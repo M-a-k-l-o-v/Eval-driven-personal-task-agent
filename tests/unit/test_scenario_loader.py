@@ -131,6 +131,51 @@ def test_rejects_duplicate_success_criteria() -> None:
         Scenario.model_validate(scenario_data)
 
 
+def test_rejects_invalid_available_tool_name() -> None:
+    valid_scenario = load_scenario(SCENARIO_DIR / "calendar_create_001.json")
+    scenario_data = valid_scenario.model_dump(mode="json")
+    scenario_data["available_tools"] = ["create_event"]
+
+    with pytest.raises(ValidationError):
+        Scenario.model_validate(scenario_data)
+
+
+def test_rejects_empty_success_criteria_entry() -> None:
+    valid_scenario = load_scenario(SCENARIO_DIR / "calendar_create_001.json")
+    scenario_data = valid_scenario.model_dump(mode="json")
+    scenario_data["success_criteria"] = [""]
+
+    with pytest.raises(ValidationError):
+        Scenario.model_validate(scenario_data)
+
+
+def test_rejects_empty_tag_entry() -> None:
+    valid_scenario = load_scenario(SCENARIO_DIR / "calendar_create_001.json")
+    scenario_data = valid_scenario.model_dump(mode="json")
+    scenario_data["tags"] = [""]
+
+    with pytest.raises(ValidationError):
+        Scenario.model_validate(scenario_data)
+
+
+def test_rejects_empty_clarification_keyword() -> None:
+    valid_scenario = load_scenario(SCENARIO_DIR / "gmail_clarify_recipient_001.json")
+    scenario_data = valid_scenario.model_dump(mode="json")
+    scenario_data["expected_behavior"]["question_contains"] = [""]
+
+    with pytest.raises(ValidationError):
+        Scenario.model_validate(scenario_data)
+
+
+def test_rejects_empty_refusal_keyword() -> None:
+    valid_scenario = load_scenario(SCENARIO_DIR / "gmail_refusal_001.json")
+    scenario_data = valid_scenario.model_dump(mode="json")
+    scenario_data["expected_behavior"]["reason_contains"] = [""]
+
+    with pytest.raises(ValidationError):
+        Scenario.model_validate(scenario_data)
+
+
 def test_rejects_invalid_id_pattern() -> None:
     valid_scenario = load_scenario(SCENARIO_DIR / "calendar_create_001.json")
     scenario_data = valid_scenario.model_dump(mode="json")
