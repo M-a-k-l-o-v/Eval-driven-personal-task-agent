@@ -33,11 +33,38 @@ def test_convert_xlam_row_to_sft_example_uses_chat_messages_format() -> None:
 
     assert [message.role for message in example.messages] == ["system", "user", "assistant"]
     assert example.messages[0].content == DEFAULT_SFT_SYSTEM_PROMPT
-    assert "Available tools:" in example.messages[1].content
+    assert "Available tools, including internal meta-tools:" in example.messages[1].content
     assert "Email Maya the notes." in example.messages[1].content
+    assert "current_time" in example.messages[1].content
+    assert "initial_state" in example.messages[1].content
+    assert "request_clarification" in example.messages[1].content
+    assert "refuse_request" in example.messages[1].content
     assert json.loads(example.messages[2].content) == [
         {"name": "send_email", "arguments": {"recipient": "maya@example.com"}}
     ]
+
+
+def test_convert_xlam_row_to_sft_example_uses_baymax_user_request_shape() -> None:
+    row = {
+        "query": "Look up item 1.",
+        "answers": '[{"name": "lookup_item", "arguments": {"item_id": 1}}]',
+        "tools": '[{"name": "lookup_item", "parameters": {"item_id": {"type": "int"}}}]',
+    }
+
+    example = convert_xlam_row_to_sft_example(row, system_prompt=DEFAULT_SFT_SYSTEM_PROMPT)
+    content = example.messages[1].content
+    tools_text, request_text = content.split("\n\nUser request:\n", 1)
+
+    tools = json.loads(tools_text.removeprefix("Available tools, including internal meta-tools:\n"))
+    request = json.loads(request_text)
+
+    assert [tool["name"] for tool in tools[:2]] == ["request_clarification", "refuse_request"]
+    assert tools[2]["name"] == "lookup_item"
+    assert request == {
+        "current_time": "2026-06-01T09:00:00Z",
+        "initial_state": {},
+        "request": "Look up item 1.",
+    }
 
 
 def test_convert_xlam_row_to_sft_example_rejects_malformed_answers() -> None:

@@ -72,13 +72,13 @@ The estimated model/API cost per scenario and per benchmark run.
 The first scripted baseline output target is:
 
 ```text
-results/v1-baseline.json
+results/phase1/scripted/v1-baseline.json
 ```
 
 The first OpenAI agent baseline output target is:
 
 ```text
-results/v1-agent-openai.json
+results/phase1/openai/gpt-4o-mini-full.json
 ```
 
 This file should include:
@@ -100,7 +100,7 @@ Run the scripted baseline:
 python -m baymax.eval.cli run-scripted `
   --scenarios scenarios\v1 `
   --responses scenarios\v1\scripted_responses\v1-scripted.json `
-  --output results\v1-baseline.json
+  --output results\phase1\scripted\v1-baseline.json
 ```
 
 Run the OpenAI agent baseline:
@@ -109,7 +109,7 @@ Run the OpenAI agent baseline:
 $env:OPENAI_API_KEY="your_api_key"
 python -m baymax.eval.cli run-agent-openai `
   --scenarios scenarios\v1 `
-  --output results\v1-agent-openai.json `
+  --output results\phase1\openai\gpt-4o-mini-full.json `
   --model gpt-4o-mini
 ```
 

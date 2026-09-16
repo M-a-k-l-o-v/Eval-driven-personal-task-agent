@@ -78,7 +78,7 @@ Run the scripted baseline:
 python -m baymax.eval.cli run-scripted \
   --scenarios scenarios/v1 \
   --responses scenarios/v1/scripted_responses/v1-scripted.json \
-  --output results/v1-baseline.json
+  --output results/phase1/scripted/v1-baseline.json
 ```
 
 Run the OpenAI agent baseline:
@@ -87,7 +87,7 @@ Run the OpenAI agent baseline:
 export OPENAI_API_KEY="your_api_key"
 python -m baymax.eval.cli run-agent-openai \
   --scenarios scenarios/v1 \
-  --output results/v1-agent-openai.json \
+  --output results/phase1/openai/gpt-4o-mini-full.json \
   --model gpt-4o-mini
 ```
 
@@ -99,7 +99,7 @@ Phase 1 result files are committed under `results/`.
 
 | Backend | task_success_rate | scenarios |
 |---|---|---|
-| Scripted baseline | see `results/v1-baseline.json` | 50 |
+| Scripted baseline | see `results/phase1/scripted/v1-baseline.json` | 50 |
 | gpt-4o-mini | **0.52** | 50 |
 | Qwen 1.5B + LoRA (smoke test) | 0.24 | 50 |
 

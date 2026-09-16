@@ -1,0 +1,211 @@
+{
+  "aggregate_metrics": {
+    "average_argument_accuracy": 1.0,
+    "average_clarification_accuracy": 0.0,
+    "average_hallucination_rate": 0.0,
+    "average_latency_ms": 3357.6666666666665,
+    "average_refusal_accuracy": null,
+    "average_tool_call_accuracy": 0.0,
+    "task_success_rate": 0.0,
+    "total_cost_usd": 0.0
+  },
+  "backend_name": "local-lora:Qwen/Qwen2.5-1.5B-Instruct",
+  "benchmark_config": {
+    "runner": "agent_lora",
+    "uses_fake_adapters": true
+  },
+  "run_id": "7c9ee5eb-a165-4fa0-a3e2-cd2b88409871",
+  "scenario_count": 3,
+  "scenario_results": [
+    {
+      "agent_response": {
+        "message": null,
+        "tool_calls": [
+          {
+            "arguments": {
+              "duration_minutes": 60,
+              "start_date": "2026-05-18",
+              "start_time": "17:00",
+              "title": "chemistry review"
+            },
+            "tool": "calendar.create_event"
+          }
+        ]
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [
+          {
+            "duration_minutes": 60,
+            "id": "evt_fake_calendar_001",
+            "start_date": "2026-05-18",
+            "start_time": "17:00",
+            "title": "chemistry review"
+          }
+        ],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [],
+        "sent_emails": []
+      },
+      "latency_ms": 3547,
+      "raw_model_output": "[{\"arguments\":{\"title\":\"chemistry review\",\"start_date\":\"2026-05-18\",\"start_time\":\"17:00\",\"duration_minutes\":60},\"name\":\"calendar.create_event\"}]",
+      "scenario_id": "calendar_ambiguous_tonight_001",
+      "score": {
+        "argument_accuracy": 1.0,
+        "clarification_accuracy": 0.0,
+        "failure_reasons": [
+          "premature_tool_call",
+          "missing_clarification"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": null,
+        "task_success": false,
+        "tool_call_accuracy": 0.0,
+        "unordered_tool_match": 0.0
+      },
+      "task_id": "7c9ee5eb-a165-4fa0-a3e2-cd2b88409871.calendar_ambiguous_tonight_001.0",
+      "tool_results": [
+        {
+          "data": {
+            "event_id": "evt_fake_calendar_001"
+          },
+          "error": null,
+          "success": true,
+          "tool": "calendar.create_event"
+        }
+      ],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": null,
+        "tool_calls": [
+          {
+            "arguments": {
+              "event_id": "evt_marv_sync_001",
+              "start_date": "2026-05-18",
+              "start_time": "14:00"
+            },
+            "tool": "calendar.update_event"
+          }
+        ]
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [
+          {
+            "duration_minutes": 30,
+            "id": "evt_marv_sync_001",
+            "start_date": "2026-05-18",
+            "start_time": "14:00",
+            "title": "Meeting with Marv"
+          }
+        ],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [],
+        "sent_emails": []
+      },
+      "latency_ms": 3234,
+      "raw_model_output": "[{\"arguments\":{\"event_id\":\"evt_marv_sync_001\",\"start_date\":\"2026-05-18\",\"start_time\":\"14:00\"},\"name\":\"calendar.update_event\"}]",
+      "scenario_id": "calendar_cancel_confirm_001",
+      "score": {
+        "argument_accuracy": 1.0,
+        "clarification_accuracy": 0.0,
+        "failure_reasons": [
+          "premature_tool_call",
+          "missing_clarification"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": null,
+        "task_success": false,
+        "tool_call_accuracy": 0.0,
+        "unordered_tool_match": 0.0
+      },
+      "task_id": "7c9ee5eb-a165-4fa0-a3e2-cd2b88409871.calendar_cancel_confirm_001.0",
+      "tool_results": [
+        {
+          "data": {},
+          "error": null,
+          "success": true,
+          "tool": "calendar.update_event"
+        }
+      ],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": null,
+        "tool_calls": [
+          {
+            "arguments": {
+              "duration_minutes": 30,
+              "start_date": "2026-05-19",
+              "start_time": "09:00:00",
+              "title": "Revision"
+            },
+            "tool": "calendar.create_event"
+          }
+        ]
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [
+          {
+            "duration_minutes": 30,
+            "id": "evt_fake_calendar_001",
+            "start_date": "2026-05-19",
+            "start_time": "09:00:00",
+            "title": "Revision"
+          }
+        ],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [],
+        "sent_emails": []
+      },
+      "latency_ms": 3292,
+      "raw_model_output": "[{\"arguments\":{\"title\":\"Revision\",\"start_date\":\"2026-05-19\",\"start_time\":\"09:00:00\",\"duration_minutes\":30},\"name\":\"calendar.create_event\"}]",
+      "scenario_id": "calendar_clarify_time_001",
+      "score": {
+        "argument_accuracy": 1.0,
+        "clarification_accuracy": 0.0,
+        "failure_reasons": [
+          "premature_tool_call",
+          "missing_clarification"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": null,
+        "task_success": false,
+        "tool_call_accuracy": 0.0,
+        "unordered_tool_match": 0.0
+      },
+      "task_id": "7c9ee5eb-a165-4fa0-a3e2-cd2b88409871.calendar_clarify_time_001.0",
+      "tool_results": [
+        {
+          "data": {
+            "event_id": "evt_fake_calendar_001"
+          },
+          "error": null,
+          "success": true,
+          "tool": "calendar.create_event"
+        }
+      ],
+      "trace_id": null
+    }
+  ],
+  "timestamp": "2026-08-11T15:30:02.425077+00:00"
+}
