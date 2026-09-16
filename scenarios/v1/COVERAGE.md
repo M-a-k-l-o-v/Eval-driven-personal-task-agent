@@ -90,9 +90,9 @@ complete only when at least one committed scenario validates for that behavior.
 - [x] Hallucination-rate scenario
   - `gmail_refusal_001`
 - [x] Latency scenario
-  - `results/v1-baseline.json`
+  - `results/phase1/scripted/v1-baseline.json`
 - [x] Cost scenario
-  - `results/v1-baseline.json`
+  - `results/phase1/scripted/v1-baseline.json`
 
 ## Failure-Mode Coverage
 

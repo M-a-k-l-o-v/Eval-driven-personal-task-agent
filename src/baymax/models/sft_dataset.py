@@ -10,6 +10,7 @@ from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
+from baymax.core.meta_tools import meta_tool_specs
 from baymax.models.external_dataset import (
     DEFAULT_EXTERNAL_DATASET_ID,
     ExternalDatasetConfig,
@@ -17,10 +18,19 @@ from baymax.models.external_dataset import (
     resolve_huggingface_dataset_revision,
 )
 
-SFT_FORMAT_VERSION = "qwen-chat-messages-v1"
+SFT_FORMAT_VERSION = "qwen-chat-messages-v2"
+DEFAULT_SFT_CURRENT_TIME = "2026-06-01T09:00:00Z"
 DEFAULT_SFT_SYSTEM_PROMPT = (
-    "You are BAYMAX's tool-calling planner. Given a user request and available tools, "
-    "return only the JSON array of tool calls required to satisfy the request."
+    "You are BAYMAX's tool-calling planner. Return only a JSON array of tool calls. "
+    "Available tools are the complete tool set for this request. Call refuse_request when "
+    "the user asks for an unavailable tool or capability, unsupported read/list/search, an "
+    "out-of-scope service, an unsafe action, secrets/passwords, impersonation, or bulk "
+    "unsolicited email. Do not use request_clarification for missing tools or unsupported "
+    "capabilities; refuse instead. Call request_clarification only when an otherwise "
+    "supported action is missing required details, ambiguous, conflicting, impossible, or "
+    "needs confirmation. Only call productive tools when the action is allowed and all "
+    "required arguments are known from the request, current_time, or initial_state. Do not "
+    "invent missing people, IDs, dates, times, recipients, state, or unavailable tools."
 )
 SplitName = Literal["train", "validation", "test"]
 
@@ -313,13 +323,34 @@ def _write_jsonl(path: Path, examples: Iterable[SFTExample]) -> None:
 def _user_message(*, query: str, tools: list[Any]) -> str:
     return "\n".join(
         [
-            "Available tools:",
-            _json_dumps(tools),
+            "Available tools, including internal meta-tools:",
+            _json_dumps(_tools_with_meta_tools(tools)),
             "",
             "User request:",
-            query,
+            _json_dumps(
+                {
+                    "current_time": DEFAULT_SFT_CURRENT_TIME,
+                    "initial_state": {},
+                    "request": query,
+                }
+            ),
         ]
     )
+
+
+def _tools_with_meta_tools(tools: list[Any]) -> list[Any]:
+    existing_tool_names = {_tool_name(tool) for tool in tools}
+    meta_tools = meta_tool_specs()
+
+    return [tool for tool in meta_tools if tool["name"] not in existing_tool_names] + tools
+
+
+def _tool_name(tool: Any) -> str | None:
+    if isinstance(tool, Mapping):
+        name = tool.get("name")
+        return name if isinstance(name, str) else None
+
+    return None
 
 
 def _required_string(row: Mapping[str, Any], field_name: str) -> str:

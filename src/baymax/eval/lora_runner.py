@@ -11,6 +11,7 @@ from typing import Any, Protocol
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from baymax.core.meta_tools import meta_tool_specs
 from baymax.eval.agent_runner import FAKE_TOOL_SCHEMAS
 from baymax.eval.fake_executor import execute_tool_calls
 from baymax.eval.runner import ScenarioRunResult
@@ -176,7 +177,7 @@ def build_lora_scenario_messages(scenario: Scenario) -> list[dict[str, str]]:
             "role": "user",
             "content": "\n".join(
                 [
-                    "Available tools:",
+                    "Available tools, including internal meta-tools:",
                     json.dumps(_available_tool_specs(scenario), sort_keys=True),
                     "",
                     "User request:",
@@ -222,7 +223,10 @@ def parse_lora_agent_response(raw_text: str) -> AgentResponse:
             message = _string_argument(arguments, "question") or raw_text or None
             continue
         if tool_name == "refuse_request":
-            message = _string_argument(arguments, "reason") or raw_text or None
+            message = _refusal_message(
+                reason=_string_argument(arguments, "reason"),
+                raw_text=raw_text,
+            )
             continue
 
         try:
@@ -259,26 +263,7 @@ def _parse_agent_response_dict(
 
 
 def _available_tool_specs(scenario: Scenario) -> list[dict[str, Any]]:
-    tool_specs = [
-        {
-            "name": "request_clarification",
-            "description": "Ask a clarification question when required information is missing.",
-            "parameters": {
-                "type": "object",
-                "properties": {"question": {"type": "string"}},
-                "required": ["question"],
-            },
-        },
-        {
-            "name": "refuse_request",
-            "description": "Refuse when the request is unsupported or out of scope.",
-            "parameters": {
-                "type": "object",
-                "properties": {"reason": {"type": "string"}},
-                "required": ["reason"],
-            },
-        },
-    ]
+    tool_specs = meta_tool_specs()
     for tool in scenario.available_tools:
         tool_specs.append(
             {
@@ -303,13 +288,43 @@ def _parse_tool_call(value: Any) -> tuple[str, dict[str, Any]] | None:
         tool_name = function.get("name")
         arguments = function.get("arguments", {})
     else:
-        tool_name = value.get("name") or value.get("tool") or value.get("tool_name")
-        arguments = value.get("arguments", value.get("parameters", value.get("params", {})))
+        tool_name = _tool_name_from_mapping(value)
+        arguments = _arguments_from_mapping(value)
 
     if not isinstance(tool_name, str):
         return None
 
     return tool_name, _parse_arguments(arguments)
+
+
+def _tool_name_from_mapping(value: dict[str, Any]) -> Any:
+    for key in (
+        "name",
+        "tool",
+        "tool_name",
+        "function_name",
+        "functionName",
+        "function_key",
+        "method",
+        "action",
+    ):
+        tool_name = value.get(key)
+        if isinstance(tool_name, str):
+            return tool_name
+
+    return None
+
+
+def _arguments_from_mapping(value: dict[str, Any]) -> Any:
+    named_inputs = value.get("named_inputs")
+    if isinstance(named_inputs, dict):
+        return named_inputs
+
+    for key in ("arguments", "parameters", "params"):
+        if key in value:
+            return value[key]
+
+    return {}
 
 
 def _tool_call_values_from_parsed(parsed: Any) -> list[Any]:
@@ -338,6 +353,12 @@ def _is_alternating_tool_call_list(values: list[Any]) -> bool:
 def _parse_arguments(value: Any) -> dict[str, Any]:
     if isinstance(value, dict):
         return value
+    if isinstance(value, list):
+        merged_arguments: dict[str, Any] = {}
+        for item in value:
+            if isinstance(item, dict):
+                merged_arguments.update(item)
+        return merged_arguments
     if isinstance(value, str):
         try:
             parsed = json.loads(value)
@@ -351,6 +372,16 @@ def _parse_arguments(value: Any) -> dict[str, Any]:
 def _string_argument(arguments: dict[str, Any], key: str) -> str | None:
     value = arguments.get(key)
     return value if isinstance(value, str) else None
+
+
+def _refusal_message(*, reason: str | None, raw_text: str) -> str:
+    if reason is None or not reason.strip():
+        return raw_text or "I cannot comply with this request."
+
+    if "cannot" in reason.casefold() or "can't" in reason.casefold():
+        return reason
+
+    return f"I cannot comply with this request: {reason}"
 
 
 def _extract_json_candidate(raw_text: str) -> str | None:

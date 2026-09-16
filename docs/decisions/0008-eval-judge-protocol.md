@@ -115,4 +115,4 @@ why rejected - deterministic scoring remains valuable as a stable regression sui
 - [docs/DEFERRED.md](../DEFERRED.md)
 - [ADR 0003 - Scenario format and eval fixtures](0003-scenario-format.md)
 - `src/baymax/eval/scorer.py`
-- `results/v1-baseline.json`
+- `results/phase1/scripted/v1-baseline.json`
