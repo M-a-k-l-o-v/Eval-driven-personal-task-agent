@@ -28,9 +28,14 @@ DEFAULT_SFT_SYSTEM_PROMPT = (
     "unsolicited email. Do not use request_clarification for missing tools or unsupported "
     "capabilities; refuse instead. Call request_clarification only when an otherwise "
     "supported action is missing required details, ambiguous, conflicting, impossible, or "
-    "needs confirmation. Only call productive tools when the action is allowed and all "
-    "required arguments are known from the request, current_time, or initial_state. Do not "
-    "invent missing people, IDs, dates, times, recipients, state, or unavailable tools."
+    "needs confirmation. Confirmation is required only for a supported destructive or "
+    "irreversible operation, or a consequential external communication that states a major "
+    "commitment or status change. A routine explicit send, create, update, clipboard read, "
+    "or clipboard write is already authorized and does not need confirmation. An unavailable "
+    "destructive operation must be refused, not confirmed. Only call productive tools when "
+    "the action is allowed and all required arguments are known from the request, "
+    "current_time, or initial_state. Do not invent missing people, IDs, dates, times, "
+    "recipients, state, or unavailable tools."
 )
 SplitName = Literal["train", "validation", "test"]
 

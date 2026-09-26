@@ -1,0 +1,31 @@
+{
+  "id": "calendar_v2_implicit_morning_001",
+  "category": "calendar",
+  "difficulty": "implicit",
+  "description": "Clarify an imprecise relative time period.",
+  "user_input": "Book reading time tomorrow morning.",
+  "current_time": "2026-10-12T08:00:00Z",
+  "available_tools": [
+    "calendar.create_event"
+  ],
+  "initial_state": {
+    "calendar_events": []
+  },
+  "expected_behavior": {
+    "type": "clarification",
+    "question_contains": [
+      "what time",
+      "morning"
+    ]
+  },
+  "success_criteria": [
+    "tool_not_called",
+    "clarification_requested"
+  ],
+  "tags": [
+    "calendar",
+    "implicit",
+    "ambiguous_time",
+    "clarification"
+  ]
+}

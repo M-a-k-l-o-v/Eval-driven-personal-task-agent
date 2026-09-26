@@ -1,0 +1,34 @@
+{
+  "id": "clipboard_v2_explicit_history_001",
+  "category": "clipboard",
+  "difficulty": "explicit",
+  "description": "Refuse unsupported clipboard history access.",
+  "user_input": "Show me the last ten things copied to my clipboard.",
+  "current_time": "2026-10-12T08:00:00Z",
+  "available_tools": [
+    "clipboard.read",
+    "clipboard.write"
+  ],
+  "initial_state": {
+    "clipboard": {
+      "text": "Current item"
+    }
+  },
+  "expected_behavior": {
+    "type": "refusal",
+    "reason_contains": [
+      "history",
+      "available"
+    ]
+  },
+  "success_criteria": [
+    "tool_not_called",
+    "refusal_given"
+  ],
+  "tags": [
+    "clipboard",
+    "explicit",
+    "history",
+    "unsupported_operation"
+  ]
+}

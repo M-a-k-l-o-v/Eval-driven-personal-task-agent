@@ -217,7 +217,7 @@
     "tool_calls": []
   },
   "calendar_cancel_confirm_001": {
-    "message": "Please confirm that you want to cancel the meeting with Marv.",
+    "message": "I cannot cancel the meeting because no calendar cancellation tool is available.",
     "tool_calls": []
   },
   "calendar_list_tomorrow_001": {
@@ -308,7 +308,7 @@
     "tool_calls": []
   },
   "notion_delete_confirm_001": {
-    "message": "Please confirm that you want to delete the physics lab report task.",
+    "message": "I cannot delete the physics lab report task because no Notion deletion tool is available.",
     "tool_calls": []
   },
   "notion_list_due_tomorrow_001": {

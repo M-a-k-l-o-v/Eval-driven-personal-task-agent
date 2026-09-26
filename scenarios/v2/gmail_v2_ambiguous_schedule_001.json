@@ -1,0 +1,34 @@
+{
+  "id": "gmail_v2_ambiguous_schedule_001",
+  "category": "gmail",
+  "difficulty": "ambiguous",
+  "description": "Handle an email boundary without guessing or using an unsupported operation.",
+  "user_input": "Schedule this email to be sent at midnight.",
+  "current_time": "2026-10-12T08:00:00Z",
+  "available_tools": [
+    "gmail.create_draft",
+    "gmail.send_email"
+  ],
+  "initial_state": {
+    "gmail_contacts": [],
+    "gmail_messages": [],
+    "gmail_drafts": [],
+    "sent_emails": []
+  },
+  "expected_behavior": {
+    "type": "refusal",
+    "reason_contains": [
+      "schedule",
+      "available"
+    ]
+  },
+  "success_criteria": [
+    "tool_not_called",
+    "refusal_given"
+  ],
+  "tags": [
+    "gmail",
+    "ambiguous",
+    "boundary_decision"
+  ]
+}

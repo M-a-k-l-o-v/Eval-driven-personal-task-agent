@@ -1,0 +1,32 @@
+{
+  "id": "notion_v2_explicit_create_002",
+  "category": "notion",
+  "difficulty": "explicit",
+  "description": "Create a fully specified Notion task.",
+  "user_input": "Create a Notion task called 'Submit internship reflection' due 2026-11-02.",
+  "current_time": "2026-10-12T08:00:00Z",
+  "available_tools": [
+    "notion.create_task"
+  ],
+  "initial_state": {
+    "notion_tasks": []
+  },
+  "expected_behavior": {
+    "type": "tool_call",
+    "tool": "notion.create_task",
+    "arguments": {
+      "title": "Submit internship reflection",
+      "due_date": "2026-11-02"
+    }
+  },
+  "success_criteria": [
+    "correct_tool_called",
+    "correct_arguments"
+  ],
+  "tags": [
+    "notion",
+    "explicit",
+    "create_task",
+    "single_tool"
+  ]
+}

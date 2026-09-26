@@ -8,7 +8,9 @@ complete only when at least one committed scenario validates for that behavior.
 - [x] Calendar contextual scenario
   - `calendar_contextual_reschedule_001`, `calendar_update_duration_001`
 - [x] Calendar clarification scenario
-  - `calendar_clarify_time_001`, `calendar_cancel_confirm_001`, `calendar_ambiguous_tonight_001`
+  - `calendar_clarify_time_001`, `calendar_ambiguous_tonight_001`
+- [x] Calendar refusal scenario
+  - `calendar_cancel_confirm_001`, `calendar_list_tomorrow_001`
 - [x] Calendar explicit scenario
   - `calendar_create_001`, `calendar_timezone_create_001`
 - [x] Calendar implicit scenario
@@ -32,7 +34,9 @@ complete only when at least one committed scenario validates for that behavior.
 - [x] Notion contextual scenario
   - `notion_contextual_complete_001`, `notion_update_due_date_001`, `notion_mark_done_no_match_001`
 - [x] Notion clarification scenario
-  - `notion_clarify_multiple_tasks_001`, `notion_delete_confirm_001`, `notion_invalid_due_date_001`
+  - `notion_clarify_multiple_tasks_001`, `notion_invalid_due_date_001`
+- [x] Notion refusal scenario
+  - `notion_delete_confirm_001`, `notion_list_due_tomorrow_001`
 - [x] Notion explicit scenario
   - `notion_explicit_create_001`, `notion_multi_create_two_tasks_001`
 - [x] Notion implicit scenario
@@ -131,8 +135,10 @@ complete only when at least one committed scenario validates for that behavior.
 
 - [x] Harmless out-of-scope request
   - `scope_refusal_food_order_001`
-- [x] Destructive action confirmation scenario
-  - `calendar_cancel_confirm_001`, `notion_delete_confirm_001`, `gmail_send_confirmation_001`
+- [x] Unsupported destructive action refusal scenario
+  - `calendar_cancel_confirm_001`, `notion_delete_confirm_001`
+- [x] Consequential external communication confirmation scenario
+  - `gmail_send_confirmation_001`
 
 ## Target
 

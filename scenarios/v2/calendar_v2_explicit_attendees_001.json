@@ -1,0 +1,32 @@
+{
+  "id": "calendar_v2_explicit_attendees_001",
+  "category": "calendar",
+  "difficulty": "explicit",
+  "description": "Refuse an attendee invitation operation unavailable in the calendar tools.",
+  "user_input": "Invite lea@example.com to my calendar event on 2026-10-15.",
+  "current_time": "2026-10-12T08:00:00Z",
+  "available_tools": [
+    "calendar.create_event",
+    "calendar.update_event"
+  ],
+  "initial_state": {
+    "calendar_events": []
+  },
+  "expected_behavior": {
+    "type": "refusal",
+    "reason_contains": [
+      "attendee",
+      "available"
+    ]
+  },
+  "success_criteria": [
+    "tool_not_called",
+    "refusal_given"
+  ],
+  "tags": [
+    "calendar",
+    "explicit",
+    "unsupported_operation",
+    "attendees"
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "id": "notion_v2_ambiguous_comments_001",
+  "category": "notion",
+  "difficulty": "ambiguous",
+  "description": "Handle a task boundary without guessing or using an unsupported operation.",
+  "user_input": "Add a comment to my planning task saying approved.",
+  "current_time": "2026-10-12T08:00:00Z",
+  "available_tools": [
+    "notion.create_task",
+    "notion.update_task"
+  ],
+  "initial_state": {
+    "notion_tasks": []
+  },
+  "expected_behavior": {
+    "type": "refusal",
+    "reason_contains": [
+      "comment",
+      "available"
+    ]
+  },
+  "success_criteria": [
+    "tool_not_called",
+    "refusal_given"
+  ],
+  "tags": [
+    "notion",
+    "ambiguous",
+    "boundary_decision"
+  ]
+}

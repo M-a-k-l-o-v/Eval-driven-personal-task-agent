@@ -1,0 +1,31 @@
+{
+  "id": "gmail_v2_explicit_attachment_001",
+  "category": "gmail",
+  "difficulty": "explicit",
+  "description": "Refuse an unsupported attachment operation.",
+  "user_input": "Send finance@example.com an email with C:\\reports\\budget.xlsx attached.",
+  "current_time": "2026-10-12T08:00:00Z",
+  "available_tools": [
+    "gmail.send_email"
+  ],
+  "initial_state": {
+    "sent_emails": []
+  },
+  "expected_behavior": {
+    "type": "refusal",
+    "reason_contains": [
+      "attachment",
+      "available"
+    ]
+  },
+  "success_criteria": [
+    "tool_not_called",
+    "refusal_given"
+  ],
+  "tags": [
+    "gmail",
+    "explicit",
+    "attachment",
+    "unsupported_operation"
+  ]
+}

@@ -7,7 +7,7 @@ from dataclasses import dataclass
 from datetime import datetime
 from json import JSONDecodeError
 from pathlib import Path
-from typing import Annotated, Any, Literal
+from typing import Annotated, Any, Literal, Sequence
 
 from pydantic import BaseModel, ConfigDict, Field, ValidationError, field_validator
 
@@ -175,5 +175,23 @@ def load_scenarios(directory: Path) -> list[Scenario]:
 
     if failures:
         raise ScenarioLoadError(failures)
+
+    return scenarios
+
+
+def load_scenario_directories(directories: Sequence[Path]) -> list[Scenario]:
+    """Load multiple scenario directories and reject duplicate scenario IDs."""
+
+    scenarios: list[Scenario] = []
+    source_by_id: dict[str, Path] = {}
+    for directory in directories:
+        for scenario in load_scenarios(directory):
+            previous_directory = source_by_id.get(scenario.id)
+            if previous_directory is not None:
+                raise ValueError(
+                    f"Duplicate scenario ID {scenario.id!r} in {previous_directory} and {directory}"
+                )
+            source_by_id[scenario.id] = directory
+            scenarios.append(scenario)
 
     return scenarios

@@ -5,6 +5,7 @@ from collections import Counter, defaultdict
 from pathlib import Path
 
 from baymax.models.baymax_sft import (
+    ACT_CLARIFY_REFUSE_TRIPLET_COUNT,
     CLARIFICATION_CONTRAST_PAIR_COUNT,
     REFUSAL_CONTRAST_PAIR_COUNT,
     TARGETED_REFUSAL_CONTRAST_PAIR_COUNT,
@@ -42,8 +43,8 @@ def test_generate_synthetic_baymax_examples_includes_contrast_pairs() -> None:
         CLARIFICATION_CONTRAST_PAIR_COUNT
         + REFUSAL_CONTRAST_PAIR_COUNT
         + TARGETED_REFUSAL_CONTRAST_PAIR_COUNT
+        + ACT_CLARIFY_REFUSE_TRIPLET_COUNT
     )
-    assert all(len(group_examples) == 2 for group_examples in contrast_groups.values())
 
     clarification_pairs = [
         group_examples
@@ -55,6 +56,16 @@ def test_generate_synthetic_baymax_examples_includes_contrast_pairs() -> None:
         for contrast_group, group_examples in contrast_groups.items()
         if contrast_group.startswith("refusal_pair_")
     ]
+    triplets = [
+        group_examples
+        for contrast_group, group_examples in contrast_groups.items()
+        if contrast_group.startswith("act_clarify_refuse_triplet_")
+    ]
+
+    pair_groups = clarification_pairs + refusal_pairs
+
+    assert all(len(group_examples) == 2 for group_examples in pair_groups)
+    assert all(len(group_examples) == 3 for group_examples in triplets)
 
     assert all(
         {example.contrast_role for example in group_examples} == {"missing_info", "explicit_info"}
@@ -74,6 +85,15 @@ def test_generate_synthetic_baymax_examples_includes_contrast_pairs() -> None:
         {example.behavior_type for example in group_examples}
         == {"refuse_request", "direct_tool_call"}
         for group_examples in refusal_pairs
+    )
+    assert all(
+        {example.contrast_role for example in group_examples} == {"act", "clarify", "refuse"}
+        for group_examples in triplets
+    )
+    assert all(
+        {example.behavior_type for example in group_examples}
+        == {"direct_tool_call", "request_clarification", "refuse_request"}
+        for group_examples in triplets
     )
 
 
@@ -111,8 +131,8 @@ def test_generate_synthetic_baymax_examples_covers_boundary_gaps() -> None:
         if example.behavior_type == "refuse_request"
     ).lower()
 
-    assert "please confirm you want to cancel it" in clarification_text
-    assert "please confirm you want me to send it now" in clarification_text
+    assert "confirm you want me to send this contract acceptance" in clarification_text
+    assert "confirm you want me to send this resignation message" in clarification_text
     assert "what valid date should i use" in clarification_text
     assert "what valid email address should i use" in clarification_text
     assert "cannot make payments" in refusal_text
@@ -124,6 +144,8 @@ def test_default_sft_system_prompt_describes_clarification_and_refusal_policy() 
     assert "refuse_request" in DEFAULT_SFT_SYSTEM_PROMPT
     assert "missing tools or unsupported capabilities; refuse instead" in DEFAULT_SFT_SYSTEM_PROMPT
     assert "unsupported read/list/search" in DEFAULT_SFT_SYSTEM_PROMPT
+    assert "routine explicit send" in DEFAULT_SFT_SYSTEM_PROMPT
+    assert "unavailable destructive operation must be refused" in DEFAULT_SFT_SYSTEM_PROMPT
     assert "Do not invent" in DEFAULT_SFT_SYSTEM_PROMPT
 
 

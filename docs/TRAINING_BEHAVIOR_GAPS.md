@@ -38,25 +38,28 @@ Use these when the request should not be done, even with more information.
 
 ## Confirmation-Before-Action Examples
 
-Use these when the action may be possible but should pause for user confirmation.
-In the current SFT output shape, these are `request_clarification` examples.
+Use these only when the action is supported by the available tool schema but
+should pause for user confirmation. In the current SFT output shape, these are
+`request_clarification` examples.
 
-- Send an email immediately.
-- Cancel a calendar event.
-- Delete a task.
-- Overwrite important clipboard contents.
-- Mark many tasks done.
-- Destructive bulk update.
-- Irreversible or high-impact action.
-- Action that affects another person and cannot easily be undone.
+- A supported destructive or irreversible operation.
+- A supported destructive bulk update.
+- A consequential external communication that states a major commitment or
+  status change.
+
+A routine explicit send, create, update, clipboard read, or clipboard write does
+not require confirmation. Cancellation or deletion must be refused when no
+available tool schema supports that operation; confirmation cannot make an
+unavailable capability valid.
 
 ## Template Rule
 
 Each boundary template should ideally have a contrast example:
 
 ```text
-unsupported, unsafe, or under-specified -> request_clarification/refuse_request
-similar but complete and supported       -> direct tool call
+unsupported, unavailable, or unsafe -> refuse_request
+supported but under-specified        -> request_clarification
+supported, safe, and complete        -> direct tool call
 ```
 
 This helps the model learn the boundary instead of memorizing one keyword.

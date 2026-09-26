@@ -1,0 +1,34 @@
+{
+  "id": "gmail_v2_ambiguous_send_or_draft_001",
+  "category": "gmail",
+  "difficulty": "ambiguous",
+  "description": "Handle an email boundary without guessing or using an unsupported operation.",
+  "user_input": "Email me the onboarding wording for approval.",
+  "current_time": "2026-10-12T08:00:00Z",
+  "available_tools": [
+    "gmail.create_draft",
+    "gmail.send_email"
+  ],
+  "initial_state": {
+    "gmail_contacts": [],
+    "gmail_messages": [],
+    "gmail_drafts": [],
+    "sent_emails": []
+  },
+  "expected_behavior": {
+    "type": "clarification",
+    "question_contains": [
+      "draft",
+      "send"
+    ]
+  },
+  "success_criteria": [
+    "tool_not_called",
+    "clarification_requested"
+  ],
+  "tags": [
+    "gmail",
+    "ambiguous",
+    "boundary_decision"
+  ]
+}

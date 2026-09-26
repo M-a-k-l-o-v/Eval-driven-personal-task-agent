@@ -1,0 +1,49 @@
+{
+  "id": "gmail_v2_contextual_multiple_mona_001",
+  "category": "gmail",
+  "difficulty": "contextual",
+  "description": "Handle an email boundary without guessing or using an unsupported operation.",
+  "user_input": "Reply to Mona's email saying yes.",
+  "current_time": "2026-10-12T08:00:00Z",
+  "available_tools": [
+    "gmail.create_draft",
+    "gmail.send_email"
+  ],
+  "initial_state": {
+    "gmail_contacts": [],
+    "gmail_messages": [
+      {
+        "id": "msg_mona_a",
+        "sender_name": "Mona",
+        "sender_email": "mona@example.com",
+        "subject": "Budget",
+        "received_at": "2026-10-12T06:00:00Z"
+      },
+      {
+        "id": "msg_mona_b",
+        "sender_name": "Mona",
+        "sender_email": "mona@example.com",
+        "subject": "Venue",
+        "received_at": "2026-10-12T07:00:00Z"
+      }
+    ],
+    "gmail_drafts": [],
+    "sent_emails": []
+  },
+  "expected_behavior": {
+    "type": "clarification",
+    "question_contains": [
+      "which",
+      "Mona"
+    ]
+  },
+  "success_criteria": [
+    "tool_not_called",
+    "clarification_requested"
+  ],
+  "tags": [
+    "gmail",
+    "contextual",
+    "boundary_decision"
+  ]
+}

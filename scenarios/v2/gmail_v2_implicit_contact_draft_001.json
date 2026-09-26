@@ -1,0 +1,38 @@
+{
+  "id": "gmail_v2_implicit_contact_draft_001",
+  "category": "gmail",
+  "difficulty": "implicit",
+  "description": "Resolve a named contact before creating a draft.",
+  "user_input": "Draft Aisha a note that the prototype is ready.",
+  "current_time": "2026-10-12T08:00:00Z",
+  "available_tools": [
+    "gmail.create_draft"
+  ],
+  "initial_state": {
+    "gmail_contacts": [
+      {
+        "name": "Aisha Khan",
+        "email": "aisha.khan@example.com"
+      }
+    ],
+    "gmail_drafts": []
+  },
+  "expected_behavior": {
+    "type": "tool_call",
+    "tool": "gmail.create_draft",
+    "arguments": {
+      "recipient": "aisha.khan@example.com",
+      "body_contains": "prototype is ready"
+    }
+  },
+  "success_criteria": [
+    "correct_tool_called",
+    "correct_arguments"
+  ],
+  "tags": [
+    "gmail",
+    "implicit",
+    "contact_lookup",
+    "draft"
+  ]
+}
