@@ -1,0 +1,33 @@
+{
+  "id": "clipboard_v2_ambiguous_read_or_write_001",
+  "category": "clipboard",
+  "difficulty": "ambiguous",
+  "description": "Handle a clipboard boundary without guessing or using an unsupported operation.",
+  "user_input": "Use the clipboard for the access code.",
+  "current_time": "2026-10-12T08:00:00Z",
+  "available_tools": [
+    "clipboard.read",
+    "clipboard.write"
+  ],
+  "initial_state": {
+    "clipboard": {
+      "text": ""
+    }
+  },
+  "expected_behavior": {
+    "type": "clarification",
+    "question_contains": [
+      "read",
+      "write"
+    ]
+  },
+  "success_criteria": [
+    "tool_not_called",
+    "clarification_requested"
+  ],
+  "tags": [
+    "clipboard",
+    "ambiguous",
+    "boundary_decision"
+  ]
+}

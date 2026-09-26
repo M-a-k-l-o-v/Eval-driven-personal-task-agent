@@ -12,6 +12,7 @@ from baymax.eval.scenario_loader import (
     ToolCallExpectedBehavior,
     ToolCallsExpectedBehavior,
     load_scenario,
+    load_scenario_directories,
     load_scenarios,
 )
 
@@ -76,6 +77,28 @@ def test_loads_all_v1_scenarios() -> None:
     }
 
 
+def test_load_scenario_directories_combines_v1_and_v2() -> None:
+    scenarios = load_scenario_directories(
+        [REPO_ROOT / "scenarios" / "v1", REPO_ROOT / "scenarios" / "v2"]
+    )
+
+    assert len(scenarios) == 150
+    assert len({scenario.id for scenario in scenarios}) == 150
+
+
+def test_load_scenario_directories_rejects_duplicate_ids(tmp_path: Path) -> None:
+    first_dir = tmp_path / "first"
+    second_dir = tmp_path / "second"
+    first_dir.mkdir()
+    second_dir.mkdir()
+    source = SCENARIO_DIR / "calendar_create_001.json"
+    (first_dir / source.name).write_text(source.read_text(encoding="utf-8"), encoding="utf-8")
+    (second_dir / source.name).write_text(source.read_text(encoding="utf-8"), encoding="utf-8")
+
+    with pytest.raises(ValueError, match="Duplicate scenario ID 'calendar_create_001'"):
+        load_scenario_directories([first_dir, second_dir])
+
+
 def test_loads_tool_call_scenario() -> None:
     scenario = load_scenario(SCENARIO_DIR / "calendar_create_001.json")
 
@@ -99,6 +122,20 @@ def test_loads_refusal_scenario_without_tool_arguments() -> None:
     assert scenario.difficulty == "explicit"
     assert isinstance(scenario.expected_behavior, RefusalExpectedBehavior)
     assert scenario.expected_behavior.reason_contains == ["impersonate", "professor"]
+
+
+@pytest.mark.parametrize(
+    "scenario_id,operation",
+    [
+        ("calendar_cancel_confirm_001", "cancel"),
+        ("notion_delete_confirm_001", "delete"),
+    ],
+)
+def test_unsupported_destructive_operations_are_refusals(scenario_id: str, operation: str) -> None:
+    scenario = load_scenario(SCENARIO_DIR / f"{scenario_id}.json")
+
+    assert isinstance(scenario.expected_behavior, RefusalExpectedBehavior)
+    assert operation in scenario.expected_behavior.reason_contains
 
 
 def test_loads_multi_step_scenario_with_ordered_tool_calls() -> None:
@@ -126,6 +163,51 @@ def test_rejects_duplicate_success_criteria() -> None:
     valid_scenario = load_scenario(SCENARIO_DIR / "notion_create_task_001.json")
     scenario_data = valid_scenario.model_dump(mode="json")
     scenario_data["success_criteria"] = ["correct_title", "correct_title"]
+
+    with pytest.raises(ValidationError):
+        Scenario.model_validate(scenario_data)
+
+
+def test_rejects_invalid_available_tool_name() -> None:
+    valid_scenario = load_scenario(SCENARIO_DIR / "calendar_create_001.json")
+    scenario_data = valid_scenario.model_dump(mode="json")
+    scenario_data["available_tools"] = ["create_event"]
+
+    with pytest.raises(ValidationError):
+        Scenario.model_validate(scenario_data)
+
+
+def test_rejects_empty_success_criteria_entry() -> None:
+    valid_scenario = load_scenario(SCENARIO_DIR / "calendar_create_001.json")
+    scenario_data = valid_scenario.model_dump(mode="json")
+    scenario_data["success_criteria"] = [""]
+
+    with pytest.raises(ValidationError):
+        Scenario.model_validate(scenario_data)
+
+
+def test_rejects_empty_tag_entry() -> None:
+    valid_scenario = load_scenario(SCENARIO_DIR / "calendar_create_001.json")
+    scenario_data = valid_scenario.model_dump(mode="json")
+    scenario_data["tags"] = [""]
+
+    with pytest.raises(ValidationError):
+        Scenario.model_validate(scenario_data)
+
+
+def test_rejects_empty_clarification_keyword() -> None:
+    valid_scenario = load_scenario(SCENARIO_DIR / "gmail_clarify_recipient_001.json")
+    scenario_data = valid_scenario.model_dump(mode="json")
+    scenario_data["expected_behavior"]["question_contains"] = [""]
+
+    with pytest.raises(ValidationError):
+        Scenario.model_validate(scenario_data)
+
+
+def test_rejects_empty_refusal_keyword() -> None:
+    valid_scenario = load_scenario(SCENARIO_DIR / "gmail_refusal_001.json")
+    scenario_data = valid_scenario.model_dump(mode="json")
+    scenario_data["expected_behavior"]["reason_contains"] = [""]
 
     with pytest.raises(ValidationError):
         Scenario.model_validate(scenario_data)

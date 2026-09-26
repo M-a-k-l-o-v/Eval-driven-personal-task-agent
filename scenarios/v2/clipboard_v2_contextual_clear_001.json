@@ -1,0 +1,33 @@
+{
+  "id": "clipboard_v2_contextual_clear_001",
+  "category": "clipboard",
+  "difficulty": "contextual",
+  "description": "Handle a clipboard boundary without guessing or using an unsupported operation.",
+  "user_input": "Clear the copied text.",
+  "current_time": "2026-10-12T08:00:00Z",
+  "available_tools": [
+    "clipboard.read",
+    "clipboard.write"
+  ],
+  "initial_state": {
+    "clipboard": {
+      "text": "Temporary note"
+    }
+  },
+  "expected_behavior": {
+    "type": "tool_call",
+    "tool": "clipboard.write",
+    "arguments": {
+      "text": ""
+    }
+  },
+  "success_criteria": [
+    "correct_tool_called",
+    "correct_arguments"
+  ],
+  "tags": [
+    "clipboard",
+    "contextual",
+    "boundary_decision"
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "id": "notion_v2_implicit_later_001",
+  "category": "notion",
+  "difficulty": "implicit",
+  "description": "Handle a task boundary without guessing or using an unsupported operation.",
+  "user_input": "Remind me to update my portfolio later.",
+  "current_time": "2026-10-12T08:00:00Z",
+  "available_tools": [
+    "notion.create_task",
+    "notion.update_task"
+  ],
+  "initial_state": {
+    "notion_tasks": []
+  },
+  "expected_behavior": {
+    "type": "clarification",
+    "question_contains": [
+      "when",
+      "due"
+    ]
+  },
+  "success_criteria": [
+    "tool_not_called",
+    "clarification_requested"
+  ],
+  "tags": [
+    "notion",
+    "implicit",
+    "boundary_decision"
+  ]
+}

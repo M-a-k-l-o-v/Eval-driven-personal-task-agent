@@ -7,12 +7,14 @@ from dataclasses import dataclass
 from datetime import datetime
 from json import JSONDecodeError
 from pathlib import Path
-from typing import Annotated, Any, Literal
+from typing import Annotated, Any, Literal, Sequence
 
 from pydantic import BaseModel, ConfigDict, Field, ValidationError, field_validator
 
 ScenarioCategory = Literal["calendar", "notion", "gmail", "clipboard", "multi_tool"]
 ScenarioDifficulty = Literal["explicit", "implicit", "contextual", "ambiguous", "multi_step"]
+ToolName = Annotated[str, Field(pattern=r"^[a-z][a-z0-9_]*\.[a-z][a-z0-9_]*$")]
+NonEmptyString = Annotated[str, Field(min_length=1)]
 
 
 @dataclass(frozen=True)
@@ -40,7 +42,7 @@ class ExpectedToolCall(BaseModel):
 
     model_config = ConfigDict(extra="forbid")
 
-    tool: str = Field(pattern=r"^[a-z][a-z0-9_]*\.[a-z][a-z0-9_]*$")
+    tool: ToolName
     arguments: dict[str, Any]
 
 
@@ -50,7 +52,7 @@ class ToolCallExpectedBehavior(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     type: Literal["tool_call"]
-    tool: str = Field(pattern=r"^[a-z][a-z0-9_]*\.[a-z][a-z0-9_]*$")
+    tool: ToolName
     arguments: dict[str, Any]
 
 
@@ -69,7 +71,7 @@ class ClarificationExpectedBehavior(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     type: Literal["clarification"]
-    question_contains: list[str] = Field(min_length=1)
+    question_contains: list[NonEmptyString] = Field(min_length=1)
 
     @field_validator("question_contains")
     @classmethod
@@ -85,7 +87,7 @@ class RefusalExpectedBehavior(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     type: Literal["refusal"]
-    reason_contains: list[str] = Field(min_length=1)
+    reason_contains: list[NonEmptyString] = Field(min_length=1)
 
     @field_validator("reason_contains")
     @classmethod
@@ -115,11 +117,11 @@ class Scenario(BaseModel):
     description: str = Field(min_length=1)
     user_input: str = Field(min_length=1)
     current_time: datetime
-    available_tools: list[str] = Field(min_length=1)
+    available_tools: list[ToolName] = Field(min_length=1)
     initial_state: dict[str, Any]
     expected_behavior: ExpectedBehavior
-    success_criteria: list[str] = Field(min_length=1)
-    tags: list[str] = Field(default_factory=list)
+    success_criteria: list[NonEmptyString] = Field(min_length=1)
+    tags: list[NonEmptyString] = Field(default_factory=list)
 
     @field_validator("available_tools")
     @classmethod
@@ -173,5 +175,23 @@ def load_scenarios(directory: Path) -> list[Scenario]:
 
     if failures:
         raise ScenarioLoadError(failures)
+
+    return scenarios
+
+
+def load_scenario_directories(directories: Sequence[Path]) -> list[Scenario]:
+    """Load multiple scenario directories and reject duplicate scenario IDs."""
+
+    scenarios: list[Scenario] = []
+    source_by_id: dict[str, Path] = {}
+    for directory in directories:
+        for scenario in load_scenarios(directory):
+            previous_directory = source_by_id.get(scenario.id)
+            if previous_directory is not None:
+                raise ValueError(
+                    f"Duplicate scenario ID {scenario.id!r} in {previous_directory} and {directory}"
+                )
+            source_by_id[scenario.id] = directory
+            scenarios.append(scenario)
 
     return scenarios

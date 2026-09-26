@@ -18,7 +18,7 @@ from baymax.eval.lora_runner import (
     run_lora_scenarios,
 )
 from baymax.eval.runner import ScenarioRunResult, ScriptedAgent, run_scenarios
-from baymax.eval.scenario_loader import load_scenarios
+from baymax.eval.scenario_loader import load_scenario_directories
 from baymax.eval.scorer import AgentResponse
 from baymax.service.inference import OpenAIBackend
 
@@ -29,7 +29,7 @@ def main(argv: Sequence[str] | None = None) -> int:
 
     if args.command == "run-scripted":
         _run_scripted(
-            scenarios_dir=args.scenarios,
+            scenario_dirs=args.scenarios,
             responses_path=args.responses,
             output_path=args.output,
         )
@@ -38,7 +38,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     if args.command == "run-agent-openai":
         asyncio.run(
             _run_agent_openai(
-                scenarios_dir=args.scenarios,
+                scenario_dirs=args.scenarios,
                 output_path=args.output,
                 model=args.model,
             )
@@ -47,7 +47,7 @@ def main(argv: Sequence[str] | None = None) -> int:
 
     if args.command == "run-agent-lora":
         _run_agent_local(
-            scenarios_dir=args.scenarios,
+            scenario_dirs=args.scenarios,
             output_path=args.output,
             base_model=args.base_model,
             adapter_path=args.adapter,
@@ -64,7 +64,7 @@ def main(argv: Sequence[str] | None = None) -> int:
 
     if args.command == "run-agent-local":
         _run_agent_local(
-            scenarios_dir=args.scenarios,
+            scenario_dirs=args.scenarios,
             output_path=args.output,
             base_model=args.base_model,
             adapter_path=None,
@@ -94,8 +94,9 @@ def _build_parser() -> argparse.ArgumentParser:
     scripted_parser.add_argument(
         "--scenarios",
         type=Path,
+        action="append",
         required=True,
-        help="directory containing scenario JSON files",
+        help="scenario directory; repeat to combine suites",
     )
     scripted_parser.add_argument(
         "--responses",
@@ -117,8 +118,9 @@ def _build_parser() -> argparse.ArgumentParser:
     agent_openai_parser.add_argument(
         "--scenarios",
         type=Path,
+        action="append",
         required=True,
-        help="directory containing scenario JSON files",
+        help="scenario directory; repeat to combine suites",
     )
     agent_openai_parser.add_argument(
         "--output",
@@ -139,8 +141,9 @@ def _build_parser() -> argparse.ArgumentParser:
     agent_lora_parser.add_argument(
         "--scenarios",
         type=Path,
+        action="append",
         required=True,
-        help="directory containing scenario JSON files",
+        help="scenario directory; repeat to combine suites",
     )
     agent_lora_parser.add_argument(
         "--output",
@@ -201,8 +204,9 @@ def _build_parser() -> argparse.ArgumentParser:
     agent_local_parser.add_argument(
         "--scenarios",
         type=Path,
+        action="append",
         required=True,
-        help="directory containing scenario JSON files",
+        help="scenario directory; repeat to combine suites",
     )
     agent_local_parser.add_argument(
         "--output",
@@ -255,12 +259,12 @@ def _build_parser() -> argparse.ArgumentParser:
 
 def _run_scripted(
     *,
-    scenarios_dir: Path,
+    scenario_dirs: list[Path],
     responses_path: Path,
     output_path: Path,
 ) -> None:
     run_id = str(uuid4())
-    scenarios = load_scenarios(scenarios_dir)
+    scenarios = load_scenario_directories(scenario_dirs)
     responses = load_scripted_responses(responses_path)
     results = run_scenarios(
         scenarios,
@@ -283,12 +287,12 @@ def _run_scripted(
 
 async def _run_agent_openai(
     *,
-    scenarios_dir: Path,
+    scenario_dirs: list[Path],
     output_path: Path,
     model: str,
 ) -> None:
     run_id = str(uuid4())
-    scenarios = load_scenarios(scenarios_dir)
+    scenarios = load_scenario_directories(scenario_dirs)
     results = await run_agent_scenarios(
         scenarios=scenarios,
         inference=OpenAIBackend(model_id=model),
@@ -310,7 +314,7 @@ async def _run_agent_openai(
 
 def _run_agent_local(
     *,
-    scenarios_dir: Path,
+    scenario_dirs: list[Path],
     output_path: Path,
     base_model: str,
     adapter_path: Path | None,
@@ -324,7 +328,7 @@ def _run_agent_local(
     backend_name: str,
 ) -> None:
     run_id = str(uuid4())
-    scenarios = load_scenarios(scenarios_dir)
+    scenarios = load_scenario_directories(scenario_dirs)
     if scenario_ids:
         selected_ids = set(scenario_ids)
         scenarios = [scenario for scenario in scenarios if scenario.id in selected_ids]

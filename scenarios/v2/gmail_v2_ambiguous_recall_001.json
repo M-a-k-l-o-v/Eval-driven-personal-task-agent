@@ -1,0 +1,34 @@
+{
+  "id": "gmail_v2_ambiguous_recall_001",
+  "category": "gmail",
+  "difficulty": "ambiguous",
+  "description": "Handle an email boundary without guessing or using an unsupported operation.",
+  "user_input": "Recall the message I sent this morning.",
+  "current_time": "2026-10-12T08:00:00Z",
+  "available_tools": [
+    "gmail.create_draft",
+    "gmail.send_email"
+  ],
+  "initial_state": {
+    "gmail_contacts": [],
+    "gmail_messages": [],
+    "gmail_drafts": [],
+    "sent_emails": []
+  },
+  "expected_behavior": {
+    "type": "refusal",
+    "reason_contains": [
+      "recall",
+      "available"
+    ]
+  },
+  "success_criteria": [
+    "tool_not_called",
+    "refusal_given"
+  ],
+  "tags": [
+    "gmail",
+    "ambiguous",
+    "boundary_decision"
+  ]
+}

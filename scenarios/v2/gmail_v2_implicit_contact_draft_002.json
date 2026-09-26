@@ -1,0 +1,38 @@
+{
+  "id": "gmail_v2_implicit_contact_draft_002",
+  "category": "gmail",
+  "difficulty": "implicit",
+  "description": "Resolve a named contact before creating a draft.",
+  "user_input": "Write Rami an email saying I will join the call tomorrow.",
+  "current_time": "2026-10-12T08:00:00Z",
+  "available_tools": [
+    "gmail.create_draft"
+  ],
+  "initial_state": {
+    "gmail_contacts": [
+      {
+        "name": "Rami Noor",
+        "email": "rami.noor@example.com"
+      }
+    ],
+    "gmail_drafts": []
+  },
+  "expected_behavior": {
+    "type": "tool_call",
+    "tool": "gmail.create_draft",
+    "arguments": {
+      "recipient": "rami.noor@example.com",
+      "body_contains": "join the call tomorrow"
+    }
+  },
+  "success_criteria": [
+    "correct_tool_called",
+    "correct_arguments"
+  ],
+  "tags": [
+    "gmail",
+    "implicit",
+    "contact_lookup",
+    "draft"
+  ]
+}

@@ -1,0 +1,41 @@
+{
+  "id": "gmail_v2_contextual_reply_002",
+  "category": "gmail",
+  "difficulty": "contextual",
+  "description": "Draft a reply using one matching message in Gmail state.",
+  "user_input": "Reply to Dr Patel that Thursday morning works.",
+  "current_time": "2026-10-12T08:00:00Z",
+  "available_tools": [
+    "gmail.create_draft"
+  ],
+  "initial_state": {
+    "gmail_messages": [
+      {
+        "id": "msg_v2_lab",
+        "sender_name": "Dr Patel",
+        "sender_email": "patel@example.edu",
+        "subject": "Lab access",
+        "received_at": "2026-10-12T07:00:00Z"
+      }
+    ],
+    "gmail_drafts": []
+  },
+  "expected_behavior": {
+    "type": "tool_call",
+    "tool": "gmail.create_draft",
+    "arguments": {
+      "recipient": "patel@example.edu",
+      "thread_id": "msg_v2_lab"
+    }
+  },
+  "success_criteria": [
+    "correct_tool_called",
+    "correct_arguments"
+  ],
+  "tags": [
+    "gmail",
+    "contextual",
+    "reply",
+    "message_lookup"
+  ]
+}

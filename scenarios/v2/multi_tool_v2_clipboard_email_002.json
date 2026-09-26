@@ -1,0 +1,46 @@
+{
+  "id": "multi_tool_v2_clipboard_email_002",
+  "category": "multi_tool",
+  "difficulty": "multi_step",
+  "description": "Read clipboard text and place it in an email draft.",
+  "user_input": "Read the clipboard and draft its contents to mentor@example.com with subject 'Portfolio Review'.",
+  "current_time": "2026-10-12T08:00:00Z",
+  "available_tools": [
+    "clipboard.read",
+    "gmail.create_draft"
+  ],
+  "initial_state": {
+    "clipboard": {
+      "text": "Notes for portfolio review"
+    },
+    "gmail_drafts": []
+  },
+  "expected_behavior": {
+    "type": "tool_calls",
+    "calls": [
+      {
+        "tool": "clipboard.read",
+        "arguments": {}
+      },
+      {
+        "tool": "gmail.create_draft",
+        "arguments": {
+          "recipient": "mentor@example.com",
+          "subject": "Portfolio Review",
+          "body_contains": "Notes for portfolio review"
+        }
+      }
+    ]
+  },
+  "success_criteria": [
+    "correct_tool_call_order",
+    "correct_tools_called",
+    "correct_arguments"
+  ],
+  "tags": [
+    "multi_tool",
+    "multi_step",
+    "clipboard",
+    "gmail"
+  ]
+}

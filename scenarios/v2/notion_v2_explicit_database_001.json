@@ -1,0 +1,32 @@
+{
+  "id": "notion_v2_explicit_database_001",
+  "category": "notion",
+  "difficulty": "explicit",
+  "description": "Refuse an unsupported database creation request.",
+  "user_input": "Create a Notion database named Vendor Directory with company and phone columns.",
+  "current_time": "2026-10-12T08:00:00Z",
+  "available_tools": [
+    "notion.create_task",
+    "notion.update_task"
+  ],
+  "initial_state": {
+    "notion_tasks": []
+  },
+  "expected_behavior": {
+    "type": "refusal",
+    "reason_contains": [
+      "database",
+      "available"
+    ]
+  },
+  "success_criteria": [
+    "tool_not_called",
+    "refusal_given"
+  ],
+  "tags": [
+    "notion",
+    "explicit",
+    "unsupported_operation",
+    "database"
+  ]
+}

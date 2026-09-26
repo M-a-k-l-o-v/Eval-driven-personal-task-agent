@@ -1,0 +1,34 @@
+{
+  "id": "gmail_v2_contextual_delete_001",
+  "category": "gmail",
+  "difficulty": "contextual",
+  "description": "Handle an email boundary without guessing or using an unsupported operation.",
+  "user_input": "Delete the old draft to legal@example.com.",
+  "current_time": "2026-10-12T08:00:00Z",
+  "available_tools": [
+    "gmail.create_draft",
+    "gmail.send_email"
+  ],
+  "initial_state": {
+    "gmail_contacts": [],
+    "gmail_messages": [],
+    "gmail_drafts": [],
+    "sent_emails": []
+  },
+  "expected_behavior": {
+    "type": "refusal",
+    "reason_contains": [
+      "delete",
+      "available"
+    ]
+  },
+  "success_criteria": [
+    "tool_not_called",
+    "refusal_given"
+  ],
+  "tags": [
+    "gmail",
+    "contextual",
+    "boundary_decision"
+  ]
+}

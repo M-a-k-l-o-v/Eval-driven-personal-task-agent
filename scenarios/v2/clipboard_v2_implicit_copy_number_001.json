@@ -1,0 +1,33 @@
+{
+  "id": "clipboard_v2_implicit_copy_number_001",
+  "category": "clipboard",
+  "difficulty": "implicit",
+  "description": "Infer that supplied text should be written to the clipboard.",
+  "user_input": "Put my booking number BK-9071 on the clipboard.",
+  "current_time": "2026-10-12T08:00:00Z",
+  "available_tools": [
+    "clipboard.write"
+  ],
+  "initial_state": {
+    "clipboard": {
+      "text": ""
+    }
+  },
+  "expected_behavior": {
+    "type": "tool_call",
+    "tool": "clipboard.write",
+    "arguments": {
+      "text": "BK-9071"
+    }
+  },
+  "success_criteria": [
+    "correct_tool_called",
+    "correct_arguments"
+  ],
+  "tags": [
+    "clipboard",
+    "implicit",
+    "write",
+    "natural_phrasing"
+  ]
+}

@@ -21,7 +21,7 @@ The base model choice affects scenario design, SFT formatting, cost reporting, a
 
 ## Decision
 
-Phase 1 keeps the eval harness model-agnostic. The first baseline is the scripted control run in `results/v1-baseline.json`; it costs `0.0` and validates the harness rather than model intelligence.
+Phase 1 keeps the eval harness model-agnostic. The first baseline is the scripted control run in `results/phase1/scripted/v1-baseline.json`; it costs `0.0` and validates the harness rather than model intelligence.
 
 After the scripted control, Marv's naive agent should be evaluated through the same `AgentResponse` boundary and fake adapter environment. Hosted models may be used for baseline comparison, but they are not the target deployment model.
 
@@ -109,5 +109,5 @@ why rejected - bad benchmark data creates bad training data. The Phase 1 harness
 - [docs/ROADMAP.md](../ROADMAP.md)
 - [docs/BENCHMARKING.md](../BENCHMARKING.md)
 - [ADR 0005 - Inference backend](0005-inference-backend.md)
-- `results/v1-baseline.json`
+- `results/phase1/scripted/v1-baseline.json`
 - Qwen 2.5 model family documentation

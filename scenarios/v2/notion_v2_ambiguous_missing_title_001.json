@@ -1,0 +1,31 @@
+{
+  "id": "notion_v2_ambiguous_missing_title_001",
+  "category": "notion",
+  "difficulty": "ambiguous",
+  "description": "Handle a task boundary without guessing or using an unsupported operation.",
+  "user_input": "Create a task due October 30.",
+  "current_time": "2026-10-12T08:00:00Z",
+  "available_tools": [
+    "notion.create_task",
+    "notion.update_task"
+  ],
+  "initial_state": {
+    "notion_tasks": []
+  },
+  "expected_behavior": {
+    "type": "clarification",
+    "question_contains": [
+      "task",
+      "title"
+    ]
+  },
+  "success_criteria": [
+    "tool_not_called",
+    "clarification_requested"
+  ],
+  "tags": [
+    "notion",
+    "ambiguous",
+    "boundary_decision"
+  ]
+}

@@ -1,0 +1,34 @@
+{
+  "id": "calendar_v2_implicit_create_001",
+  "category": "calendar",
+  "difficulty": "implicit",
+  "description": "Resolve a relative date before creating a calendar event.",
+  "user_input": "Schedule statistics review tomorrow at 17:00 for 60 minutes.",
+  "current_time": "2026-10-12T08:00:00Z",
+  "available_tools": [
+    "calendar.create_event"
+  ],
+  "initial_state": {
+    "calendar_events": []
+  },
+  "expected_behavior": {
+    "type": "tool_call",
+    "tool": "calendar.create_event",
+    "arguments": {
+      "title_contains": "statistics review",
+      "start_date": "2026-10-13",
+      "start_time": "17:00",
+      "duration_minutes": 60
+    }
+  },
+  "success_criteria": [
+    "correct_tool_called",
+    "correct_arguments"
+  ],
+  "tags": [
+    "calendar",
+    "implicit",
+    "relative_time",
+    "create_event"
+  ]
+}

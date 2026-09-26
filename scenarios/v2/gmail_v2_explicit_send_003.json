@@ -1,0 +1,34 @@
+{
+  "id": "gmail_v2_explicit_send_003",
+  "category": "gmail",
+  "difficulty": "explicit",
+  "description": "Send an email with explicit recipient and content.",
+  "user_input": "Send an email to teamlead@example.com titled 'Status update' saying 'The migration checklist is complete.'",
+  "current_time": "2026-10-12T08:00:00Z",
+  "available_tools": [
+    "gmail.send_email"
+  ],
+  "initial_state": {
+    "gmail_drafts": [],
+    "sent_emails": []
+  },
+  "expected_behavior": {
+    "type": "tool_call",
+    "tool": "gmail.send_email",
+    "arguments": {
+      "recipient": "teamlead@example.com",
+      "subject": "Status update",
+      "body_contains": "The migration checklist is complete."
+    }
+  },
+  "success_criteria": [
+    "correct_tool_called",
+    "correct_arguments"
+  ],
+  "tags": [
+    "gmail",
+    "explicit",
+    "send",
+    "single_tool"
+  ]
+}

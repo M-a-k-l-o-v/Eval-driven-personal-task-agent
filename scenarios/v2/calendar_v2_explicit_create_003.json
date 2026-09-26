@@ -1,0 +1,34 @@
+{
+  "id": "calendar_v2_explicit_create_003",
+  "category": "calendar",
+  "difficulty": "explicit",
+  "description": "Create an event from fully specified calendar details.",
+  "user_input": "Add project retrospective on 2026-10-20 at 13:00 for 30 minutes to my calendar.",
+  "current_time": "2026-10-12T08:00:00Z",
+  "available_tools": [
+    "calendar.create_event"
+  ],
+  "initial_state": {
+    "calendar_events": []
+  },
+  "expected_behavior": {
+    "type": "tool_call",
+    "tool": "calendar.create_event",
+    "arguments": {
+      "title_contains": "project retrospective",
+      "start_date": "2026-10-20",
+      "start_time": "13:00",
+      "duration_minutes": 30
+    }
+  },
+  "success_criteria": [
+    "correct_tool_called",
+    "correct_arguments"
+  ],
+  "tags": [
+    "calendar",
+    "explicit",
+    "create_event",
+    "single_tool"
+  ]
+}

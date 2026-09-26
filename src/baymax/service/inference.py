@@ -1,4 +1,4 @@
-"""Inference service — abstracts the LLM backend behind a uniform interface.
+"""Inference service â€” abstracts the LLM backend behind a uniform interface.
 
 Per ADR 0005 (v1 abstraction) and ADR 0011 (v2 iteration).
 
@@ -46,6 +46,7 @@ from baymax.core.exceptions import (
     _describe_exception,
     is_retriable_api_error,
 )
+from baymax.core.meta_tools import meta_tool_specs
 
 # Module-level logger for retry / warmup telemetry. Tests capture via `caplog`.
 _backend_logger = logging.getLogger("baymax.backend")
@@ -59,7 +60,7 @@ _RETRY_JITTER = 0.25  # ±25% random jitter
 T = TypeVar("T")
 
 # DECISION: OpenAI function names cannot contain dots, but our tool naming
-# convention requires dots ("calendar.create_event"). Mapping: dot → "__".
+# convention requires dots ("calendar.create_event"). Mapping: dot â†’ "__".
 # Tools come in as "calendar.create_event", get sent to OpenAI as
 # "calendar__create_event", and the response is reverse-mapped back.
 # Double underscore is unlikely to collide with real tool names that use
@@ -346,19 +347,26 @@ _OPENAI_PRICING_PER_MTOK = {
 _PLAN_SYSTEM_PROMPT = (
     "You are BAYMAX, a personal-task agent. The user will give you a request.\n"
     "You have access to a fixed set of tools. Your job:\n\n"
-    "1. Decide if you understand the user's intent. If NOT, call the special function\n"
-    "   `request_clarification` with a question.\n"
-    "2. Decide if the request is OUT OF SCOPE (e.g., asking you to do something not\n"
-    "   supported by available tools, or harmful). If so, call `refuse_request` with\n"
-    "   a reason.\n"
-    "3. Otherwise, emit one or more tool calls (in execution order) that satisfy the\n"
+    "1. Decide if the request is unsupported, unavailable, out of scope, or unsafe.\n"
+    "   If so, call `refuse_request` with a reason.\n"
+    "2. Decide if an otherwise supported request is missing required information or is\n"
+    "   ambiguous. If so, call `request_clarification` with a question.\n"
+    "3. Otherwise, emit one or more tool calls in execution order that satisfy the\n"
     "   request.\n\n"
     "Rules:\n"
+    "- Available tools are the complete tool set for this request.\n"
     "- Never invent tool names. Use only the tools listed.\n"
+    "- Missing tool or missing capability means refusal, not clarification.\n"
+    "- Refuse unsupported read/list/search requests when no matching read/list/search\n"
+    "  tool is available.\n"
+    "- Refuse requests involving secrets/passwords, impersonation, unsupported ordering,\n"
+    "  or bulk unsolicited email.\n"
+    "- Ask for clarification only when the requested action is supported and safe but\n"
+    "  details are missing, ambiguous, conflicting, impossible, or need confirmation.\n"
     "- Prefer fewer tool calls when possible.\n"
     "- For multi-step requests, emit calls in the order they should execute.\n"
-    "- If the user's request is ambiguous (could mean multiple things), prefer\n"
-    "  asking for clarification over guessing.\n\n"
+    "- Do not invent missing people, IDs, dates, times, recipients, state, or unavailable\n"
+    "  tools.\n\n"
     "Current context (provided by the agent runtime, not by the user):\n"
     "{context_block}\n"
 )
@@ -381,44 +389,12 @@ _META_TOOLS = [
     {
         "type": "function",
         "function": {
-            "name": "request_clarification",
-            "description": (
-                "Ask the user a clarifying question. Use when the request is "
-                "ambiguous or missing required information."
-            ),
-            "parameters": {
-                "type": "object",
-                "additionalProperties": False,
-                "properties": {
-                    "question": {
-                        "type": "string",
-                        "description": "The clarifying question to ask the user.",
-                    }
-                },
-                "required": ["question"],
-            },
+            "name": spec["name"],
+            "description": spec["description"],
+            "parameters": spec["parameters"],
         },
-    },
-    {
-        "type": "function",
-        "function": {
-            "name": "refuse_request",
-            "description": (
-                "Refuse the request because it is out of scope or unsafe. Use sparingly."
-            ),
-            "parameters": {
-                "type": "object",
-                "additionalProperties": False,
-                "properties": {
-                    "reason": {
-                        "type": "string",
-                        "description": "Why the request is being refused.",
-                    }
-                },
-                "required": ["reason"],
-            },
-        },
-    },
+    }
+    for spec in meta_tool_specs()
 ]
 
 
@@ -527,7 +503,7 @@ class OpenAIBackend(InferenceBackend):
         # DECISION: openai-python now distinguishes function tool calls from
         # custom (non-function) tool calls in the response union. We only ever
         # send function tools, so filter to that variant. Anything else is a
-        # protocol violation by the model — log and skip rather than crash.
+        # protocol violation by the model â€” log and skip rather than crash.
         raw_tool_calls = message.tool_calls or []
         tool_calls: list[ChatCompletionMessageFunctionToolCall] = [
             tc for tc in raw_tool_calls if _is_function_tool_call(tc)
@@ -537,7 +513,7 @@ class OpenAIBackend(InferenceBackend):
         output_tokens = response.usage.completion_tokens if response.usage else 0
         cost = _estimate_cost_usd(self.model_id, input_tokens, output_tokens)
 
-        # Empty tool_calls means model emitted only free text — treat as
+        # Empty tool_calls means model emitted only free text â€” treat as
         # intent_unclear if the text looks like a question, else refuse.
         if not tool_calls:
             return PlanResult(
@@ -588,7 +564,7 @@ class OpenAIBackend(InferenceBackend):
                     cost_usd=cost,
                 )
 
-        # All remaining tool_calls are real tools — build the plan.
+        # All remaining tool_calls are real tools â€” build the plan.
         plan: list[ToolCallStep] = []
         for tc in tool_calls:
             fn_name = tc.function.name
@@ -605,7 +581,7 @@ class OpenAIBackend(InferenceBackend):
             RequestComplexity.SINGLE_TOOL if len(plan) == 1 else RequestComplexity.MULTI_TOOL
         )
 
-        # DECISION: request_type inference is naive for v1 — infer from the
+        # DECISION: request_type inference is naive for v1 â€” infer from the
         # first tool's verb in the dotted name (create/update/delete/read/write).
         # v2 should let the model declare request_type explicitly.
         request_type = _infer_request_type_from_plan(plan)
@@ -663,7 +639,7 @@ def _is_function_tool_call(
 
     Used before accessing `.function` on a tool call. Custom (non-function)
     tool calls have `.custom` instead and don't carry a name matching our
-    function-calling convention — we filter them out at the call site.
+    function-calling convention â€” we filter them out at the call site.
     """
     return getattr(tc, "type", None) == "function" and hasattr(tc, "function")
 

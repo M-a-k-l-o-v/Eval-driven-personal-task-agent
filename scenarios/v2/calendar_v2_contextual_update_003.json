@@ -1,0 +1,40 @@
+{
+  "id": "calendar_v2_contextual_update_003",
+  "category": "calendar",
+  "difficulty": "contextual",
+  "description": "Update one uniquely matching event from calendar state.",
+  "user_input": "Move the product demo to Friday.",
+  "current_time": "2026-10-12T08:00:00Z",
+  "available_tools": [
+    "calendar.update_event"
+  ],
+  "initial_state": {
+    "calendar_events": [
+      {
+        "id": "evt_v2_demo",
+        "title": "Product demo",
+        "start_date": "2026-10-14",
+        "start_time": "10:00",
+        "duration_minutes": 30
+      }
+    ]
+  },
+  "expected_behavior": {
+    "type": "tool_call",
+    "tool": "calendar.update_event",
+    "arguments": {
+      "event_id": "evt_v2_demo",
+      "start_date": "2026-10-16"
+    }
+  },
+  "success_criteria": [
+    "correct_tool_called",
+    "correct_arguments"
+  ],
+  "tags": [
+    "calendar",
+    "contextual",
+    "update_event",
+    "state_lookup"
+  ]
+}

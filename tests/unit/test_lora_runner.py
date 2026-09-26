@@ -99,6 +99,83 @@ def test_parse_lora_agent_response_reads_params_arguments() -> None:
     assert response.message == "Do you want me to cancel it?"
 
 
+def test_parse_lora_agent_response_reads_function_name_variant() -> None:
+    response = parse_lora_agent_response(
+        json.dumps(
+            [
+                {
+                    "function_name": "request_clarification",
+                    "arguments": {"question": "Which task should I update?"},
+                }
+            ]
+        )
+    )
+
+    assert response.tool_calls == []
+    assert response.message == "Which task should I update?"
+
+
+def test_parse_lora_agent_response_reads_named_inputs_variant() -> None:
+    response = parse_lora_agent_response(
+        json.dumps(
+            [
+                {
+                    "function_key": "request_clarification",
+                    "arguments": [{"text": "hunter2"}],
+                    "named_inputs": {"question": "What do you mean by password?"},
+                }
+            ]
+        )
+    )
+
+    assert response.tool_calls == []
+    assert response.message == "What do you mean by password?"
+
+
+def test_parse_lora_agent_response_reads_method_and_action_variants() -> None:
+    method_response = parse_lora_agent_response(
+        json.dumps(
+            [
+                {
+                    "method": "calendar.create_event",
+                    "arguments": {"title": "Calculus revision"},
+                }
+            ]
+        )
+    )
+    action_response = parse_lora_agent_response(
+        json.dumps(
+            [
+                {
+                    "action": "gmail.send_email",
+                    "arguments": {"recipient": "advisor@example.com"},
+                }
+            ]
+        )
+    )
+
+    assert [call.tool for call in method_response.tool_calls] == ["calendar.create_event"]
+    assert method_response.tool_calls[0].arguments == {"title": "Calculus revision"}
+    assert [call.tool for call in action_response.tool_calls] == ["gmail.send_email"]
+    assert action_response.tool_calls[0].arguments == {"recipient": "advisor@example.com"}
+
+
+def test_parse_lora_agent_response_merges_list_arguments() -> None:
+    response = parse_lora_agent_response(
+        json.dumps(
+            [
+                {
+                    "functionName": "notion.create_task",
+                    "arguments": [{"title": "Physics lab"}, {"status": "open"}],
+                }
+            ]
+        )
+    )
+
+    assert [call.tool for call in response.tool_calls] == ["notion.create_task"]
+    assert response.tool_calls[0].arguments == {"title": "Physics lab", "status": "open"}
+
+
 def test_parse_lora_agent_response_converts_meta_clarification_to_message() -> None:
     response = parse_lora_agent_response(
         json.dumps(
@@ -115,6 +192,24 @@ def test_parse_lora_agent_response_converts_meta_clarification_to_message() -> N
     assert response.message == "Who should I email?"
 
 
+def test_parse_lora_agent_response_normalizes_meta_refusal_message() -> None:
+    response = parse_lora_agent_response(
+        json.dumps(
+            [
+                {
+                    "name": "refuse_request",
+                    "arguments": {"reason": "Unsupported task list on Notion API"},
+                }
+            ]
+        )
+    )
+
+    assert response.tool_calls == []
+    assert response.message == (
+        "I cannot comply with this request: Unsupported task list on Notion API"
+    )
+
+
 def test_parse_lora_agent_response_preserves_unparseable_text_as_message() -> None:
     response = parse_lora_agent_response("I need the recipient.")
 
@@ -129,8 +224,11 @@ def test_build_lora_scenario_messages_includes_eval_context_and_tools() -> None:
 
     assert messages[0]["role"] == "system"
     assert messages[1]["role"] == "user"
+    assert "Available tools, including internal meta-tools:" in messages[1]["content"]
     assert "calendar.create_event" in messages[1]["content"]
     assert "request_clarification" in messages[1]["content"]
+    assert "unsupported read/list/search" in messages[1]["content"]
+    assert "Do not use for unavailable tools" in messages[1]["content"]
     assert "2026-05-18T09:00:00+00:00" in messages[1]["content"]
     assert "Schedule linear algebra revision" in messages[1]["content"]
 

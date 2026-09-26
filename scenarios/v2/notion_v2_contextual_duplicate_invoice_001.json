@@ -1,0 +1,42 @@
+{
+  "id": "notion_v2_contextual_duplicate_invoice_001",
+  "category": "notion",
+  "difficulty": "contextual",
+  "description": "Handle a task boundary without guessing or using an unsupported operation.",
+  "user_input": "Mark the invoice task done.",
+  "current_time": "2026-10-12T08:00:00Z",
+  "available_tools": [
+    "notion.create_task",
+    "notion.update_task"
+  ],
+  "initial_state": {
+    "notion_tasks": [
+      {
+        "id": "task_invoice_a",
+        "title": "Process invoice",
+        "status": "open"
+      },
+      {
+        "id": "task_invoice_b",
+        "title": "Process invoice",
+        "status": "open"
+      }
+    ]
+  },
+  "expected_behavior": {
+    "type": "clarification",
+    "question_contains": [
+      "which",
+      "invoice"
+    ]
+  },
+  "success_criteria": [
+    "tool_not_called",
+    "clarification_requested"
+  ],
+  "tags": [
+    "notion",
+    "contextual",
+    "boundary_decision"
+  ]
+}

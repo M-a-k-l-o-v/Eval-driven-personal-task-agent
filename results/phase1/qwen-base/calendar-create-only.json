@@ -1,0 +1,83 @@
+{
+  "aggregate_metrics": {
+    "average_argument_accuracy": 0.5,
+    "average_clarification_accuracy": null,
+    "average_hallucination_rate": 0.0,
+    "average_latency_ms": 3564.0,
+    "average_refusal_accuracy": null,
+    "average_tool_call_accuracy": 1.0,
+    "task_success_rate": 0.0,
+    "total_cost_usd": 0.0
+  },
+  "backend_name": "local-base:Qwen/Qwen2.5-1.5B-Instruct",
+  "benchmark_config": {
+    "runner": "agent_local",
+    "uses_fake_adapters": true
+  },
+  "run_id": "3284e359-4355-4ca2-b43e-f92b0b3161e2",
+  "scenario_count": 1,
+  "scenario_results": [
+    {
+      "agent_response": {
+        "message": null,
+        "tool_calls": [
+          {
+            "arguments": {
+              "duration_minutes": 120,
+              "start_date": "2026-05-18",
+              "start_time": "16:00:00",
+              "title": "Linear Algebra Revision"
+            },
+            "tool": "calendar.create_event"
+          }
+        ]
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [
+          {
+            "duration_minutes": 120,
+            "id": "evt_fake_calendar_001",
+            "start_date": "2026-05-18",
+            "start_time": "16:00:00",
+            "title": "Linear Algebra Revision"
+          }
+        ],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [],
+        "sent_emails": []
+      },
+      "latency_ms": 3564,
+      "raw_model_output": "[\n  {\n    \"name\": \"calendar.create_event\",\n    \"parameters\": {\n      \"title\": \"Linear Algebra Revision\",\n      \"start_date\": \"2026-05-18\",\n      \"start_time\": \"16:00:00\",\n      \"duration_minutes\": 120\n    }\n  }\n]",
+      "scenario_id": "calendar_create_001",
+      "score": {
+        "argument_accuracy": 0.5,
+        "clarification_accuracy": null,
+        "failure_reasons": [],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": null,
+        "task_success": false,
+        "tool_call_accuracy": 1.0,
+        "unordered_tool_match": 1.0
+      },
+      "task_id": "3284e359-4355-4ca2-b43e-f92b0b3161e2.calendar_create_001.0",
+      "tool_results": [
+        {
+          "data": {
+            "event_id": "evt_fake_calendar_001"
+          },
+          "error": null,
+          "success": true,
+          "tool": "calendar.create_event"
+        }
+      ],
+      "trace_id": null
+    }
+  ],
+  "timestamp": "2026-08-11T15:41:34.837829+00:00"
+}
