@@ -1,0 +1,42 @@
+{
+  "id": "multi_tool_v2_two_tasks_003",
+  "category": "multi_tool",
+  "difficulty": "multi_step",
+  "description": "Create two distinct Notion tasks in order.",
+  "user_input": "Create a task for volunteer notes, then another task to confirm the volunteer briefing venue.",
+  "current_time": "2026-10-12T08:00:00Z",
+  "available_tools": [
+    "notion.create_task"
+  ],
+  "initial_state": {
+    "notion_tasks": []
+  },
+  "expected_behavior": {
+    "type": "tool_calls",
+    "calls": [
+      {
+        "tool": "notion.create_task",
+        "arguments": {
+          "title_contains": "volunteer notes"
+        }
+      },
+      {
+        "tool": "notion.create_task",
+        "arguments": {
+          "title_contains": "volunteer briefing venue"
+        }
+      }
+    ]
+  },
+  "success_criteria": [
+    "correct_tool_call_order",
+    "correct_tools_called",
+    "correct_arguments"
+  ],
+  "tags": [
+    "multi_tool",
+    "multi_step",
+    "notion",
+    "repeated_tool"
+  ]
+}

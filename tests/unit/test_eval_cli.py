@@ -1,7 +1,7 @@
 import json
 from pathlib import Path
 
-from baymax.eval.cli import main
+from baymax.eval.cli import _build_parser, main
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 SCENARIO_DIR = REPO_ROOT / "scenarios" / "v1"
@@ -86,3 +86,33 @@ def test_run_scripted_cli_creates_output_parent_directory(tmp_path: Path) -> Non
     assert result["aggregate_metrics"]["task_success_rate"] is None
     assert result["aggregate_metrics"]["average_latency_ms"] is None
     assert result["aggregate_metrics"]["total_cost_usd"] == 0.0
+
+
+def test_scenarios_flag_accepts_one_directory() -> None:
+    args = _build_parser().parse_args(
+        [
+            "run-agent-local",
+            "--scenarios",
+            "scenarios/v1",
+            "--output",
+            "results/output.json",
+        ]
+    )
+
+    assert args.scenarios == [Path("scenarios/v1")]
+
+
+def test_scenarios_flag_can_combine_multiple_directories() -> None:
+    args = _build_parser().parse_args(
+        [
+            "run-agent-local",
+            "--scenarios",
+            "scenarios/v1",
+            "--scenarios",
+            "scenarios/v2",
+            "--output",
+            "results/output.json",
+        ]
+    )
+
+    assert args.scenarios == [Path("scenarios/v1"), Path("scenarios/v2")]

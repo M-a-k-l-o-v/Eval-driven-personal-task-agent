@@ -1,0 +1,41 @@
+{
+  "id": "gmail_v2_contextual_reply_003",
+  "category": "gmail",
+  "difficulty": "contextual",
+  "description": "Draft a reply using one matching message in Gmail state.",
+  "user_input": "Draft a reply to the vendor asking them to keep the ticket open.",
+  "current_time": "2026-10-12T08:00:00Z",
+  "available_tools": [
+    "gmail.create_draft"
+  ],
+  "initial_state": {
+    "gmail_messages": [
+      {
+        "id": "msg_v2_vendor",
+        "sender_name": "Vendor Support",
+        "sender_email": "support@vendor.example",
+        "subject": "Ticket 482",
+        "received_at": "2026-10-12T07:00:00Z"
+      }
+    ],
+    "gmail_drafts": []
+  },
+  "expected_behavior": {
+    "type": "tool_call",
+    "tool": "gmail.create_draft",
+    "arguments": {
+      "recipient": "support@vendor.example",
+      "thread_id": "msg_v2_vendor"
+    }
+  },
+  "success_criteria": [
+    "correct_tool_called",
+    "correct_arguments"
+  ],
+  "tags": [
+    "gmail",
+    "contextual",
+    "reply",
+    "message_lookup"
+  ]
+}

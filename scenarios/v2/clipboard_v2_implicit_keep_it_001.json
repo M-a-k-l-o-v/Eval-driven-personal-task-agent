@@ -1,0 +1,33 @@
+{
+  "id": "clipboard_v2_implicit_keep_it_001",
+  "category": "clipboard",
+  "difficulty": "implicit",
+  "description": "Handle a clipboard boundary without guessing or using an unsupported operation.",
+  "user_input": "Keep it on my clipboard.",
+  "current_time": "2026-10-12T08:00:00Z",
+  "available_tools": [
+    "clipboard.read",
+    "clipboard.write"
+  ],
+  "initial_state": {
+    "clipboard": {
+      "text": ""
+    }
+  },
+  "expected_behavior": {
+    "type": "clarification",
+    "question_contains": [
+      "what",
+      "clipboard"
+    ]
+  },
+  "success_criteria": [
+    "tool_not_called",
+    "clarification_requested"
+  ],
+  "tags": [
+    "clipboard",
+    "implicit",
+    "boundary_decision"
+  ]
+}

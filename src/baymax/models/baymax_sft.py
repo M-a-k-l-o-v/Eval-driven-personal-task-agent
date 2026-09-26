@@ -25,11 +25,12 @@ from baymax.models.sft_dataset import (
 )
 
 BAYMAX_SYNTHETIC_DATASET_ID = "baymax/synthetic-control-v1"
-BAYMAX_SYNTHETIC_GENERATOR_VERSION = "7"
+BAYMAX_SYNTHETIC_GENERATOR_VERSION = "8"
 TARGET_SYNTHETIC_EXAMPLE_COUNT = 1000
 CLARIFICATION_CONTRAST_PAIR_COUNT = 48
 REFUSAL_CONTRAST_PAIR_COUNT = 48
 TARGETED_REFUSAL_CONTRAST_PAIR_COUNT = 48
+ACT_CLARIFY_REFUSE_TRIPLET_COUNT = 24
 
 BehaviorType = Literal[
     "request_clarification",
@@ -37,7 +38,15 @@ BehaviorType = Literal[
     "direct_tool_call",
     "multi_tool_sequence",
 ]
-ContrastRole = Literal["missing_info", "explicit_info", "unsafe_or_unsupported", "safe_allowed"]
+ContrastRole = Literal[
+    "missing_info",
+    "explicit_info",
+    "unsafe_or_unsupported",
+    "safe_allowed",
+    "act",
+    "clarify",
+    "refuse",
+]
 
 
 class BaymaxSFTBuildConfig(BaseModel):
@@ -544,10 +553,16 @@ def generate_synthetic_baymax_examples() -> list[SyntheticBaymaxExample]:
         ),
     ]
     contrast_examples = _contrast_pair_examples()
+    triplet_examples = _act_clarify_refuse_triplet_examples()
     generated_examples = _generated_synthetic_baymax_examples(
-        count=TARGET_SYNTHETIC_EXAMPLE_COUNT - len(seed_examples) - len(contrast_examples)
+        count=(
+            TARGET_SYNTHETIC_EXAMPLE_COUNT
+            - len(seed_examples)
+            - len(contrast_examples)
+            - len(triplet_examples)
+        )
     )
-    return seed_examples + contrast_examples + generated_examples
+    return seed_examples + contrast_examples + triplet_examples + generated_examples
 
 
 def _contrast_pair_examples() -> list[SyntheticBaymaxExample]:
@@ -560,6 +575,182 @@ def _contrast_pair_examples() -> list[SyntheticBaymaxExample]:
         examples.extend(_targeted_refusal_contrast_pair(index))
 
     return examples
+
+
+def _act_clarify_refuse_triplet_examples() -> list[SyntheticBaymaxExample]:
+    examples: list[SyntheticBaymaxExample] = []
+    for index in range(ACT_CLARIFY_REFUSE_TRIPLET_COUNT):
+        examples.extend(_act_clarify_refuse_triplet(index))
+
+    return examples
+
+
+def _act_clarify_refuse_triplet(index: int) -> list[SyntheticBaymaxExample]:
+    topic = _cycle(TOPICS, index)
+    task = _cycle(TASK_NOUNS, index)
+    person = _cycle(PEOPLE, index)
+    date = _cycle(DATES, index)
+    time = _cycle(TIMES, index)
+    duration = _cycle(DURATIONS, index)
+    group = f"act_clarify_refuse_triplet_{index + 1:03}"
+    operation = index % 4
+
+    if operation == 0:
+        body = f"The {topic} {task} is ready."
+        return [
+            _example(
+                f"baymax_triplet_act_email_{index + 1:03}",
+                "direct_tool_call",
+                f"Email {person['email']} that the {topic} {task} is ready.",
+                ["gmail.send_email"],
+                {"gmail_contacts": [person], "sent_emails": []},
+                [
+                    _call(
+                        "gmail.send_email",
+                        recipient=person["email"],
+                        subject=f"{topic.title()} {task}",
+                        body=body,
+                    )
+                ],
+                contrast_group=group,
+                contrast_role="act",
+            ),
+            _example(
+                f"baymax_triplet_clarify_email_{index + 1:03}",
+                "request_clarification",
+                f"Email {person['name']} that the {topic} {task} is ready.",
+                ["gmail.send_email"],
+                {"gmail_contacts": [], "sent_emails": []},
+                [_call("request_clarification", question="What email address should I use?")],
+                contrast_group=group,
+                contrast_role="clarify",
+            ),
+            _example(
+                f"baymax_triplet_refuse_email_{index + 1:03}",
+                "refuse_request",
+                f"Email every contact that the {topic} {task} is ready.",
+                ["gmail.send_email"],
+                {"gmail_contacts": [person], "sent_emails": []},
+                [_call("refuse_request", reason="I cannot send bulk unsolicited email.")],
+                contrast_group=group,
+                contrast_role="refuse",
+            ),
+        ]
+
+    if operation == 1:
+        title = f"{topic} {task}"
+        return [
+            _example(
+                f"baymax_triplet_act_calendar_{index + 1:03}",
+                "direct_tool_call",
+                f"Schedule {title} on {date} at {time} for {duration} minutes.",
+                ["calendar.create_event"],
+                {"calendar_events": []},
+                [
+                    _call(
+                        "calendar.create_event",
+                        title=title,
+                        start_date=date,
+                        start_time=time,
+                        duration_minutes=duration,
+                    )
+                ],
+                contrast_group=group,
+                contrast_role="act",
+            ),
+            _example(
+                f"baymax_triplet_clarify_calendar_{index + 1:03}",
+                "request_clarification",
+                f"Schedule {title} on {date}.",
+                ["calendar.create_event"],
+                {"calendar_events": []},
+                [_call("request_clarification", question="What time should I schedule it?")],
+                contrast_group=group,
+                contrast_role="clarify",
+            ),
+            _example(
+                f"baymax_triplet_refuse_calendar_{index + 1:03}",
+                "refuse_request",
+                f"Book concert tickets for the {topic} club on {date}.",
+                ["calendar.create_event"],
+                {"calendar_events": []},
+                [_call("refuse_request", reason="I cannot book concert tickets.")],
+                contrast_group=group,
+                contrast_role="refuse",
+            ),
+        ]
+
+    if operation == 2:
+        return [
+            _example(
+                f"baymax_triplet_act_notion_{index + 1:03}",
+                "direct_tool_call",
+                f"Create a task for {topic} {task} due {date}.",
+                ["notion.create_task"],
+                {"notion_tasks": []},
+                [
+                    _call(
+                        "notion.create_task", title=f"{topic} {task}", due_date=date, status="open"
+                    )
+                ],
+                contrast_group=group,
+                contrast_role="act",
+            ),
+            _example(
+                f"baymax_triplet_clarify_notion_{index + 1:03}",
+                "request_clarification",
+                f"Create a task for {topic} soon.",
+                ["notion.create_task"],
+                {"notion_tasks": []},
+                [_call("request_clarification", question="What due date should I use?")],
+                contrast_group=group,
+                contrast_role="clarify",
+            ),
+            _example(
+                f"baymax_triplet_refuse_notion_{index + 1:03}",
+                "refuse_request",
+                f"Pay the {topic} club fee for me.",
+                ["notion.create_task"],
+                {"notion_tasks": []},
+                [_call("refuse_request", reason="I cannot make payments.")],
+                contrast_group=group,
+                contrast_role="refuse",
+            ),
+        ]
+
+    clipboard_text = f"{topic} {task} checklist"
+    return [
+        _example(
+            f"baymax_triplet_act_clipboard_{index + 1:03}",
+            "direct_tool_call",
+            f"Copy {clipboard_text} to my clipboard.",
+            ["clipboard.write"],
+            {"clipboard": ""},
+            [_call("clipboard.write", text=clipboard_text)],
+            contrast_group=group,
+            contrast_role="act",
+        ),
+        _example(
+            f"baymax_triplet_clarify_clipboard_{index + 1:03}",
+            "request_clarification",
+            "Copy the checklist to my clipboard.",
+            ["clipboard.write"],
+            {"clipboard": ""},
+            [_call("request_clarification", question="Which checklist should I copy?")],
+            contrast_group=group,
+            contrast_role="clarify",
+        ),
+        _example(
+            f"baymax_triplet_refuse_clipboard_{index + 1:03}",
+            "refuse_request",
+            f"Copy my saved {topic} password to the clipboard.",
+            ["clipboard.write"],
+            {"clipboard": ""},
+            [_call("refuse_request", reason="I cannot access or copy saved passwords.")],
+            contrast_group=group,
+            contrast_role="refuse",
+        ),
+    ]
 
 
 def _clarification_contrast_pair(index: int) -> list[SyntheticBaymaxExample]:
@@ -1509,27 +1700,32 @@ def _generated_clarification_example(index: int) -> SyntheticBaymaxExample:
         return _example(
             f"baymax_generated_clarify_{index + 1:03}",
             "request_clarification",
-            f"Cancel my {topic} meeting.",
-            ["calendar.update_event"],
-            {
-                "calendar_events": [
-                    {
-                        "id": f"event_cancel_{index:03}",
-                        "title": f"{topic} meeting",
-                        "start_time": time,
-                    }
-                ]
-            },
-            [_call("request_clarification", question="Please confirm you want to cancel it.")],
+            (f"Send an email to {person['email']} accepting the {topic} service contract."),
+            ["gmail.send_email"],
+            {"sent_emails": []},
+            [
+                _call(
+                    "request_clarification",
+                    question="Please confirm you want me to send this contract acceptance.",
+                )
+            ],
         )
 
     return _example(
         f"baymax_generated_clarify_{index + 1:03}",
         "request_clarification",
-        f"Send an email to {person['email']} about {topic} now.",
+        (
+            f"Send an email to {person['email']} saying I resign from the {topic} "
+            "committee effective immediately."
+        ),
         ["gmail.send_email"],
         {"sent_emails": []},
-        [_call("request_clarification", question="Please confirm you want me to send it now.")],
+        [
+            _call(
+                "request_clarification",
+                question="Please confirm you want me to send this resignation message.",
+            )
+        ],
     )
 
 

@@ -1,0 +1,38 @@
+{
+  "id": "gmail_v2_implicit_contact_draft_003",
+  "category": "gmail",
+  "difficulty": "implicit",
+  "description": "Resolve a named contact before creating a draft.",
+  "user_input": "Prepare a message for Sara that the venue has changed.",
+  "current_time": "2026-10-12T08:00:00Z",
+  "available_tools": [
+    "gmail.create_draft"
+  ],
+  "initial_state": {
+    "gmail_contacts": [
+      {
+        "name": "Sara Chen",
+        "email": "sara.chen@example.com"
+      }
+    ],
+    "gmail_drafts": []
+  },
+  "expected_behavior": {
+    "type": "tool_call",
+    "tool": "gmail.create_draft",
+    "arguments": {
+      "recipient": "sara.chen@example.com",
+      "body_contains": "venue has changed"
+    }
+  },
+  "success_criteria": [
+    "correct_tool_called",
+    "correct_arguments"
+  ],
+  "tags": [
+    "gmail",
+    "implicit",
+    "contact_lookup",
+    "draft"
+  ]
+}

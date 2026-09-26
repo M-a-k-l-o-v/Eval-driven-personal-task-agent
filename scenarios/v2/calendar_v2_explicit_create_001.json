@@ -1,0 +1,34 @@
+{
+  "id": "calendar_v2_explicit_create_001",
+  "category": "calendar",
+  "difficulty": "explicit",
+  "description": "Create an event from fully specified calendar details.",
+  "user_input": "Add portfolio review on 2026-10-15 at 09:30 for 45 minutes to my calendar.",
+  "current_time": "2026-10-12T08:00:00Z",
+  "available_tools": [
+    "calendar.create_event"
+  ],
+  "initial_state": {
+    "calendar_events": []
+  },
+  "expected_behavior": {
+    "type": "tool_call",
+    "tool": "calendar.create_event",
+    "arguments": {
+      "title_contains": "portfolio review",
+      "start_date": "2026-10-15",
+      "start_time": "09:30",
+      "duration_minutes": 45
+    }
+  },
+  "success_criteria": [
+    "correct_tool_called",
+    "correct_arguments"
+  ],
+  "tags": [
+    "calendar",
+    "explicit",
+    "create_event",
+    "single_tool"
+  ]
+}

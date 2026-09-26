@@ -1,0 +1,32 @@
+{
+  "id": "notion_v2_implicit_create_001",
+  "category": "notion",
+  "difficulty": "implicit",
+  "description": "Resolve a relative due date before creating a task.",
+  "user_input": "Add a task to order replacement charger due tomorrow.",
+  "current_time": "2026-10-12T08:00:00Z",
+  "available_tools": [
+    "notion.create_task"
+  ],
+  "initial_state": {
+    "notion_tasks": []
+  },
+  "expected_behavior": {
+    "type": "tool_call",
+    "tool": "notion.create_task",
+    "arguments": {
+      "title_contains": "Order replacement charger",
+      "due_date": "2026-10-13"
+    }
+  },
+  "success_criteria": [
+    "correct_tool_called",
+    "correct_arguments"
+  ],
+  "tags": [
+    "notion",
+    "implicit",
+    "relative_date",
+    "create_task"
+  ]
+}

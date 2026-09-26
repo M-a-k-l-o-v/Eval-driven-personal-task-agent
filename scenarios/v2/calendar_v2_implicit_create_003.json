@@ -1,0 +1,34 @@
+{
+  "id": "calendar_v2_implicit_create_003",
+  "category": "calendar",
+  "difficulty": "implicit",
+  "description": "Resolve a relative date before creating a calendar event.",
+  "user_input": "Schedule design check-in next Monday at 11:00 for 45 minutes.",
+  "current_time": "2026-10-12T08:00:00Z",
+  "available_tools": [
+    "calendar.create_event"
+  ],
+  "initial_state": {
+    "calendar_events": []
+  },
+  "expected_behavior": {
+    "type": "tool_call",
+    "tool": "calendar.create_event",
+    "arguments": {
+      "title_contains": "design check-in",
+      "start_date": "2026-10-19",
+      "start_time": "11:00",
+      "duration_minutes": 45
+    }
+  },
+  "success_criteria": [
+    "correct_tool_called",
+    "correct_arguments"
+  ],
+  "tags": [
+    "calendar",
+    "implicit",
+    "relative_time",
+    "create_event"
+  ]
+}

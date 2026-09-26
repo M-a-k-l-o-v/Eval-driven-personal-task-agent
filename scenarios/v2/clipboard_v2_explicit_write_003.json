@@ -1,0 +1,33 @@
+{
+  "id": "clipboard_v2_explicit_write_003",
+  "category": "clipboard",
+  "difficulty": "explicit",
+  "description": "Write explicitly provided text to the clipboard.",
+  "user_input": "Copy this exact text to my clipboard: Call the electrician on Tuesday",
+  "current_time": "2026-10-12T08:00:00Z",
+  "available_tools": [
+    "clipboard.write"
+  ],
+  "initial_state": {
+    "clipboard": {
+      "text": ""
+    }
+  },
+  "expected_behavior": {
+    "type": "tool_call",
+    "tool": "clipboard.write",
+    "arguments": {
+      "text": "Call the electrician on Tuesday"
+    }
+  },
+  "success_criteria": [
+    "correct_tool_called",
+    "correct_arguments"
+  ],
+  "tags": [
+    "clipboard",
+    "explicit",
+    "write",
+    "single_tool"
+  ]
+}

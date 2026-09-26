@@ -1,0 +1,34 @@
+{
+  "id": "gmail_v2_explicit_draft_002",
+  "category": "gmail",
+  "difficulty": "explicit",
+  "description": "Draft an email with explicit recipient and content.",
+  "user_input": "Draft an email to haris@example.com titled 'Travel receipt' saying 'Here is the receipt from the conference trip.'",
+  "current_time": "2026-10-12T08:00:00Z",
+  "available_tools": [
+    "gmail.create_draft"
+  ],
+  "initial_state": {
+    "gmail_drafts": [],
+    "sent_emails": []
+  },
+  "expected_behavior": {
+    "type": "tool_call",
+    "tool": "gmail.create_draft",
+    "arguments": {
+      "recipient": "haris@example.com",
+      "subject": "Travel receipt",
+      "body_contains": "Here is the receipt from the conference trip."
+    }
+  },
+  "success_criteria": [
+    "correct_tool_called",
+    "correct_arguments"
+  ],
+  "tags": [
+    "gmail",
+    "explicit",
+    "draft",
+    "single_tool"
+  ]
+}

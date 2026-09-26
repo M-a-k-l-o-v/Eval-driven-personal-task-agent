@@ -1,0 +1,34 @@
+{
+  "id": "calendar_v2_implicit_create_002",
+  "category": "calendar",
+  "difficulty": "implicit",
+  "description": "Resolve a relative date before creating a calendar event.",
+  "user_input": "Schedule year-end journal in one hour at 00:30 for 30 minutes.",
+  "current_time": "2026-12-31T23:30:00+04:00",
+  "available_tools": [
+    "calendar.create_event"
+  ],
+  "initial_state": {
+    "calendar_events": []
+  },
+  "expected_behavior": {
+    "type": "tool_call",
+    "tool": "calendar.create_event",
+    "arguments": {
+      "title_contains": "year-end journal",
+      "start_date": "2027-01-01",
+      "start_time": "00:30",
+      "duration_minutes": 30
+    }
+  },
+  "success_criteria": [
+    "correct_tool_called",
+    "correct_arguments"
+  ],
+  "tags": [
+    "calendar",
+    "implicit",
+    "relative_time",
+    "create_event"
+  ]
+}

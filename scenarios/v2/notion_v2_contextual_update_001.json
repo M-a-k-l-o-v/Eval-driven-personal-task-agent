@@ -1,0 +1,39 @@
+{
+  "id": "notion_v2_contextual_update_001",
+  "category": "notion",
+  "difficulty": "contextual",
+  "description": "Update one uniquely matching task from Notion state.",
+  "user_input": "Mark the tax statements task complete.",
+  "current_time": "2026-10-12T08:00:00Z",
+  "available_tools": [
+    "notion.update_task"
+  ],
+  "initial_state": {
+    "notion_tasks": [
+      {
+        "id": "task_v2_tax",
+        "title": "Collect tax statements",
+        "status": "open",
+        "due_date": "2026-10-20"
+      }
+    ]
+  },
+  "expected_behavior": {
+    "type": "tool_call",
+    "tool": "notion.update_task",
+    "arguments": {
+      "task_id": "task_v2_tax",
+      "status": "done"
+    }
+  },
+  "success_criteria": [
+    "correct_tool_called",
+    "correct_arguments"
+  ],
+  "tags": [
+    "notion",
+    "contextual",
+    "update_task",
+    "state_lookup"
+  ]
+}

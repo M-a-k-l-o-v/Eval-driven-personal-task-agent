@@ -1,0 +1,32 @@
+{
+  "id": "calendar_v2_implicit_list_week_001",
+  "category": "calendar",
+  "difficulty": "implicit",
+  "description": "Refuse calendar listing when no read tool is available.",
+  "user_input": "What appointments do I have next week?",
+  "current_time": "2026-10-12T08:00:00Z",
+  "available_tools": [
+    "calendar.create_event",
+    "calendar.update_event"
+  ],
+  "initial_state": {
+    "calendar_events": []
+  },
+  "expected_behavior": {
+    "type": "refusal",
+    "reason_contains": [
+      "list",
+      "available"
+    ]
+  },
+  "success_criteria": [
+    "tool_not_called",
+    "refusal_given"
+  ],
+  "tags": [
+    "calendar",
+    "implicit",
+    "read_unavailable",
+    "refusal"
+  ]
+}

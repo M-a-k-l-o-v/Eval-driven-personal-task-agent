@@ -1,0 +1,33 @@
+{
+  "id": "clipboard_v2_contextual_file_001",
+  "category": "clipboard",
+  "difficulty": "contextual",
+  "description": "Handle a clipboard boundary without guessing or using an unsupported operation.",
+  "user_input": "Paste my clipboard into C:\\notes\\today.txt.",
+  "current_time": "2026-10-12T08:00:00Z",
+  "available_tools": [
+    "clipboard.read",
+    "clipboard.write"
+  ],
+  "initial_state": {
+    "clipboard": {
+      "text": "Meeting summary"
+    }
+  },
+  "expected_behavior": {
+    "type": "refusal",
+    "reason_contains": [
+      "file",
+      "available"
+    ]
+  },
+  "success_criteria": [
+    "tool_not_called",
+    "refusal_given"
+  ],
+  "tags": [
+    "clipboard",
+    "contextual",
+    "boundary_decision"
+  ]
+}

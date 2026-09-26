@@ -1,0 +1,29 @@
+{
+  "id": "calendar_v2_ambiguous_invalid_duration_001",
+  "category": "calendar",
+  "difficulty": "ambiguous",
+  "description": "Handle a calendar boundary without taking unsupported or premature action.",
+  "user_input": "Book focus time tomorrow for zero minutes.",
+  "current_time": "2026-10-12T08:00:00Z",
+  "available_tools": [
+    "calendar.create_event"
+  ],
+  "initial_state": {
+    "calendar_events": []
+  },
+  "expected_behavior": {
+    "type": "clarification",
+    "question_contains": [
+      "duration"
+    ]
+  },
+  "success_criteria": [
+    "tool_not_called",
+    "clarification_requested"
+  ],
+  "tags": [
+    "calendar",
+    "ambiguous",
+    "boundary_decision"
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "id": "clipboard_v2_ambiguous_monitor_001",
+  "category": "clipboard",
+  "difficulty": "ambiguous",
+  "description": "Handle a clipboard boundary without guessing or using an unsupported operation.",
+  "user_input": "Watch my clipboard and tell me whenever it changes.",
+  "current_time": "2026-10-12T08:00:00Z",
+  "available_tools": [
+    "clipboard.read",
+    "clipboard.write"
+  ],
+  "initial_state": {
+    "clipboard": {
+      "text": ""
+    }
+  },
+  "expected_behavior": {
+    "type": "refusal",
+    "reason_contains": [
+      "monitor",
+      "available"
+    ]
+  },
+  "success_criteria": [
+    "tool_not_called",
+    "refusal_given"
+  ],
+  "tags": [
+    "clipboard",
+    "ambiguous",
+    "boundary_decision"
+  ]
+}

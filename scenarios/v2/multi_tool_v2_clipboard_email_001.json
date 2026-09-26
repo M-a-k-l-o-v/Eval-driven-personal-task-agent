@@ -1,0 +1,46 @@
+{
+  "id": "multi_tool_v2_clipboard_email_001",
+  "category": "multi_tool",
+  "difficulty": "multi_step",
+  "description": "Read clipboard text and place it in an email draft.",
+  "user_input": "Read the clipboard and draft its contents to consulate@example.com with subject 'Visa Appointment'.",
+  "current_time": "2026-10-12T08:00:00Z",
+  "available_tools": [
+    "clipboard.read",
+    "gmail.create_draft"
+  ],
+  "initial_state": {
+    "clipboard": {
+      "text": "Notes for visa appointment"
+    },
+    "gmail_drafts": []
+  },
+  "expected_behavior": {
+    "type": "tool_calls",
+    "calls": [
+      {
+        "tool": "clipboard.read",
+        "arguments": {}
+      },
+      {
+        "tool": "gmail.create_draft",
+        "arguments": {
+          "recipient": "consulate@example.com",
+          "subject": "Visa Appointment",
+          "body_contains": "Notes for visa appointment"
+        }
+      }
+    ]
+  },
+  "success_criteria": [
+    "correct_tool_call_order",
+    "correct_tools_called",
+    "correct_arguments"
+  ],
+  "tags": [
+    "multi_tool",
+    "multi_step",
+    "clipboard",
+    "gmail"
+  ]
+}
