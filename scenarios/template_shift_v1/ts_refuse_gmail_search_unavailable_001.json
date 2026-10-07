@@ -1,0 +1,35 @@
+{
+  "id": "ts_refuse_gmail_search_unavailable_001",
+  "category": "gmail",
+  "difficulty": "implicit",
+  "description": "Refuse an inbox search when only composition tools are available.",
+  "user_input": "Before I reply, dig through my inbox and find the message about the blueprints.",
+  "current_time": "2027-02-10T10:00:00Z",
+  "available_tools": [
+    "gmail.create_draft",
+    "gmail.send_email"
+  ],
+  "initial_state": {
+    "gmail_messages": [],
+    "gmail_drafts": [],
+    "sent_emails": []
+  },
+  "expected_behavior": {
+    "type": "refusal",
+    "reason_contains": [
+      "search",
+      "available"
+    ]
+  },
+  "success_criteria": [
+    "tool_not_called",
+    "refusal_given"
+  ],
+  "tags": [
+    "template_shift",
+    "locked_eval",
+    "refuse",
+    "unsupported_capability",
+    "conversational"
+  ]
+}

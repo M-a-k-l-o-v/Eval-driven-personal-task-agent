@@ -16,6 +16,7 @@ def test_run_scripted_cli_writes_result_json(tmp_path: Path) -> None:
                 "calendar_clarify_time_001": {
                     "message": "What time should I schedule it?",
                     "tool_calls": [],
+                    "decision_type": "clarify",
                 }
             }
         ),
@@ -46,6 +47,11 @@ def test_run_scripted_cli_writes_result_json(tmp_path: Path) -> None:
     assert result["backend_name"] == "scripted"
     assert result["scenario_count"] == 1
     assert result["aggregate_metrics"]["task_success_rate"] == 1.0
+    assert result["aggregate_metrics"]["average_decision_accuracy"] == 1.0
+    assert result["aggregate_metrics"]["decision_coverage_rate"] == 1.0
+    assert result["aggregate_metrics"]["macro_f1"] == 1 / 3
+    assert result["aggregate_metrics"]["invalid_output_rate"] == 0.0
+    assert result["decision_confusion_matrix"]["clarify"]["clarify"] == 1
     assert result["scenario_results"][0]["scenario_id"] == "calendar_clarify_time_001"
     assert result["scenario_results"][0]["trace_id"] is None
     assert result["scenario_results"][0]["task_id"].endswith(".calendar_clarify_time_001.0")
@@ -84,6 +90,10 @@ def test_run_scripted_cli_creates_output_parent_directory(tmp_path: Path) -> Non
     assert output_path.exists()
     assert result["scenario_count"] == 0
     assert result["aggregate_metrics"]["task_success_rate"] is None
+    assert result["aggregate_metrics"]["average_decision_accuracy"] is None
+    assert result["aggregate_metrics"]["decision_coverage_rate"] is None
+    assert result["aggregate_metrics"]["macro_f1"] is None
+    assert result["aggregate_metrics"]["invalid_output_rate"] is None
     assert result["aggregate_metrics"]["average_latency_ms"] is None
     assert result["aggregate_metrics"]["total_cost_usd"] == 0.0
 

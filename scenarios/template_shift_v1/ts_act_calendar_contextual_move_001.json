@@ -1,0 +1,41 @@
+{
+  "id": "ts_act_calendar_contextual_move_001",
+  "category": "calendar",
+  "difficulty": "contextual",
+  "description": "Update the only matching event from indirect phrasing.",
+  "user_input": "The hiring debrief is slipping a little; make it 4:45pm instead.",
+  "current_time": "2027-02-10T10:00:00Z",
+  "available_tools": [
+    "calendar.update_event"
+  ],
+  "initial_state": {
+    "calendar_events": [
+      {
+        "id": "evt_hiring_debrief_001",
+        "title": "Hiring debrief",
+        "start_date": "2027-02-12",
+        "start_time": "16:00",
+        "duration_minutes": 30
+      }
+    ]
+  },
+  "expected_behavior": {
+    "type": "tool_call",
+    "tool": "calendar.update_event",
+    "arguments": {
+      "event_id": "evt_hiring_debrief_001",
+      "start_time": "16:45"
+    }
+  },
+  "success_criteria": [
+    "correct_tool_called",
+    "correct_arguments"
+  ],
+  "tags": [
+    "template_shift",
+    "locked_eval",
+    "act",
+    "state_lookup",
+    "conversational"
+  ]
+}

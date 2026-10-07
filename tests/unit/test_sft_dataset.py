@@ -6,6 +6,7 @@ from pathlib import Path
 import pytest
 from pydantic import ValidationError
 
+from baymax.models import sft_dataset
 from baymax.models.sft_dataset import (
     DEFAULT_SFT_SYSTEM_PROMPT,
     SFTBuildConfig,
@@ -15,6 +16,7 @@ from baymax.models.sft_dataset import (
     convert_xlam_row_to_sft_example,
     sft_build_config_hash,
 )
+from baymax.models.sft_validation import validate_sft_dataset
 
 
 def test_sft_split_ratios_reject_non_unit_total() -> None:
@@ -157,6 +159,85 @@ def test_sft_build_config_hash_is_stable_and_changes_with_content() -> None:
 
     assert sft_build_config_hash(first_config) == sft_build_config_hash(second_config)
     assert sft_build_config_hash(first_config) != sft_build_config_hash(changed_config)
+
+
+@pytest.mark.parametrize("seed", [1, 123])
+def test_split_keeps_duplicate_content_together_without_dropping_source_rows(
+    tmp_path: Path,
+    seed: int,
+) -> None:
+    rows: list[dict[str, object]] = []
+    for index in range(60):
+        row = _xlam_row(index % 10)
+        row["id"] = index
+        # Equivalent input JSON can have different whitespace and key order.
+        if (index // 10) % 2:
+            row["answers"] = json.dumps(
+                [{"arguments": {"item_id": index % 10}, "name": "lookup_item"}], indent=2
+            )
+        rows.append(row)
+    config = SFTBuildConfig(output_dir=tmp_path, seed=seed, revision="fixture-v1")
+    manifest = build_sft_dataset_from_rows(rows, config=config)
+
+    content_splits: dict[str, set[str]] = {}
+    source_indexes: list[int] = []
+    for name, split in manifest.splits.items():
+        contents = _read_jsonl(tmp_path / f"{name}.jsonl")
+        assert len(contents) == split.count == len(split.source_rows)
+        for row in contents:
+            content_splits.setdefault(json.dumps(row, sort_keys=True), set()).add(name)
+        source_indexes.extend(row.source_index for row in split.source_rows)
+    assert len(content_splits) == 10
+    assert all(len(names) == 1 for names in content_splits.values())
+    assert sorted(source_indexes) == list(range(60))
+    assert manifest.loaded_rows == manifest.converted_rows == 60
+    assert not manifest.skipped_rows
+    assert validate_sft_dataset(tmp_path).valid
+
+    rebuilt_dir = tmp_path / "rebuilt"
+    rebuilt = build_sft_dataset_from_rows(
+        rows,
+        config=config.model_copy(
+            update={
+                "output_dir": rebuilt_dir,
+            }
+        ),
+    )
+    assert rebuilt.config_hash == manifest.config_hash
+    for split in manifest.splits:
+        assert (tmp_path / f"{split}.jsonl").read_bytes() == (
+            rebuilt_dir / f"{split}.jsonl"
+        ).read_bytes()
+
+
+def test_split_changes_with_seed(tmp_path: Path) -> None:
+    rows = [_xlam_row(index) for index in range(30)]
+    first = build_sft_dataset_from_rows(
+        rows, config=SFTBuildConfig(output_dir=tmp_path / "a", seed=1)
+    )
+    second = build_sft_dataset_from_rows(
+        rows, config=SFTBuildConfig(output_dir=tmp_path / "b", seed=2)
+    )
+    assert {row.source_index for row in first.splits["train"].source_rows} != {
+        row.source_index for row in second.splits["train"].source_rows
+    }
+
+
+@pytest.mark.parametrize("count", [0, 10])
+def test_empty_or_all_identical_data_never_splits_a_content_group(
+    tmp_path: Path, count: int
+) -> None:
+    rows = [{**_xlam_row(0), "id": index} for index in range(count)]
+    manifest = build_sft_dataset_from_rows(rows, config=SFTBuildConfig(output_dir=tmp_path))
+    assert sum(split.count for split in manifest.splits.values()) == count
+    assert sum(split.count > 0 for split in manifest.splits.values()) == (1 if count else 0)
+
+
+def test_split_strategy_is_part_of_build_fingerprint(monkeypatch: pytest.MonkeyPatch) -> None:
+    config = SFTBuildConfig()
+    current_hash = sft_build_config_hash(config)
+    monkeypatch.setattr(sft_dataset, "SFT_SPLIT_STRATEGY", "legacy-row-split")
+    assert sft_build_config_hash(config) != current_hash
 
 
 def _xlam_row(index: int) -> dict[str, object]:

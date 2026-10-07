@@ -1,0 +1,40 @@
+{
+  "id": "ts_refuse_calendar_cancel_unavailable_001",
+  "category": "calendar",
+  "difficulty": "contextual",
+  "description": "Refuse cancellation when the available tool can only update events.",
+  "user_input": "Remove the warehouse handover from my calendar completely.",
+  "current_time": "2027-02-10T10:00:00Z",
+  "available_tools": [
+    "calendar.update_event"
+  ],
+  "initial_state": {
+    "calendar_events": [
+      {
+        "id": "evt_warehouse_handover_001",
+        "title": "Warehouse handover",
+        "start_date": "2027-02-20",
+        "start_time": "13:30",
+        "duration_minutes": 60
+      }
+    ]
+  },
+  "expected_behavior": {
+    "type": "refusal",
+    "reason_contains": [
+      "cancel",
+      "available"
+    ]
+  },
+  "success_criteria": [
+    "tool_not_called",
+    "refusal_given"
+  ],
+  "tags": [
+    "template_shift",
+    "locked_eval",
+    "refuse",
+    "unsupported_capability",
+    "state_lookup"
+  ]
+}

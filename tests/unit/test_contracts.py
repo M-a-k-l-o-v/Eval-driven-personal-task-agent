@@ -48,6 +48,7 @@ def test_agent_response_empty_is_valid():
     response = AgentResponse()
     assert response.tool_calls == []
     assert response.message is None
+    assert response.decision_type is None
 
 
 def test_agent_response_with_tool_calls_and_message():
@@ -65,10 +66,12 @@ def test_agent_response_matches_scorer_shape():
     core_response = AgentResponse(
         tool_calls=[AgentToolCall(tool="calendar.create_event", arguments={"title": "x"})],
         message="hi",
+        decision_type="act",
     )
     eval_response = EvalAgentResponse(
         tool_calls=[EvalAgentToolCall(tool="calendar.create_event", arguments={"title": "x"})],
         message="hi",
+        decision_type="act",
     )
 
     assert EvalAgentResponse.model_validate(core_response.model_dump()) == eval_response
@@ -165,3 +168,16 @@ def test_taskfile_to_agent_response_clarification_emits_no_tool_calls():
     response = task.to_agent_response()
     assert response.tool_calls == []
     assert response.message == "Did you mean today or tomorrow?"
+    assert response.decision_type == "clarify"
+
+
+def test_taskfile_to_agent_response_preserves_refusal_decision():
+    task = _minimal_task()
+    task.response_text = "I cannot perform that request."
+    task.response_type = ResponseType.TASK_REFUSAL
+    task.completion_status = CompletionStatus.REFUSED
+
+    response = task.to_agent_response()
+
+    assert response.tool_calls == []
+    assert response.decision_type == "refuse"

@@ -1,0 +1,36 @@
+{
+  "id": "ts_clarify_multi_missing_email_001",
+  "category": "multi_tool",
+  "difficulty": "ambiguous",
+  "description": "Clarify a missing recipient before starting a multi-step request.",
+  "user_input": "Reserve 2027-02-18 at 10am for 25 minutes as gallery pickup, then email Sam that I will be there.",
+  "current_time": "2027-02-10T10:00:00Z",
+  "available_tools": [
+    "calendar.create_event",
+    "gmail.send_email"
+  ],
+  "initial_state": {
+    "calendar_events": [],
+    "gmail_contacts": [],
+    "sent_emails": []
+  },
+  "expected_behavior": {
+    "type": "clarification",
+    "question_contains": [
+      "email",
+      "address"
+    ]
+  },
+  "success_criteria": [
+    "tool_not_called",
+    "clarification_requested",
+    "recipient_requested"
+  ],
+  "tags": [
+    "template_shift",
+    "locked_eval",
+    "clarify",
+    "multi_step",
+    "missing_recipient"
+  ]
+}

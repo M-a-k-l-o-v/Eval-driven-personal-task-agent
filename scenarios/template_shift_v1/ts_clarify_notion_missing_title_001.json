@@ -1,0 +1,30 @@
+{
+  "id": "ts_clarify_notion_missing_title_001",
+  "category": "notion",
+  "difficulty": "ambiguous",
+  "description": "Ask what task to create when only a due date is known.",
+  "user_input": "I need something on my task list by 2027-02-19, but I have not said what yet.",
+  "current_time": "2027-02-10T10:00:00Z",
+  "available_tools": [
+    "notion.create_task"
+  ],
+  "initial_state": {
+    "notion_tasks": []
+  },
+  "expected_behavior": {
+    "type": "clarification",
+    "question_contains": [
+      "what"
+    ]
+  },
+  "success_criteria": [
+    "tool_not_called",
+    "clarification_requested"
+  ],
+  "tags": [
+    "template_shift",
+    "locked_eval",
+    "clarify",
+    "missing_title"
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "id": "ts_clarify_clipboard_missing_text_001",
+  "category": "clipboard",
+  "difficulty": "ambiguous",
+  "description": "Ask for clipboard text when an earlier reference cannot be resolved.",
+  "user_input": "Replace what is on my clipboard with that wording from earlier.",
+  "current_time": "2027-02-10T10:00:00Z",
+  "available_tools": [
+    "clipboard.write"
+  ],
+  "initial_state": {
+    "clipboard": {
+      "text": "old text"
+    }
+  },
+  "expected_behavior": {
+    "type": "clarification",
+    "question_contains": [
+      "text"
+    ]
+  },
+  "success_criteria": [
+    "tool_not_called",
+    "clarification_requested"
+  ],
+  "tags": [
+    "template_shift",
+    "locked_eval",
+    "clarify",
+    "unresolved_reference"
+  ]
+}

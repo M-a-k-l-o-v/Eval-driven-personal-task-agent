@@ -7,7 +7,7 @@ import re
 from importlib import import_module
 from pathlib import Path
 from time import perf_counter
-from typing import Any, Protocol
+from typing import Any, Protocol, cast
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -16,7 +16,7 @@ from baymax.eval.agent_runner import FAKE_TOOL_SCHEMAS
 from baymax.eval.fake_executor import execute_tool_calls
 from baymax.eval.runner import ScenarioRunResult
 from baymax.eval.scenario_loader import Scenario
-from baymax.eval.scorer import AgentResponse, AgentToolCall, score_response
+from baymax.eval.scorer import AgentResponse, AgentToolCall, DecisionType, score_response
 from baymax.models.sft_dataset import DEFAULT_SFT_SYSTEM_PROMPT
 
 
@@ -198,14 +198,21 @@ def build_lora_scenario_messages(scenario: Scenario) -> list[dict[str, str]]:
 def parse_lora_agent_response(raw_text: str) -> AgentResponse:
     """Parse xLAM-style local model text into the BAYMAX eval boundary."""
 
+    try:
+        return _parse_complete_response(raw_text)
+    except ValueError:
+        return AgentResponse(
+            message=raw_text or None,
+            parse_error="Generation must contain one complete valid response with valid calls.",
+        )
+
+
+def _parse_complete_response(raw_text: str) -> AgentResponse:
     candidate = _extract_json_candidate(raw_text)
     if candidate is None:
-        return AgentResponse(message=raw_text or None)
+        raise ValueError("Missing JSON response")
 
-    try:
-        parsed = json.loads(candidate)
-    except json.JSONDecodeError:
-        return AgentResponse(message=raw_text or None)
+    parsed = json.loads(candidate)
 
     if isinstance(parsed, dict) and ("tool_calls" in parsed or "message" in parsed):
         return _parse_agent_response_dict(parsed, fallback_message=raw_text)
@@ -213,28 +220,41 @@ def parse_lora_agent_response(raw_text: str) -> AgentResponse:
     values = _tool_call_values_from_parsed(parsed)
     tool_calls: list[AgentToolCall] = []
     message: str | None = None
+    decision_type: DecisionType | None = None
     for value in values:
         parsed_call = _parse_tool_call(value)
         if parsed_call is None:
-            continue
+            raise ValueError("Invalid call object")
 
         tool_name, arguments = parsed_call
         if tool_name == "request_clarification":
-            message = _string_argument(arguments, "question") or raw_text or None
+            if decision_type is not None or tool_calls:
+                raise ValueError("Meta-tools must be the only call")
+            message = _required_meta_argument(arguments, "question")
+            decision_type = "clarify"
             continue
         if tool_name == "refuse_request":
+            if decision_type is not None or tool_calls:
+                raise ValueError("Meta-tools must be the only call")
             message = _refusal_message(
-                reason=_string_argument(arguments, "reason"),
+                reason=_required_meta_argument(arguments, "reason"),
                 raw_text=raw_text,
             )
+            decision_type = "refuse"
             continue
 
-        try:
-            tool_calls.append(AgentToolCall(tool=tool_name, arguments=arguments))
-        except ValueError:
-            continue
+        if decision_type is not None:
+            raise ValueError("Meta-tools must be the only call")
+        tool_calls.append(AgentToolCall(tool=tool_name, arguments=arguments))
 
-    return AgentResponse(tool_calls=tool_calls, message=message)
+    if decision_type is None and tool_calls:
+        decision_type = "act"
+
+    return AgentResponse(
+        tool_calls=tool_calls,
+        message=message,
+        decision_type=decision_type,
+    )
 
 
 def _parse_agent_response_dict(
@@ -243,22 +263,56 @@ def _parse_agent_response_dict(
     fallback_message: str,
 ) -> AgentResponse:
     raw_tool_calls = parsed.get("tool_calls", [])
-    values = raw_tool_calls if isinstance(raw_tool_calls, list) else []
+    if not isinstance(raw_tool_calls, list):
+        raise ValueError("tool_calls must be a list")
+    values = raw_tool_calls
     tool_calls: list[AgentToolCall] = []
+    inferred_decision: DecisionType | None = None
     for value in values:
         parsed_call = _parse_tool_call(value)
         if parsed_call is None:
-            continue
+            raise ValueError("Invalid call object")
         tool_name, arguments = parsed_call
-        try:
-            tool_calls.append(AgentToolCall(tool=tool_name, arguments=arguments))
-        except ValueError:
+        if tool_name == "request_clarification":
+            if inferred_decision is not None or tool_calls:
+                raise ValueError("Meta-tools must be the only call")
+            parsed["message"] = _required_meta_argument(arguments, "question")
+            inferred_decision = "clarify"
             continue
+        if tool_name == "refuse_request":
+            if inferred_decision is not None or tool_calls:
+                raise ValueError("Meta-tools must be the only call")
+            parsed["message"] = _refusal_message(
+                reason=_required_meta_argument(arguments, "reason"), raw_text=fallback_message
+            )
+            inferred_decision = "refuse"
+            continue
+        if inferred_decision is not None:
+            raise ValueError("Meta-tools must be the only call")
+        tool_calls.append(AgentToolCall(tool=tool_name, arguments=arguments))
 
     message = parsed.get("message")
+    raw_decision = parsed.get("decision_type")
+    decision_type: DecisionType | None
+    if isinstance(raw_decision, str) and raw_decision in {"act", "clarify", "refuse"}:
+        decision_type = cast(DecisionType, raw_decision)
+        if (tool_calls and decision_type != "act") or (
+            inferred_decision is not None and decision_type != inferred_decision
+        ):
+            raise ValueError("Conflicting decisions")
+    elif raw_decision is not None:
+        raise ValueError("Invalid decision type")
+    elif inferred_decision is not None:
+        decision_type = inferred_decision
+    elif tool_calls:
+        decision_type = "act"
+    else:
+        decision_type = None
+
     return AgentResponse(
         tool_calls=tool_calls,
         message=message if isinstance(message, str) else fallback_message or None,
+        decision_type=decision_type,
     )
 
 
@@ -356,17 +410,23 @@ def _parse_arguments(value: Any) -> dict[str, Any]:
     if isinstance(value, list):
         merged_arguments: dict[str, Any] = {}
         for item in value:
-            if isinstance(item, dict):
-                merged_arguments.update(item)
+            if not isinstance(item, dict) or merged_arguments.keys() & item.keys():
+                raise ValueError("Invalid argument list")
+            merged_arguments.update(item)
         return merged_arguments
     if isinstance(value, str):
-        try:
-            parsed = json.loads(value)
-        except json.JSONDecodeError:
-            return {}
-        return parsed if isinstance(parsed, dict) else {}
+        parsed = json.loads(value)
+        if isinstance(parsed, dict):
+            return parsed
 
-    return {}
+    raise ValueError("Arguments must be an object")
+
+
+def _required_meta_argument(arguments: dict[str, Any], key: str) -> str:
+    value = _string_argument(arguments, key)
+    if set(arguments) != {key} or value is None or not value.strip():
+        raise ValueError("Invalid meta-tool arguments")
+    return value
 
 
 def _string_argument(arguments: dict[str, Any], key: str) -> str | None:
@@ -389,46 +449,11 @@ def _extract_json_candidate(raw_text: str) -> str | None:
     if not stripped:
         return None
 
-    fenced_match = re.search(r"```(?:json)?\s*(.*?)\s*```", stripped, flags=re.DOTALL)
+    fenced_match = re.fullmatch(r"```(?:json)?\s*(.*?)\s*```", stripped, flags=re.DOTALL)
     if fenced_match:
         stripped = fenced_match.group(1).strip()
 
-    for start_index, character in enumerate(stripped):
-        if character in "[{":
-            candidate = _balanced_json_slice(stripped[start_index:])
-            if candidate is not None:
-                return candidate
-
-    return None
-
-
-def _balanced_json_slice(value: str) -> str | None:
-    opening = value[0]
-    closing = "]" if opening == "[" else "}"
-    depth = 0
-    in_string = False
-    escaped = False
-
-    for index, character in enumerate(value):
-        if in_string:
-            if escaped:
-                escaped = False
-            elif character == "\\":
-                escaped = True
-            elif character == '"':
-                in_string = False
-            continue
-
-        if character == '"':
-            in_string = True
-        elif character == opening:
-            depth += 1
-        elif character == closing:
-            depth -= 1
-            if depth == 0:
-                return value[: index + 1]
-
-    return None
+    return stripped
 
 
 def _load_local_lora_dependencies(*, include_peft: bool) -> dict[str, Any]:

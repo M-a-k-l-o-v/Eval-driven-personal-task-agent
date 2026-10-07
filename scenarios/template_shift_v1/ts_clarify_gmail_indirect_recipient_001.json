@@ -1,0 +1,42 @@
+{
+  "id": "ts_clarify_gmail_indirect_recipient_001",
+  "category": "gmail",
+  "difficulty": "ambiguous",
+  "description": "Ask who should receive a conversationally phrased email.",
+  "user_input": "Tell her the studio key is at reception.",
+  "current_time": "2027-02-10T10:00:00Z",
+  "available_tools": [
+    "gmail.send_email"
+  ],
+  "initial_state": {
+    "gmail_contacts": [
+      {
+        "name": "Nora",
+        "email": "nora@example.com"
+      },
+      {
+        "name": "Mina",
+        "email": "mina@example.com"
+      }
+    ],
+    "sent_emails": []
+  },
+  "expected_behavior": {
+    "type": "clarification",
+    "question_contains": [
+      "who"
+    ]
+  },
+  "success_criteria": [
+    "tool_not_called",
+    "clarification_requested",
+    "recipient_requested"
+  ],
+  "tags": [
+    "template_shift",
+    "locked_eval",
+    "clarify",
+    "conversational",
+    "missing_recipient"
+  ]
+}

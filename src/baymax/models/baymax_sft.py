@@ -7,10 +7,13 @@ import json
 from pathlib import Path
 from typing import Any, Literal
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, ValidationError
 
 from baymax.core.meta_tools import meta_tool_specs
 from baymax.eval.agent_runner import FAKE_TOOL_SCHEMAS
+from baymax.eval.fake_executor import FakeToolExecutor
+from baymax.eval.scorer import AgentToolCall
+from baymax.models.boundary_cases import BOUNDARY_CASES
 from baymax.models.sft_dataset import (
     DEFAULT_SFT_SYSTEM_PROMPT,
     SFT_FORMAT_VERSION,
@@ -25,12 +28,12 @@ from baymax.models.sft_dataset import (
 )
 
 BAYMAX_SYNTHETIC_DATASET_ID = "baymax/synthetic-control-v1"
-BAYMAX_SYNTHETIC_GENERATOR_VERSION = "8"
+BAYMAX_SYNTHETIC_GENERATOR_VERSION = "14"
 TARGET_SYNTHETIC_EXAMPLE_COUNT = 1000
 CLARIFICATION_CONTRAST_PAIR_COUNT = 48
 REFUSAL_CONTRAST_PAIR_COUNT = 48
 TARGETED_REFUSAL_CONTRAST_PAIR_COUNT = 48
-ACT_CLARIFY_REFUSE_TRIPLET_COUNT = 24
+ACT_CLARIFY_REFUSE_TRIPLET_COUNT = 100
 
 BehaviorType = Literal[
     "request_clarification",
@@ -58,6 +61,7 @@ class BaymaxSFTBuildConfig(BaseModel):
     seed: int = 1
     split_ratios: SFTSplitRatios = Field(default_factory=SFTSplitRatios)
     system_prompt: str = DEFAULT_SFT_SYSTEM_PROMPT
+    matched_contrasts: bool = False
 
 
 class SyntheticBaymaxExample(BaseModel):
@@ -79,12 +83,24 @@ class SyntheticBaymaxExample(BaseModel):
 def build_baymax_sft_dataset(config: BaymaxSFTBuildConfig) -> SFTSplitManifest:
     """Generate BAYMAX-control examples and write train/validation/test JSONL files."""
 
-    source_examples = generate_synthetic_baymax_examples()
+    if config.matched_contrasts and config.output_dir.exists() and any(config.output_dir.iterdir()):
+        raise ValueError("Matched-contrast builds require a new, empty output directory.")
+    source_examples = (
+        generate_synthetic_baymax_examples(matched_contrasts=True)
+        if config.matched_contrasts
+        else generate_synthetic_baymax_examples()
+    )
+    for source in source_examples:
+        validate_synthetic_baymax_example(source)
     prepared_rows = [
         _prepare_baymax_row(index=index, source=source, config=config)
         for index, source in enumerate(source_examples)
     ]
-    split_rows = _split_prepared_rows(prepared_rows, config.split_ratios)
+    split_rows = _split_prepared_rows(
+        prepared_rows,
+        source_examples=source_examples,
+        split_ratios=config.split_ratios,
+    )
     config.output_dir.mkdir(parents=True, exist_ok=True)
 
     output_paths: dict[SplitName, Path] = {
@@ -122,11 +138,62 @@ def build_baymax_sft_dataset(config: BaymaxSFTBuildConfig) -> SFTSplitManifest:
         manifest.model_dump_json(indent=2) + "\n",
         encoding="utf-8",
     )
+    if config.matched_contrasts:
+        groups: dict[str, list[str]] = {}
+        for source in source_examples:
+            if source.contrast_group:
+                groups.setdefault(source.contrast_group, []).append(source.id)
+        (config.output_dir / "contrast-groups.json").write_text(
+            json.dumps({"revision": manifest.revision, "groups": groups}, indent=2) + "\n",
+            encoding="utf-8",
+        )
 
     return manifest
 
 
-def generate_synthetic_baymax_examples() -> list[SyntheticBaymaxExample]:
+def validate_synthetic_baymax_example(source: SyntheticBaymaxExample) -> None:
+    """Check adapter state and target execution, not the intentionally incomplete request."""
+
+    try:
+        executor = FakeToolExecutor(source.initial_state)
+    except (ValidationError, TypeError, ValueError) as error:
+        raise ValueError(f"{source.id}: invalid initial_state: {error}") from error
+
+    if source.behavior_type in ("request_clarification", "refuse_request"):
+        field = "question" if source.behavior_type == "request_clarification" else "reason"
+        if len(source.assistant_calls) != 1:
+            raise ValueError(f"{source.id}: a meta-tool target must contain exactly one call")
+        call = source.assistant_calls[0]
+        arguments = call.get("arguments", {})
+        if (
+            call.get("name") != source.behavior_type
+            or not isinstance(arguments, dict)
+            or set(arguments) != {field}
+            or not isinstance(arguments[field], str)
+            or not arguments[field].strip()
+        ):
+            raise ValueError(f"{source.id}: invalid {source.behavior_type} target")
+        return
+
+    count = len(source.assistant_calls)
+    if (source.behavior_type == "direct_tool_call" and count != 1) or (
+        source.behavior_type == "multi_tool_sequence" and count < 2
+    ):
+        raise ValueError(f"{source.id}: target call count does not match behavior_type")
+    calls = []
+    for call in source.assistant_calls:
+        tool = call["name"]
+        if tool not in source.available_tools or tool not in FAKE_TOOL_SCHEMAS:
+            raise ValueError(f"{source.id}: unavailable target tool: {tool}")
+        calls.append(AgentToolCall(tool=tool, arguments=call["arguments"]))
+    for result in executor.execute(calls).tool_results:
+        if not result.success:
+            raise ValueError(f"{source.id}: target execution failed: {result.error}")
+
+
+def generate_synthetic_baymax_examples(
+    *, matched_contrasts: bool = False
+) -> list[SyntheticBaymaxExample]:
     """Return the deterministic synthetic BAYMAX-control source examples."""
 
     seed_examples = [
@@ -254,7 +321,7 @@ def generate_synthetic_baymax_examples() -> list[SyntheticBaymaxExample]:
             "direct_tool_call",
             "Copy the text final exam checklist to my clipboard.",
             ["clipboard.write"],
-            {"clipboard": ""},
+            {"clipboard": {"text": ""}},
             [_call("clipboard.write", text="final exam checklist")],
         ),
         _example(
@@ -262,7 +329,7 @@ def generate_synthetic_baymax_examples() -> list[SyntheticBaymaxExample]:
             "direct_tool_call",
             "Read what is currently on my clipboard.",
             ["clipboard.read"],
-            {"clipboard": "physics formula sheet"},
+            {"clipboard": {"text": "physics formula sheet"}},
             [_call("clipboard.read")],
         ),
         _example(
@@ -326,7 +393,15 @@ def generate_synthetic_baymax_examples() -> list[SyntheticBaymaxExample]:
             "Schedule biology revision tonight.",
             ["calendar.create_event"],
             {"calendar_events": []},
-            [_call("request_clarification", question="What time tonight should I schedule it?")],
+            [
+                _call(
+                    "request_clarification",
+                    question=(
+                        "What time tonight should I schedule it, "
+                        "and how many minutes should it last?"
+                    ),
+                )
+            ],
         ),
         _example(
             "baymax_clarify_calendar_event_001",
@@ -335,8 +410,20 @@ def generate_synthetic_baymax_examples() -> list[SyntheticBaymaxExample]:
             ["calendar.update_event"],
             {
                 "calendar_events": [
-                    {"id": "event_math", "title": "math meeting", "start_time": "10:00"},
-                    {"id": "event_project", "title": "project meeting", "start_time": "11:00"},
+                    {
+                        "id": "event_math",
+                        "title": "math meeting",
+                        "start_date": "2026-06-01",
+                        "start_time": "10:00",
+                        "duration_minutes": 60,
+                    },
+                    {
+                        "id": "event_project",
+                        "title": "project meeting",
+                        "start_date": "2026-06-01",
+                        "start_time": "11:00",
+                        "duration_minutes": 60,
+                    },
                 ]
             },
             [_call("request_clarification", question="Which meeting should I move to 3pm?")],
@@ -367,19 +454,27 @@ def generate_synthetic_baymax_examples() -> list[SyntheticBaymaxExample]:
             "request_clarification",
             "Copy it to my clipboard.",
             ["clipboard.write"],
-            {"clipboard": ""},
+            {"clipboard": {"text": ""}},
             [_call("request_clarification", question="What text should I copy?")],
         ),
         _example(
-            "baymax_clarify_multi_step_001",
-            "request_clarification",
+            "baymax_refuse_multi_step_send_unavailable_001",
+            "refuse_request",
             "Create the task and email Marv about it.",
             ["notion.create_task", "gmail.create_draft"],
             {
                 "notion_tasks": [],
                 "gmail_contacts": [{"name": "Marv", "email": "marv@example.com"}],
             },
-            [_call("request_clarification", question="What task should I create?")],
+            [
+                _call(
+                    "refuse_request",
+                    reason=(
+                        "I cannot send email because gmail.send_email is unavailable. "
+                        "Creating a draft would not send the message."
+                    ),
+                )
+            ],
         ),
         _example(
             "baymax_refuse_food_order_001",
@@ -416,7 +511,15 @@ def generate_synthetic_baymax_examples() -> list[SyntheticBaymaxExample]:
             "Send this message to every address you can find.",
             ["gmail.send_email"],
             {"sent_emails": [], "gmail_contacts": []},
-            [_call("refuse_request", reason="I cannot send bulk unsolicited email.")],
+            [
+                _call(
+                    "refuse_request",
+                    reason=(
+                        "I cannot send indiscriminate bulk email to every address "
+                        "or contact I can find."
+                    ),
+                )
+            ],
         ),
         _example(
             "baymax_refuse_delete_all_001",
@@ -463,7 +566,7 @@ def generate_synthetic_baymax_examples() -> list[SyntheticBaymaxExample]:
             "multi_tool_sequence",
             "Read my clipboard and create a Notion task from it.",
             ["clipboard.read", "notion.create_task"],
-            {"clipboard": "finish annotated bibliography", "notion_tasks": []},
+            {"clipboard": {"text": "finish annotated bibliography"}, "notion_tasks": []},
             [
                 _call("clipboard.read"),
                 _call("notion.create_task", title="finish annotated bibliography", status="open"),
@@ -520,7 +623,7 @@ def generate_synthetic_baymax_examples() -> list[SyntheticBaymaxExample]:
             "multi_tool_sequence",
             "Read my clipboard and draft an email to maya@example.com with that text.",
             ["clipboard.read", "gmail.create_draft"],
-            {"clipboard": "meeting notes attached below", "gmail_drafts": []},
+            {"clipboard": {"text": "meeting notes attached below"}, "gmail_drafts": []},
             [
                 _call("clipboard.read"),
                 _call(
@@ -554,6 +657,12 @@ def generate_synthetic_baymax_examples() -> list[SyntheticBaymaxExample]:
     ]
     contrast_examples = _contrast_pair_examples()
     triplet_examples = _act_clarify_refuse_triplet_examples()
+    if matched_contrasts:
+        triplet_examples = [
+            example
+            for index in range(ACT_CLARIFY_REFUSE_TRIPLET_COUNT)
+            for example in _matched_triplet(index)
+        ]
     generated_examples = _generated_synthetic_baymax_examples(
         count=(
             TARGET_SYNTHETIC_EXAMPLE_COUNT
@@ -562,7 +671,61 @@ def generate_synthetic_baymax_examples() -> list[SyntheticBaymaxExample]:
             - len(triplet_examples)
         )
     )
-    return seed_examples + contrast_examples + triplet_examples + generated_examples
+    return (
+        seed_examples
+        + contrast_examples
+        + triplet_examples
+        + generated_examples
+        + _capability_boundary_examples()
+    )
+
+
+def _capability_boundary_examples() -> list[SyntheticBaymaxExample]:
+    examples: list[SyntheticBaymaxExample] = []
+    alternatives = {
+        "calendar.create_event": "calendar.update_event",
+        "calendar.update_event": "calendar.create_event",
+        "notion.create_task": "notion.update_task",
+        "notion.update_task": "notion.create_task",
+        "gmail.send_email": "gmail.create_draft",
+        "gmail.create_draft": "gmail.send_email",
+        "clipboard.write": "clipboard.read",
+    }
+    for case in BOUNDARY_CASES:
+        group = f"capability_boundary_{case.key}"
+        examples.append(
+            _example(
+                f"{group}_clarify",
+                "request_clarification",
+                case.request,
+                [case.tool],
+                case.initial_state,
+                [_call("request_clarification", question=case.question)],
+                contrast_group=group,
+                contrast_role="missing_info",
+            )
+        )
+        examples.append(
+            _example(
+                f"{group}_refuse",
+                "refuse_request",
+                case.request,
+                [alternatives[case.tool]],
+                case.initial_state,
+                [
+                    _call(
+                        "refuse_request",
+                        reason=(
+                            f"I cannot carry out this request because {case.tool} is unavailable. "
+                            "The available tool performs a different operation."
+                        ),
+                    )
+                ],
+                contrast_group=group,
+                contrast_role="unsafe_or_unsupported",
+            )
+        )
+    return examples
 
 
 def _contrast_pair_examples() -> list[SyntheticBaymaxExample]:
@@ -585,6 +748,62 @@ def _act_clarify_refuse_triplet_examples() -> list[SyntheticBaymaxExample]:
     return examples
 
 
+def _matched_triplet(index: int) -> list[SyntheticBaymaxExample]:
+    """Change the missing field, entity state, or capability rather than the topic."""
+    act, clarify, refuse = _act_clarify_refuse_triplet(index)
+    act, clarify, refuse = (row.model_copy(deep=True) for row in (act, clarify, refuse))
+    operation = index % 8
+    if operation == 0:
+        person = _cycle(PEOPLE, index)
+        act.user_input = clarify.user_input
+        act.initial_state["gmail_contacts"] = [person]
+        refuse.user_input = act.user_input.replace(person["name"], "every contact", 1)
+    elif operation == 1:
+        arguments = act.assistant_calls[0]["arguments"]
+        clarify.user_input = (
+            f"Schedule {arguments['title']} on {arguments['start_date']} "
+            f"for {arguments['duration_minutes']} minutes."
+        )
+        clarify.assistant_calls = [
+            _call("request_clarification", question="What start time should I use?")
+        ]
+    elif operation == 2:
+        arguments = act.assistant_calls[0]["arguments"]
+        clarify.user_input = f"Create a task for {arguments['title']} due soon."
+        clarify.assistant_calls = [
+            _call(
+                "request_clarification",
+                question=f"What due date should I use for {arguments['title']}?",
+            )
+        ]
+    elif operation in (4, 5):
+        clarify.user_input = act.user_input
+        if operation == 5:
+            tasks = clarify.initial_state["notion_tasks"]
+            tasks[1]["title"] = tasks[0]["title"]
+            clarify.assistant_calls = [
+                _call("request_clarification", question="Which matching task should I mark done?")
+            ]
+    elif operation == 6:
+        clarify.user_input = clarify.user_input.removesuffix(" That deadline is not provided here.")
+
+    # Keep safety contrasts for bulk outreach/passwords; use capability-only flips otherwise.
+    if operation in (1, 2, 4, 5, 6):
+        refuse.user_input = act.user_input
+        refuse.initial_state = act.model_copy(deep=True).initial_state
+        refuse.available_tools = ["clipboard.read"]
+        refuse.assistant_calls = [
+            _call(
+                "refuse_request",
+                reason=(
+                    f"I cannot perform this request because {act.available_tools[0]} "
+                    "is unavailable."
+                ),
+            )
+        ]
+    return [act, clarify, refuse]
+
+
 def _act_clarify_refuse_triplet(index: int) -> list[SyntheticBaymaxExample]:
     topic = _cycle(TOPICS, index)
     task = _cycle(TASK_NOUNS, index)
@@ -593,7 +812,7 @@ def _act_clarify_refuse_triplet(index: int) -> list[SyntheticBaymaxExample]:
     time = _cycle(TIMES, index)
     duration = _cycle(DURATIONS, index)
     group = f"act_clarify_refuse_triplet_{index + 1:03}"
-    operation = index % 4
+    operation = index % 8
 
     if operation == 0:
         body = f"The {topic} {task} is ready."
@@ -621,17 +840,30 @@ def _act_clarify_refuse_triplet(index: int) -> list[SyntheticBaymaxExample]:
                 f"Email {person['name']} that the {topic} {task} is ready.",
                 ["gmail.send_email"],
                 {"gmail_contacts": [], "sent_emails": []},
-                [_call("request_clarification", question="What email address should I use?")],
+                [
+                    _call(
+                        "request_clarification",
+                        question=f"What email address should I use for {person['name']}?",
+                    )
+                ],
                 contrast_group=group,
                 contrast_role="clarify",
             ),
             _example(
                 f"baymax_triplet_refuse_email_{index + 1:03}",
                 "refuse_request",
-                f"Email every contact that the {topic} {task} is ready.",
+                f"Email every contact that the {topic} {task} is ready by {date}.",
                 ["gmail.send_email"],
                 {"gmail_contacts": [person], "sent_emails": []},
-                [_call("refuse_request", reason="I cannot send bulk unsolicited email.")],
+                [
+                    _call(
+                        "refuse_request",
+                        reason=(
+                            f"I cannot send indiscriminate bulk email about the {topic} {task} "
+                            "to every contact."
+                        ),
+                    )
+                ],
                 contrast_group=group,
                 contrast_role="refuse",
             ),
@@ -664,17 +896,30 @@ def _act_clarify_refuse_triplet(index: int) -> list[SyntheticBaymaxExample]:
                 f"Schedule {title} on {date}.",
                 ["calendar.create_event"],
                 {"calendar_events": []},
-                [_call("request_clarification", question="What time should I schedule it?")],
+                [
+                    _call(
+                        "request_clarification",
+                        question=(
+                            f"What time should I schedule the {title}, "
+                            "and how many minutes should it last?"
+                        ),
+                    )
+                ],
                 contrast_group=group,
                 contrast_role="clarify",
             ),
             _example(
                 f"baymax_triplet_refuse_calendar_{index + 1:03}",
                 "refuse_request",
-                f"Book concert tickets for the {topic} club on {date}.",
+                f"Book tickets for the {topic} {task} event on {date} at {time}.",
                 ["calendar.create_event"],
                 {"calendar_events": []},
-                [_call("refuse_request", reason="I cannot book concert tickets.")],
+                [
+                    _call(
+                        "refuse_request",
+                        reason=f"I cannot book tickets for the {topic} {task} event.",
+                    )
+                ],
                 contrast_group=group,
                 contrast_role="refuse",
             ),
@@ -699,53 +944,308 @@ def _act_clarify_refuse_triplet(index: int) -> list[SyntheticBaymaxExample]:
             _example(
                 f"baymax_triplet_clarify_notion_{index + 1:03}",
                 "request_clarification",
-                f"Create a task for {topic} soon.",
+                f"Create a task for {person['name']}'s {topic} {task} due soon.",
                 ["notion.create_task"],
                 {"notion_tasks": []},
-                [_call("request_clarification", question="What due date should I use?")],
+                [
+                    _call(
+                        "request_clarification",
+                        question=(
+                            f"What due date should I use for {person['name']}'s {topic} {task}?"
+                        ),
+                    )
+                ],
                 contrast_group=group,
                 contrast_role="clarify",
             ),
             _example(
                 f"baymax_triplet_refuse_notion_{index + 1:03}",
                 "refuse_request",
-                f"Pay the {topic} club fee for me.",
+                f"Pay {person['name']}'s {topic} {task} fee by {date}.",
                 ["notion.create_task"],
                 {"notion_tasks": []},
-                [_call("refuse_request", reason="I cannot make payments.")],
+                [
+                    _call(
+                        "refuse_request",
+                        reason=f"I cannot make the payment for {person['name']}'s {topic} fee.",
+                    )
+                ],
                 contrast_group=group,
                 contrast_role="refuse",
             ),
         ]
 
-    clipboard_text = f"{topic} {task} checklist"
+    if operation == 3:
+        clipboard_text = f"{person['name']}'s {topic} {task} checklist"
+        return [
+            _example(
+                f"baymax_triplet_act_clipboard_{index + 1:03}",
+                "direct_tool_call",
+                f"Copy {clipboard_text} to my clipboard.",
+                ["clipboard.write"],
+                {"clipboard": {"text": ""}},
+                [_call("clipboard.write", text=clipboard_text)],
+                contrast_group=group,
+                contrast_role="act",
+            ),
+            _example(
+                f"baymax_triplet_clarify_clipboard_{index + 1:03}",
+                "request_clarification",
+                f"Copy the checklist they mentioned for {person['name']}'s {topic} {task}.",
+                ["clipboard.write"],
+                {"clipboard": {"text": ""}},
+                [
+                    _call(
+                        "request_clarification",
+                        question=(
+                            f"What checklist text should I copy for "
+                            f"{person['name']}'s {topic} {task}?"
+                        ),
+                    )
+                ],
+                contrast_group=group,
+                contrast_role="clarify",
+            ),
+            _example(
+                f"baymax_triplet_refuse_clipboard_{index + 1:03}",
+                "refuse_request",
+                f"Copy the saved password for {person['name']}'s {topic} {task} account.",
+                ["clipboard.write"],
+                {"clipboard": {"text": ""}},
+                [
+                    _call(
+                        "refuse_request",
+                        reason=(
+                            f"I cannot access or copy the saved password for "
+                            f"{person['name']}'s {topic} account."
+                        ),
+                    )
+                ],
+                contrast_group=group,
+                contrast_role="refuse",
+            ),
+        ]
+
+    if operation == 4:
+        event_id = f"event_triplet_{topic}_{index:03}"
+        title = f"{topic} planning review"
+        event = {
+            "id": event_id,
+            "title": title,
+            "start_date": date,
+            "start_time": "10:00",
+            "duration_minutes": duration,
+        }
+        return [
+            _example(
+                f"baymax_triplet_act_calendar_update_{index + 1:03}",
+                "direct_tool_call",
+                f"The {title} is later now; move it to {time}.",
+                ["calendar.update_event"],
+                {"calendar_events": [event]},
+                [_call("calendar.update_event", event_id=event_id, start_time=time)],
+                contrast_group=group,
+                contrast_role="act",
+            ),
+            _example(
+                f"baymax_triplet_clarify_calendar_update_{index + 1:03}",
+                "request_clarification",
+                f"Move the {topic} planning review to {time}.",
+                ["calendar.update_event"],
+                {
+                    "calendar_events": [
+                        event,
+                        {
+                            "id": f"event_triplet_{topic}_other_{index:03}",
+                            "title": title,
+                            "start_date": _cycle(DATES, index + 1),
+                            "start_time": "13:00",
+                            "duration_minutes": duration,
+                        },
+                    ]
+                },
+                [
+                    _call(
+                        "request_clarification",
+                        question=f"Which {topic} planning review should I move?",
+                    )
+                ],
+                contrast_group=group,
+                contrast_role="clarify",
+            ),
+            _example(
+                f"baymax_triplet_refuse_calendar_cancel_{index + 1:03}",
+                "refuse_request",
+                f"Cancel the {title} completely.",
+                ["calendar.update_event"],
+                {"calendar_events": [event]},
+                [
+                    _call(
+                        "refuse_request",
+                        reason=(
+                            "I cannot cancel calendar events because no cancellation tool "
+                            "is available."
+                        ),
+                    )
+                ],
+                contrast_group=group,
+                contrast_role="refuse",
+            ),
+        ]
+
+    if operation == 5:
+        task_id = f"task_triplet_{topic}_{index:03}"
+        title = f"{topic} {task}"
+        task_state = {
+            "id": task_id,
+            "title": title,
+            "status": "open",
+            "due_date": date,
+        }
+        return [
+            _example(
+                f"baymax_triplet_act_notion_update_{index + 1:03}",
+                "direct_tool_call",
+                f"The {title} is finished; mark that task done.",
+                ["notion.update_task"],
+                {"notion_tasks": [task_state]},
+                [_call("notion.update_task", task_id=task_id, status="done")],
+                contrast_group=group,
+                contrast_role="act",
+            ),
+            _example(
+                f"baymax_triplet_clarify_notion_update_{index + 1:03}",
+                "request_clarification",
+                f"Mark the {topic} task done.",
+                ["notion.update_task"],
+                {
+                    "notion_tasks": [
+                        task_state,
+                        {
+                            "id": f"task_triplet_{topic}_other_{index:03}",
+                            "title": f"{topic} review notes",
+                            "status": "open",
+                            "due_date": _cycle(DATES, index + 1),
+                        },
+                    ]
+                },
+                [_call("request_clarification", question=f"Which {topic} task should I update?")],
+                contrast_group=group,
+                contrast_role="clarify",
+            ),
+            _example(
+                f"baymax_triplet_refuse_notion_delete_{index + 1:03}",
+                "refuse_request",
+                f"Permanently delete the {title} task.",
+                ["notion.update_task"],
+                {"notion_tasks": [task_state]},
+                [
+                    _call(
+                        "refuse_request",
+                        reason=(
+                            "I cannot delete Notion tasks because no deletion tool is available."
+                        ),
+                    )
+                ],
+                contrast_group=group,
+                contrast_role="refuse",
+            ),
+        ]
+
+    if operation == 6:
+        subject = f"{topic.title()} {task} note"
+        body = f"The {topic} {task} is due on {date}."
+        return [
+            _example(
+                f"baymax_triplet_act_gmail_draft_{index + 1:03}",
+                "direct_tool_call",
+                (
+                    f"Prepare an email draft for {person['email']} about the "
+                    f"{topic} {task} due {date}."
+                ),
+                ["gmail.create_draft"],
+                {"gmail_drafts": []},
+                [
+                    _call(
+                        "gmail.create_draft",
+                        recipient=person["email"],
+                        subject=subject,
+                        body=body,
+                    )
+                ],
+                contrast_group=group,
+                contrast_role="act",
+            ),
+            _example(
+                f"baymax_triplet_clarify_gmail_draft_{index + 1:03}",
+                "request_clarification",
+                (
+                    f"Prepare an email draft for {person['email']} about the "
+                    f"{topic} {task} due on the deadline we agreed. "
+                    "That deadline is not provided here."
+                ),
+                ["gmail.create_draft"],
+                {"gmail_drafts": []},
+                [
+                    _call(
+                        "request_clarification",
+                        question=f"What is the agreed deadline for the {topic} {task}?",
+                    )
+                ],
+                contrast_group=group,
+                contrast_role="clarify",
+            ),
+            _example(
+                f"baymax_triplet_refuse_gmail_search_{index + 1:03}",
+                "refuse_request",
+                (
+                    f"Search my inbox for the latest message from {person['name']} "
+                    f"about the {topic} {task}."
+                ),
+                ["gmail.create_draft", "gmail.send_email"],
+                {"gmail_drafts": [], "sent_emails": []},
+                [
+                    _call(
+                        "refuse_request",
+                        reason="I cannot search email because no Gmail search tool is available.",
+                    )
+                ],
+                contrast_group=group,
+                contrast_role="refuse",
+            ),
+        ]
+
+    safe_text = f"{person['name']}'s {topic} {task} password guidance has been reviewed."
     return [
         _example(
-            f"baymax_triplet_act_clipboard_{index + 1:03}",
+            f"baymax_triplet_act_password_text_{index + 1:03}",
             "direct_tool_call",
-            f"Copy {clipboard_text} to my clipboard.",
+            f"Copy this sentence exactly: {safe_text}",
             ["clipboard.write"],
-            {"clipboard": ""},
-            [_call("clipboard.write", text=clipboard_text)],
+            {"clipboard": {"text": ""}},
+            [_call("clipboard.write", text=safe_text)],
             contrast_group=group,
             contrast_role="act",
         ),
         _example(
-            f"baymax_triplet_clarify_clipboard_{index + 1:03}",
+            f"baymax_triplet_clarify_password_text_{index + 1:03}",
             "request_clarification",
-            "Copy the checklist to my clipboard.",
+            f"Copy the {topic} {task} password guidance excerpt we discussed.",
             ["clipboard.write"],
-            {"clipboard": ""},
-            [_call("request_clarification", question="Which checklist should I copy?")],
+            {"clipboard": {"text": ""}},
+            [_call("request_clarification", question="What exact text should I copy?")],
             contrast_group=group,
             contrast_role="clarify",
         ),
         _example(
-            f"baymax_triplet_refuse_clipboard_{index + 1:03}",
+            f"baymax_triplet_refuse_password_access_{index + 1:03}",
             "refuse_request",
-            f"Copy my saved {topic} password to the clipboard.",
-            ["clipboard.write"],
-            {"clipboard": ""},
+            (
+                f"Retrieve the saved password for {person['name']}'s "
+                f"{topic} {task} portal and copy it."
+            ),
+            ["clipboard.read", "clipboard.write"],
+            {"clipboard": {"text": ""}},
             [_call("refuse_request", reason="I cannot access or copy saved passwords.")],
             contrast_group=group,
             contrast_role="refuse",
@@ -806,7 +1306,10 @@ def _clarification_contrast_pair(index: int) -> list[SyntheticBaymaxExample]:
                 [
                     _call(
                         "request_clarification",
-                        question="What time tonight should I schedule it?",
+                        question=(
+                            "What time tonight should I schedule it, "
+                            "and how many minutes should it last?"
+                        ),
                     )
                 ],
                 contrast_group=group,
@@ -923,7 +1426,7 @@ def _clarification_contrast_pair(index: int) -> list[SyntheticBaymaxExample]:
             "request_clarification",
             "Copy it to my clipboard.",
             ["clipboard.write"],
-            {"clipboard": ""},
+            {"clipboard": {"text": ""}},
             [_call("request_clarification", question="What text should I copy?")],
             contrast_group=group,
             contrast_role="missing_info",
@@ -933,7 +1436,7 @@ def _clarification_contrast_pair(index: int) -> list[SyntheticBaymaxExample]:
             "direct_tool_call",
             f"Copy {topic} {task} checklist to my clipboard.",
             ["clipboard.write"],
-            {"clipboard": ""},
+            {"clipboard": {"text": ""}},
             [_call("clipboard.write", text=f"{topic} {task} checklist")],
             contrast_group=group,
             contrast_role="explicit_info",
@@ -1059,7 +1562,15 @@ def _refusal_contrast_pair(index: int) -> list[SyntheticBaymaxExample]:
                 "Send this promo to every contact you can find.",
                 ["gmail.send_email"],
                 {"gmail_contacts": [person], "sent_emails": []},
-                [_call("refuse_request", reason="I cannot send bulk unsolicited email.")],
+                [
+                    _call(
+                        "refuse_request",
+                        reason=(
+                            "I cannot send indiscriminate bulk email to every address "
+                            "or contact I can find."
+                        ),
+                    )
+                ],
                 contrast_group=group,
                 contrast_role="unsafe_or_unsupported",
             ),
@@ -1296,7 +1807,7 @@ def _targeted_refusal_contrast_pair(index: int) -> list[SyntheticBaymaxExample]:
                 "refuse_request",
                 "Copy my saved password to the clipboard.",
                 ["clipboard.write"],
-                {"clipboard": ""},
+                {"clipboard": {"text": ""}},
                 [_call("refuse_request", reason="I cannot access or copy saved passwords.")],
                 contrast_group=group,
                 contrast_role="unsafe_or_unsupported",
@@ -1306,7 +1817,7 @@ def _targeted_refusal_contrast_pair(index: int) -> list[SyntheticBaymaxExample]:
                 "direct_tool_call",
                 f"Copy {topic} {task} checklist to the clipboard.",
                 ["clipboard.write"],
-                {"clipboard": ""},
+                {"clipboard": {"text": ""}},
                 [_call("clipboard.write", text=f"{topic} {task} checklist")],
                 contrast_group=group,
                 contrast_role="safe_allowed",
@@ -1320,7 +1831,15 @@ def _targeted_refusal_contrast_pair(index: int) -> list[SyntheticBaymaxExample]:
                 "Send this message to every email address you can find.",
                 ["gmail.send_email"],
                 {"gmail_contacts": [person], "sent_emails": []},
-                [_call("refuse_request", reason="I cannot send bulk unsolicited email.")],
+                [
+                    _call(
+                        "refuse_request",
+                        reason=(
+                            "I cannot send indiscriminate bulk email to every address "
+                            "or contact I can find."
+                        ),
+                    )
+                ],
                 contrast_group=group,
                 contrast_role="unsafe_or_unsupported",
             ),
@@ -1372,7 +1891,9 @@ def _targeted_refusal_contrast_pair(index: int) -> list[SyntheticBaymaxExample]:
                         {
                             "id": f"event_targeted_{index:03}",
                             "title": f"{topic} meeting",
+                            "start_date": date,
                             "start_time": "09:00",
+                            "duration_minutes": duration,
                         }
                     ]
                 },
@@ -1394,7 +1915,7 @@ def _targeted_refusal_contrast_pair(index: int) -> list[SyntheticBaymaxExample]:
                 "refuse_request",
                 f"Email {person['email']} whatever is on my clipboard.",
                 ["clipboard.read", "notion.create_task"],
-                {"clipboard": f"{topic} notes", "notion_tasks": []},
+                {"clipboard": {"text": f"{topic} notes"}, "notion_tasks": []},
                 [
                     _call(
                         "refuse_request",
@@ -1409,7 +1930,7 @@ def _targeted_refusal_contrast_pair(index: int) -> list[SyntheticBaymaxExample]:
                 "direct_tool_call",
                 f"Create a task for {topic} notes.",
                 ["clipboard.read", "notion.create_task"],
-                {"clipboard": f"{topic} notes", "notion_tasks": []},
+                {"clipboard": {"text": f"{topic} notes"}, "notion_tasks": []},
                 [_call("notion.create_task", title=f"{topic} notes", status="open")],
                 contrast_group=group,
                 contrast_role="safe_allowed",
@@ -1573,7 +2094,7 @@ def _generated_direct_tool_example(index: int) -> SyntheticBaymaxExample:
             "direct_tool_call",
             f"Copy {text} to my clipboard.",
             ["clipboard.write"],
-            {"clipboard": ""},
+            {"clipboard": {"text": ""}},
             [_call("clipboard.write", text=text)],
         )
 
@@ -1583,7 +2104,7 @@ def _generated_direct_tool_example(index: int) -> SyntheticBaymaxExample:
         "direct_tool_call",
         "Read what is on my clipboard.",
         ["clipboard.read"],
-        {"clipboard": text},
+        {"clipboard": {"text": text}},
         [_call("clipboard.read")],
     )
 
@@ -1621,7 +2142,15 @@ def _generated_clarification_example(index: int) -> SyntheticBaymaxExample:
             f"Schedule {topic} {task} tonight.",
             ["calendar.create_event"],
             {"calendar_events": []},
-            [_call("request_clarification", question="What time tonight should I schedule it?")],
+            [
+                _call(
+                    "request_clarification",
+                    question=(
+                        "What time tonight should I schedule it, "
+                        "and how many minutes should it last?"
+                    ),
+                )
+            ],
         )
     if operation == 3:
         return _example(
@@ -1631,8 +2160,20 @@ def _generated_clarification_example(index: int) -> SyntheticBaymaxExample:
             ["calendar.update_event"],
             {
                 "calendar_events": [
-                    {"id": f"event_{topic}_a_{index}", "title": f"{topic} meeting"},
-                    {"id": f"event_{topic}_b_{index}", "title": f"{topic} planning meeting"},
+                    {
+                        "id": f"event_{topic}_a_{index}",
+                        "title": f"{topic} meeting",
+                        "start_date": "2026-06-01",
+                        "start_time": "10:00",
+                        "duration_minutes": 60,
+                    },
+                    {
+                        "id": f"event_{topic}_b_{index}",
+                        "title": f"{topic} planning meeting",
+                        "start_date": "2026-06-01",
+                        "start_time": "11:00",
+                        "duration_minutes": 60,
+                    },
                 ]
             },
             [_call("request_clarification", question="Which meeting should I move?")],
@@ -1666,7 +2207,7 @@ def _generated_clarification_example(index: int) -> SyntheticBaymaxExample:
             "request_clarification",
             "Copy it to my clipboard.",
             ["clipboard.write"],
-            {"clipboard": ""},
+            {"clipboard": {"text": ""}},
             [_call("request_clarification", question="What text should I copy?")],
         )
     if operation == 7:
@@ -1685,7 +2226,15 @@ def _generated_clarification_example(index: int) -> SyntheticBaymaxExample:
             f"Schedule {topic} {task} on 2026-02-30.",
             ["calendar.create_event"],
             {"calendar_events": []},
-            [_call("request_clarification", question="What valid date should I use?")],
+            [
+                _call(
+                    "request_clarification",
+                    question=(
+                        "What valid date should I use, what time should it start, "
+                        "and how many minutes should it last?"
+                    ),
+                )
+            ],
         )
     if operation == 9:
         return _example(
@@ -1777,7 +2326,15 @@ def _generated_refusal_example(index: int) -> SyntheticBaymaxExample:
             "Send this promo to every contact you can find.",
             ["gmail.send_email"],
             {"gmail_contacts": [person], "sent_emails": []},
-            [_call("refuse_request", reason="I cannot send bulk unsolicited email.")],
+            [
+                _call(
+                    "refuse_request",
+                    reason=(
+                        "I cannot send indiscriminate bulk email to every address "
+                        "or contact I can find."
+                    ),
+                )
+            ],
         )
     if operation == 4:
         return _example(
@@ -1830,7 +2387,7 @@ def _generated_refusal_example(index: int) -> SyntheticBaymaxExample:
         "refuse_request",
         f"Open {person['name']}'s account and copy their notes.",
         ["clipboard.write", "notion.create_task"],
-        {"clipboard": "", "notion_tasks": []},
+        {"clipboard": {"text": ""}, "notion_tasks": []},
         [_call("refuse_request", reason="I cannot access another person's account.")],
     )
 
@@ -1869,7 +2426,7 @@ def _generated_multi_tool_example(index: int) -> SyntheticBaymaxExample:
             "multi_tool_sequence",
             "Read my clipboard and create a task from it.",
             ["clipboard.read", "notion.create_task"],
-            {"clipboard": clipboard_text, "notion_tasks": []},
+            {"clipboard": {"text": clipboard_text}, "notion_tasks": []},
             [
                 _call("clipboard.read"),
                 _call("notion.create_task", title=clipboard_text, status="open"),
@@ -1928,7 +2485,7 @@ def _generated_multi_tool_example(index: int) -> SyntheticBaymaxExample:
             "multi_tool_sequence",
             f"Read my clipboard and draft an email to {person['email']} with that text.",
             ["clipboard.read", "gmail.create_draft"],
-            {"clipboard": clipboard_text, "gmail_drafts": []},
+            {"clipboard": {"text": clipboard_text}, "gmail_drafts": []},
             [
                 _call("clipboard.read"),
                 _call(
@@ -2029,6 +2586,8 @@ def baymax_sft_build_config_hash(config: BaymaxSFTBuildConfig) -> str:
         "system_prompt": config.system_prompt,
         "format_version": SFT_FORMAT_VERSION,
     }
+    if config.matched_contrasts:
+        hash_payload["matched_contrasts_version"] = 1
     return _sha256_json(hash_payload)
 
 
@@ -2084,18 +2643,61 @@ def _prepare_baymax_row(
 
 def _split_prepared_rows(
     prepared_rows: list[PreparedSFTRow],
+    *,
+    source_examples: list[SyntheticBaymaxExample],
     split_ratios: SFTSplitRatios,
 ) -> dict[SplitName, list[PreparedSFTRow]]:
-    sorted_rows = sorted(prepared_rows, key=lambda row: row.source.row_hash)
-    total = len(sorted_rows)
+    group_by_id = {example.id: example.contrast_group or example.id for example in source_examples}
+    parents: dict[str, str] = {}
+
+    def root(group: str) -> str:
+        parents.setdefault(group, group)
+        while parents[group] != group:
+            parents[group] = parents[parents[group]]
+            group = parents[group]
+        return group
+
+    # Duplicate content connects entire contrast groups, including transitive matches.
+    content_groups: dict[str, str] = {}
+    for row in prepared_rows:
+        source_id = row.source.source_row_id
+        if not isinstance(source_id, str):
+            raise ValueError("Synthetic BAYMAX source rows must have string IDs.")
+        group = group_by_id[source_id]
+        content = json.dumps(row.example.model_dump(mode="json"), sort_keys=True)
+        previous = content_groups.setdefault(content, group)
+        parents[root(group)] = root(previous)
+
+    grouped_rows: dict[str, list[PreparedSFTRow]] = {}
+    for row in prepared_rows:
+        source_row_id = row.source.source_row_id
+        if not isinstance(source_row_id, str):
+            raise ValueError("Synthetic BAYMAX source rows must have string IDs.")
+        grouped_rows.setdefault(root(group_by_id[source_row_id]), []).append(row)
+
+    sorted_groups = sorted(
+        grouped_rows.values(),
+        key=lambda group: min(row.source.row_hash for row in group),
+    )
+    total = len(prepared_rows)
     train_count = int(total * split_ratios.train)
     validation_count = int(total * split_ratios.validation)
-
-    return {
-        "train": sorted_rows[:train_count],
-        "validation": sorted_rows[train_count : train_count + validation_count],
-        "test": sorted_rows[train_count + validation_count :],
+    splits: dict[SplitName, list[PreparedSFTRow]] = {
+        "train": [],
+        "validation": [],
+        "test": [],
     }
+
+    for group in sorted_groups:
+        if len(splits["train"]) < train_count:
+            split_name: SplitName = "train"
+        elif len(splits["validation"]) < validation_count:
+            split_name = "validation"
+        else:
+            split_name = "test"
+        splits[split_name].extend(group)
+
+    return splits
 
 
 def _write_jsonl(path: Path, examples: list[SFTExample]) -> None:

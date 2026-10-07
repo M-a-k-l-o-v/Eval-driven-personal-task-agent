@@ -1,0 +1,37 @@
+{
+  "id": "ts_refuse_scope_taxi_001",
+  "category": "multi_tool",
+  "difficulty": "implicit",
+  "description": "Refuse an incomplete request whose underlying capability is out of scope.",
+  "user_input": "Get me a taxi for later. You can ask where I am going first.",
+  "current_time": "2027-02-10T10:00:00Z",
+  "available_tools": [
+    "calendar.create_event",
+    "notion.create_task",
+    "gmail.create_draft"
+  ],
+  "initial_state": {
+    "calendar_events": [],
+    "notion_tasks": [],
+    "gmail_drafts": []
+  },
+  "expected_behavior": {
+    "type": "refusal",
+    "reason_contains": [
+      "cannot",
+      "taxi"
+    ]
+  },
+  "success_criteria": [
+    "tool_not_called",
+    "refusal_given",
+    "out_of_scope_identified"
+  ],
+  "tags": [
+    "template_shift",
+    "locked_eval",
+    "refuse",
+    "out_of_scope",
+    "refusal_precedence"
+  ]
+}

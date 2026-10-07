@@ -7,7 +7,11 @@ import json
 from pathlib import Path
 from typing import Any, Literal
 
-from pydantic import BaseModel, ConfigDict, Field, field_validator
+from pydantic import BaseModel, ConfigDict, Field, ValidationError, field_validator
+
+from baymax.models.sft_dataset import SFTSplitManifest, SplitName
+
+SHA256_PATTERN = r"^[0-9a-f]{64}$"
 
 
 class TrainingConfigIssue(BaseModel):
@@ -27,12 +31,13 @@ class TrainingDataConfig(BaseModel):
     dataset_id: str
     revision: str
     format_version: str
+    system_prompt_sha256: str = Field(pattern=SHA256_PATTERN)
     train_path: Path
     validation_path: Path
     test_path: Path
     split_manifest_path: Path
     validation_report_path: Path
-    eval_scenarios_path: Path
+    eval_scenarios_paths: list[Path] = Field(min_length=1)
 
 
 class LoraTrainingConfig(BaseModel):
@@ -170,6 +175,9 @@ def validate_training_config(
             )
         )
 
+    if config.data.split_manifest_path.exists():
+        issues.extend(_manifest_issues(config))
+
     if check_paths:
         issues.extend(_path_issues(config))
 
@@ -196,8 +204,13 @@ def _path_issues(config: SFTTrainingConfig) -> list[TrainingConfigIssue]:
         "data.test_path": config.data.test_path,
         "data.split_manifest_path": config.data.split_manifest_path,
         "data.validation_report_path": config.data.validation_report_path,
-        "data.eval_scenarios_path": config.data.eval_scenarios_path,
     }
+    required_paths.update(
+        {
+            f"data.eval_scenarios_paths[{index}]": path
+            for index, path in enumerate(config.data.eval_scenarios_paths)
+        }
+    )
     issues: list[TrainingConfigIssue] = []
 
     for location, path in required_paths.items():
@@ -206,6 +219,69 @@ def _path_issues(config: SFTTrainingConfig) -> list[TrainingConfigIssue]:
                 TrainingConfigIssue(
                     location=location,
                     message=f"referenced path does not exist: {path}",
+                )
+            )
+
+    return issues
+
+
+def _manifest_issues(config: SFTTrainingConfig) -> list[TrainingConfigIssue]:
+    manifest_path = config.data.split_manifest_path
+    try:
+        manifest = SFTSplitManifest.model_validate_json(manifest_path.read_text(encoding="utf-8"))
+    except (OSError, ValidationError) as error:
+        return [
+            TrainingConfigIssue(
+                location="data.split_manifest_path",
+                message=f"could not load a valid split manifest from {manifest_path}: {error}",
+            )
+        ]
+
+    issues: list[TrainingConfigIssue] = []
+    identity_fields = {
+        "dataset_id": manifest.dataset_id,
+        "revision": manifest.revision,
+        "format_version": manifest.format_version,
+        "system_prompt_sha256": manifest.system_prompt_sha256,
+    }
+    for field_name, manifest_value in identity_fields.items():
+        config_value = getattr(config.data, field_name)
+        if config_value != manifest_value:
+            issues.append(
+                TrainingConfigIssue(
+                    location=f"data.{field_name}",
+                    message=(
+                        f"config value {config_value!r} does not match "
+                        f"split manifest value {manifest_value!r}"
+                    ),
+                )
+            )
+
+    split_paths: dict[SplitName, tuple[str, Path]] = {
+        "train": ("data.train_path", config.data.train_path),
+        "validation": ("data.validation_path", config.data.validation_path),
+        "test": ("data.test_path", config.data.test_path),
+    }
+    for split_name, (location, config_path) in split_paths.items():
+        manifest_split = manifest.splits.get(split_name)
+        if manifest_split is None:
+            issues.append(
+                TrainingConfigIssue(
+                    location="data.split_manifest_path",
+                    message=f"split manifest does not define the {split_name!r} split",
+                )
+            )
+            continue
+
+        manifest_path_value = Path(manifest_split.path)
+        if config_path != manifest_path_value:
+            issues.append(
+                TrainingConfigIssue(
+                    location=location,
+                    message=(
+                        f"config path {str(config_path)!r} does not match "
+                        f"split manifest path {str(manifest_path_value)!r}"
+                    ),
                 )
             )
 

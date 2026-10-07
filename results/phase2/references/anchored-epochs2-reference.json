@@ -1,0 +1,347 @@
+{
+  "format_version": "baymax-frozen-reference-v1",
+  "captured_on_local": "2026-10-07",
+  "reference_name": "target-compatible-anchored-act200-epochs2",
+  "status": "selected_development_reference",
+  "freeze_method": "SHA256 identity pinning only; existing files are not copied, overwritten or permission-locked",
+  "base_model": {
+    "repository": "Qwen/Qwen2.5-1.5B-Instruct",
+    "revision_recorded_in_adapter": null,
+    "limitation": "Exact base-model revision/weight hash was not recorded by the original run."
+  },
+  "training_config_hash": "ce9efa2db24a065dbdb4eb482c07a29a56bfbcbdce32495418eb54b92d985c40",
+  "dataset_revision": "329fab4d8f1604a4085d3ec50e05881e7c069717bb1428db7e592743bb07f03c",
+  "system_prompt_sha256": "a31446de6c8b67f1fc8ba8fc09ed8e2d7425ba832334dc8fd6fe2d55ef978468",
+  "seed": 1,
+  "training_recipe": {
+    "initialization": "fresh base model plus fresh LoRA adapter",
+    "epochs": 2,
+    "owner_run_overrides": {
+      "local_low_vram": true,
+      "max_train_rows": 1000,
+      "max_eval_rows": 200,
+      "max_sequence_length": 1024
+    },
+    "gradient_accumulation_steps": 16,
+    "source_of_overrides": "owner-run command and pasted training logs; not deserialized from training_args.bin",
+    "trainable_rows_reported": 974,
+    "validation_rows_reported": 195,
+    "tokenized_artifact_not_rerun": true,
+    "per_device_train_batch_size": 1,
+    "effective_batch_size_single_gpu": 16
+  },
+  "inference_recipe": {
+    "max_new_tokens": 256,
+    "temperature": 0,
+    "source": "owner-run evaluation commands; result metadata does not store these settings"
+  },
+  "checkpoint_state": {
+    "epoch": 2,
+    "global_step": 122,
+    "max_steps": 122,
+    "num_train_epochs": 2
+  },
+  "raw_data_prefixes": [
+    {
+      "path": "data/sft/v1/xlam-baymax-target-compatible-v14-act200-anchored-val200/train.jsonl",
+      "raw_row_cap": 1000,
+      "raw_prefix_sha256": "7c4a38f71578500e7beb4f56f3cef417bf78a0fe99ba88334c838ce8be57a0c9",
+      "hash_scope": "first capped JSONL lines, including original line endings"
+    },
+    {
+      "path": "data/sft/v1/xlam-baymax-target-compatible-v14-act200-anchored-val200/validation.jsonl",
+      "raw_row_cap": 200,
+      "raw_prefix_sha256": "0b62620120f1ecce576a24440c1dbf464704fd5a04484830e2a2638187349f39",
+      "hash_scope": "first capped JSONL lines, including original line endings"
+    }
+  ],
+  "files": [
+    {
+      "path": "configs/sft/qwen2_5_1_5b_lora_target_compatible_v14_act200_anchored_val200_epochs2.json",
+      "role": "training_config",
+      "bytes": 2478,
+      "sha256": "69b348c8dd2f8ecf624e119d4f56753416be615e4a3233b288701f9532f0d789"
+    },
+    {
+      "path": "models/qwen2_5_1_5b_lora_target_compatible_v14_act200_anchored_val200_epochs2/adapter/adapter_config.json",
+      "role": "final_adapter",
+      "bytes": 1125,
+      "sha256": "1fbcce6f9c8848359425e4e88fc9deca72c4cdef3c7e396e1d055a8e423322c9"
+    },
+    {
+      "path": "models/qwen2_5_1_5b_lora_target_compatible_v14_act200_anchored_val200_epochs2/adapter/adapter_model.safetensors",
+      "role": "final_adapter",
+      "bytes": 4372840,
+      "sha256": "6d1122f5f44a607a18a28778cd02d6df61f5f638a56aa3c882396cbe637d8f2b"
+    },
+    {
+      "path": "models/qwen2_5_1_5b_lora_target_compatible_v14_act200_anchored_val200_epochs2/adapter/chat_template.jinja",
+      "role": "final_adapter",
+      "bytes": 2561,
+      "sha256": "8aa40ce145adb73cb3a75194dc0224702a95850ec5275cabb728496bbd749fc6"
+    },
+    {
+      "path": "models/qwen2_5_1_5b_lora_target_compatible_v14_act200_anchored_val200_epochs2/adapter/README.md",
+      "role": "final_adapter",
+      "bytes": 5206,
+      "sha256": "2db35a7c784c24c5aaef702c1beb778a045dc59eb13cdd9cc2eee302c7a73de4"
+    },
+    {
+      "path": "models/qwen2_5_1_5b_lora_target_compatible_v14_act200_anchored_val200_epochs2/adapter/tokenizer.json",
+      "role": "final_adapter",
+      "bytes": 11421991,
+      "sha256": "2f55e63353d3d978b390d346bae531be8b83bc9532c0be500d62b7253aa4c595"
+    },
+    {
+      "path": "models/qwen2_5_1_5b_lora_target_compatible_v14_act200_anchored_val200_epochs2/adapter/tokenizer_config.json",
+      "role": "final_adapter",
+      "bytes": 724,
+      "sha256": "154e5ff1e7c152d964edf30da854ea62465c767719ac8e97e58babf2d4fa9079"
+    },
+    {
+      "path": "models/qwen2_5_1_5b_lora_target_compatible_v14_act200_anchored_val200_epochs2/checkpoint-122/adapter_config.json",
+      "role": "training_checkpoint",
+      "bytes": 1125,
+      "sha256": "1fbcce6f9c8848359425e4e88fc9deca72c4cdef3c7e396e1d055a8e423322c9"
+    },
+    {
+      "path": "models/qwen2_5_1_5b_lora_target_compatible_v14_act200_anchored_val200_epochs2/checkpoint-122/adapter_model.safetensors",
+      "role": "training_checkpoint",
+      "bytes": 4372840,
+      "sha256": "6d1122f5f44a607a18a28778cd02d6df61f5f638a56aa3c882396cbe637d8f2b"
+    },
+    {
+      "path": "models/qwen2_5_1_5b_lora_target_compatible_v14_act200_anchored_val200_epochs2/checkpoint-122/chat_template.jinja",
+      "role": "training_checkpoint",
+      "bytes": 2561,
+      "sha256": "8aa40ce145adb73cb3a75194dc0224702a95850ec5275cabb728496bbd749fc6"
+    },
+    {
+      "path": "models/qwen2_5_1_5b_lora_target_compatible_v14_act200_anchored_val200_epochs2/checkpoint-122/optimizer.pt",
+      "role": "training_checkpoint",
+      "bytes": 8812555,
+      "sha256": "19cee6d0d492940bfa20adab3bfd67a779a0f8ec3814199557cb3f779794752b"
+    },
+    {
+      "path": "models/qwen2_5_1_5b_lora_target_compatible_v14_act200_anchored_val200_epochs2/checkpoint-122/README.md",
+      "role": "training_checkpoint",
+      "bytes": 5206,
+      "sha256": "2db35a7c784c24c5aaef702c1beb778a045dc59eb13cdd9cc2eee302c7a73de4"
+    },
+    {
+      "path": "models/qwen2_5_1_5b_lora_target_compatible_v14_act200_anchored_val200_epochs2/checkpoint-122/rng_state.pth",
+      "role": "training_checkpoint",
+      "bytes": 14645,
+      "sha256": "3391abc8dc17d6bef1a610e4e69f265d82346d90215475b3abedee926b020a65"
+    },
+    {
+      "path": "models/qwen2_5_1_5b_lora_target_compatible_v14_act200_anchored_val200_epochs2/checkpoint-122/scheduler.pt",
+      "role": "training_checkpoint",
+      "bytes": 1465,
+      "sha256": "d16142045636222a8e1016ddfab5931ba912ed7cac278f4cbcdd07d5aeb6b5f8"
+    },
+    {
+      "path": "models/qwen2_5_1_5b_lora_target_compatible_v14_act200_anchored_val200_epochs2/checkpoint-122/tokenizer.json",
+      "role": "training_checkpoint",
+      "bytes": 11421991,
+      "sha256": "2f55e63353d3d978b390d346bae531be8b83bc9532c0be500d62b7253aa4c595"
+    },
+    {
+      "path": "models/qwen2_5_1_5b_lora_target_compatible_v14_act200_anchored_val200_epochs2/checkpoint-122/tokenizer_config.json",
+      "role": "training_checkpoint",
+      "bytes": 724,
+      "sha256": "154e5ff1e7c152d964edf30da854ea62465c767719ac8e97e58babf2d4fa9079"
+    },
+    {
+      "path": "models/qwen2_5_1_5b_lora_target_compatible_v14_act200_anchored_val200_epochs2/checkpoint-122/trainer_state.json",
+      "role": "training_checkpoint",
+      "bytes": 3322,
+      "sha256": "10aa14389405ccc0149c0f7874bc9cfc9e1551debac5e3486494d5b80e54b44f"
+    },
+    {
+      "path": "models/qwen2_5_1_5b_lora_target_compatible_v14_act200_anchored_val200_epochs2/checkpoint-122/training_args.bin",
+      "role": "training_checkpoint",
+      "bytes": 5329,
+      "sha256": "aacdf1d608cc16eeb71f96b198ab6b6e8e39c6e316c2445f2f7f2a7c29c48f35"
+    },
+    {
+      "path": "data/sft/v1/xlam-baymax-target-compatible-v14-act200-anchored-val200/split-manifest.json",
+      "role": "dataset_manifest",
+      "bytes": 11502352,
+      "sha256": "c7c264f84b2324bc2f53cf3afb19bfc7c2ffce4d8ba8dc51b712511b85b98dc7"
+    },
+    {
+      "path": "data/sft/v1/xlam-baymax-target-compatible-v14-act200-anchored-val200/validation-report.json",
+      "role": "dataset_validation_report",
+      "bytes": 1543,
+      "sha256": "970e1f517d64adb3dce0b98b5c1025b5270aeb7dbd5619c1c48c783060d2a916"
+    },
+    {
+      "path": "data/sft/v1/xlam-baymax-target-compatible-v14-act200-anchored-val200/sampling-report.json",
+      "role": "anchored_sampling_report",
+      "bytes": 8059,
+      "sha256": "35271a42aceab0a4c0e31c5829c098694723318677def7138a04767c9cf8fb10"
+    },
+    {
+      "path": "results/phase2/qwen-lora/baymax-mix/target-compatible-generator14-act200-anchored-train1k-val200-epochs2-combined-150.json",
+      "role": "reference_result",
+      "bytes": 269990,
+      "sha256": "b00b78b51b1b58f88090cef2daa4b1526261543120c0586d796a31250733ed28"
+    },
+    {
+      "path": "results/phase2/template-shift/target-compatible-anchored-epochs2-template-shift-30.json",
+      "role": "reference_result",
+      "bytes": 51276,
+      "sha256": "6d2cb88ae0babb884b18f72aa9da49166db0807204b47b01d7f5bcacd58c4423"
+    }
+  ],
+  "results": [
+    {
+      "path": "results/phase2/qwen-lora/baymax-mix/target-compatible-generator14-act200-anchored-train1k-val200-epochs2-combined-150.json",
+      "run_id": "ceb14197-beb7-484a-bc69-a12aa8d7d785",
+      "timestamp": "2026-10-06T15:29:45.372202+00:00",
+      "backend_name": "local-lora:Qwen/Qwen2.5-1.5B-Instruct",
+      "scenario_count": 150,
+      "task_success_count": 44,
+      "aggregate_metrics": {
+        "average_argument_accuracy": 0.770888888888889,
+        "average_clarification_accuracy": 0.075,
+        "average_decision_accuracy": 0.5675675675675675,
+        "average_hallucination_rate": 0.02,
+        "average_latency_ms": 1827.8,
+        "average_refusal_accuracy": 0.1724137931034483,
+        "average_tool_call_accuracy": 0.6,
+        "decision_coverage_rate": 0.9866666666666667,
+        "invalid_output_rate": 0.013333333333333334,
+        "macro_f1": 0.5138384257817457,
+        "task_success_rate": 0.29333333333333333,
+        "total_cost_usd": 0
+      },
+      "routing_metrics": {
+        "macro_f1": 0.5138384257817457,
+        "invalid_output_rate": 0.013333333333333334,
+        "decision_confusion_matrix": {
+          "act": {
+            "act": 57,
+            "clarify": 21,
+            "refuse": 3,
+            "invalid_or_unknown": 0
+          },
+          "clarify": {
+            "act": 20,
+            "clarify": 11,
+            "refuse": 9,
+            "invalid_or_unknown": 0
+          },
+          "refuse": {
+            "act": 11,
+            "clarify": 0,
+            "refuse": 16,
+            "invalid_or_unknown": 2
+          }
+        },
+        "decision_class_metrics": {
+          "act": {
+            "support": 81,
+            "precision": 0.6477272727272727,
+            "recall": 0.7037037037037037,
+            "f1": 0.6745562130177515
+          },
+          "clarify": {
+            "support": 40,
+            "precision": 0.34375,
+            "recall": 0.275,
+            "f1": 0.3055555555555556
+          },
+          "refuse": {
+            "support": 29,
+            "precision": 0.5714285714285714,
+            "recall": 0.5517241379310345,
+            "f1": 0.5614035087719298
+          }
+        }
+      },
+      "benchmark_config": {
+        "runner": "agent_lora",
+        "uses_fake_adapters": true
+      }
+    },
+    {
+      "path": "results/phase2/template-shift/target-compatible-anchored-epochs2-template-shift-30.json",
+      "run_id": "7dd9d8f3-6a2b-4ed7-8e01-6531b10b1399",
+      "timestamp": "2026-10-07T12:54:34.064749+00:00",
+      "backend_name": "local-lora:Qwen/Qwen2.5-1.5B-Instruct",
+      "scenario_count": 30,
+      "task_success_count": 5,
+      "aggregate_metrics": {
+        "average_argument_accuracy": 0.6944444444444444,
+        "average_clarification_accuracy": 0.25,
+        "average_decision_accuracy": 0.35714285714285715,
+        "average_hallucination_rate": 0,
+        "average_latency_ms": 1783.7333333333333,
+        "average_refusal_accuracy": 0.25,
+        "average_tool_call_accuracy": 0.43333333333333335,
+        "decision_coverage_rate": 0.9333333333333333,
+        "invalid_output_rate": 0.06666666666666667,
+        "macro_f1": 0.3447507658033973,
+        "task_success_rate": 0.16666666666666666,
+        "total_cost_usd": 0
+      },
+      "routing_metrics": {
+        "macro_f1": 0.3447507658033973,
+        "invalid_output_rate": 0.06666666666666667,
+        "decision_confusion_matrix": {
+          "act": {
+            "act": 3,
+            "clarify": 6,
+            "refuse": 1,
+            "invalid_or_unknown": 0
+          },
+          "clarify": {
+            "act": 5,
+            "clarify": 2,
+            "refuse": 3,
+            "invalid_or_unknown": 0
+          },
+          "refuse": {
+            "act": 3,
+            "clarify": 0,
+            "refuse": 5,
+            "invalid_or_unknown": 2
+          }
+        },
+        "decision_class_metrics": {
+          "act": {
+            "support": 10,
+            "precision": 0.2727272727272727,
+            "recall": 0.3,
+            "f1": 0.2857142857142857
+          },
+          "clarify": {
+            "support": 10,
+            "precision": 0.25,
+            "recall": 0.2,
+            "f1": 0.2222222222222222
+          },
+          "refuse": {
+            "support": 10,
+            "precision": 0.5555555555555556,
+            "recall": 0.5,
+            "f1": 0.5263157894736842
+          }
+        }
+      },
+      "benchmark_config": {
+        "runner": "agent_lora",
+        "uses_fake_adapters": true
+      }
+    }
+  ],
+  "limitations": [
+    "Both benchmark suites have been repeatedly used for development, not untouched final testing.",
+    "An earlier bounded similarity audit found near-duplicate v1 wording in the current training cap.",
+    "Raw prefix hashes cover the capped inputs, not the complete uncapped dataset files.",
+    "Hashes detect drift on recheck; they do not prevent a user or script from overwriting a file."
+  ],
+  "training_config_hash_scope": "Canonical config hash from training_config_hash; file-byte hashes are recorded separately. CLI overrides are listed under training_recipe."
+}

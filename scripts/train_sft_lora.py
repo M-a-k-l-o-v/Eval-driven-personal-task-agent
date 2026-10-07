@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 from pathlib import Path
 
+from baymax.models.sft_artifact_report import SFTArtifactReport
 from baymax.models.sft_training import (
     SFTTrainingOverrides,
     TrainingDependencyError,
@@ -108,7 +109,81 @@ def main() -> int:
     print(f"Output dir: {result.plan.output_dir}")
     print(f"Adapter path: {result.plan.adapter_path}")
     print(f"Config hash: {result.plan.config_hash}")
+    if result.train_artifact_report is not None:
+        print()
+        print("Final training artifact")
+        print(_format_artifact_report(result.train_artifact_report))
+    if result.validation_artifact_report is not None:
+        print()
+        print("Final validation artifact")
+        print(_format_artifact_report(result.validation_artifact_report))
     return 0
+
+
+def _format_artifact_report(report: SFTArtifactReport) -> str:
+    lines = [
+        _format_table(
+            ["class", "rows", "row %", "trainable tokens", "token %"],
+            [
+                [
+                    row.behavior_class,
+                    str(row.rows),
+                    _format_percent(row.row_percent),
+                    str(row.trainable_tokens),
+                    _format_percent(row.token_percent),
+                ]
+                for row in report.behavior
+            ],
+        ),
+        "",
+        "source:",
+        _format_table(
+            ["source", "rows", "row %"],
+            [
+                [row.source, str(row.rows), _format_percent(row.row_percent)]
+                for row in report.source
+            ],
+        ),
+        "",
+        "duplicates:",
+        f"exact duplicate rows: {report.duplicates.exact_duplicate_rows}",
+        f"unique rows: {report.duplicates.unique_rows}",
+        "",
+        "duplicates by class:",
+        _format_table(
+            ["class", "exact duplicate rows", "unique rows"],
+            [
+                [
+                    row.behavior_class,
+                    str(row.exact_duplicate_rows),
+                    str(row.unique_rows),
+                ]
+                for row in report.duplicates_by_behavior
+            ],
+        ),
+    ]
+    return "\n".join(lines)
+
+
+def _format_table(headers: list[str], rows: list[list[str]]) -> str:
+    widths = [max(len(row[index]) for row in [headers, *rows]) for index in range(len(headers))]
+    lines = [
+        "  " + "  ".join(_pad(value, widths[index]) for index, value in enumerate(headers)),
+        "  " + "  ".join("-" * width for width in widths),
+    ]
+    lines.extend(
+        "  " + "  ".join(_pad(value, widths[index]) for index, value in enumerate(row))
+        for row in rows
+    )
+    return "\n".join(lines)
+
+
+def _format_percent(value: float) -> str:
+    return f"{value * 100:.1f}%"
+
+
+def _pad(value: str, width: int) -> str:
+    return value + (" " * (width - len(value)))
 
 
 if __name__ == "__main__":

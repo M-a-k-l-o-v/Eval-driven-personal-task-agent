@@ -14,6 +14,8 @@ from baymax.eval.scenario_loader import (
     ToolCallsExpectedBehavior,
 )
 
+DecisionType = Literal["act", "clarify", "refuse"]
+
 FailureReason = Literal[
     "wrong_tool_order",
     "missing_tool_call",
@@ -24,6 +26,8 @@ FailureReason = Literal[
     "premature_tool_call",
     "wrong_tool_call",
     "wrong_argument",
+    "wrong_decision",
+    "invalid_model_output",
 ]
 
 
@@ -43,6 +47,8 @@ class AgentResponse(BaseModel):
 
     tool_calls: list[AgentToolCall] = Field(default_factory=list)
     message: str | None = None
+    decision_type: DecisionType | None = None
+    parse_error: str | None = None
 
 
 class ScenarioScore(BaseModel):
@@ -55,6 +61,7 @@ class ScenarioScore(BaseModel):
     argument_accuracy: float
     clarification_accuracy: float | None
     refusal_accuracy: float | None
+    decision_accuracy: float | None = None
     unordered_tool_match: float
     hallucination_rate: float
     failure_reasons: list[FailureReason] = Field(default_factory=list)
@@ -64,6 +71,22 @@ def score_response(scenario: Scenario, response: AgentResponse) -> ScenarioScore
     """Score an agent response against the scenario's expected behavior."""
 
     expected_behavior = scenario.expected_behavior
+    if response.parse_error is not None:
+        return ScenarioScore(
+            task_success=False,
+            tool_call_accuracy=0.0,
+            argument_accuracy=0.0,
+            clarification_accuracy=(
+                0.0 if isinstance(expected_behavior, ClarificationExpectedBehavior) else None
+            ),
+            refusal_accuracy=0.0
+            if isinstance(expected_behavior, RefusalExpectedBehavior)
+            else None,
+            decision_accuracy=None,
+            unordered_tool_match=0.0,
+            hallucination_rate=0.0,
+            failure_reasons=["invalid_model_output"],
+        )
     if isinstance(expected_behavior, ToolCallExpectedBehavior):
         expected_tools = [expected_behavior.tool]
     elif isinstance(expected_behavior, ToolCallsExpectedBehavior):
@@ -80,6 +103,10 @@ def score_response(scenario: Scenario, response: AgentResponse) -> ScenarioScore
     )
     clarification_accuracy = _clarification_accuracy(expected_behavior, response)
     refusal_accuracy = _refusal_accuracy(expected_behavior, response)
+    decision_accuracy = _decision_accuracy(expected_behavior, response.decision_type)
+
+    if decision_accuracy == 0.0:
+        failure_reasons.append("wrong_decision")
 
     if isinstance(expected_behavior, ClarificationExpectedBehavior):
         if actual_tools:
@@ -111,10 +138,28 @@ def score_response(scenario: Scenario, response: AgentResponse) -> ScenarioScore
         argument_accuracy=argument_accuracy,
         clarification_accuracy=clarification_accuracy,
         refusal_accuracy=refusal_accuracy,
+        decision_accuracy=decision_accuracy,
         unordered_tool_match=_unordered_tool_match(expected_tools, actual_tools),
         hallucination_rate=hallucination_rate,
         failure_reasons=failure_reasons,
     )
+
+
+def _decision_accuracy(
+    expected_behavior: object,
+    actual_decision: DecisionType | None,
+) -> float | None:
+    if actual_decision is None:
+        return None
+
+    if isinstance(expected_behavior, ClarificationExpectedBehavior):
+        expected_decision: DecisionType = "clarify"
+    elif isinstance(expected_behavior, RefusalExpectedBehavior):
+        expected_decision = "refuse"
+    else:
+        expected_decision = "act"
+
+    return 1.0 if actual_decision == expected_decision else 0.0
 
 
 def _ordered_tool_accuracy(expected_tools: list[str], actual_tools: list[str]) -> float:

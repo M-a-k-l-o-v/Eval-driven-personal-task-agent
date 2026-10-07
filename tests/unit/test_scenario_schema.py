@@ -8,7 +8,7 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 SCHEMA_PATH = REPO_ROOT / "src" / "baymax" / "eval" / "schemas" / "scenario.schema.json"
 
 
-@pytest.mark.parametrize("suite_name", ["v1", "v2"])
+@pytest.mark.parametrize("suite_name", ["v1", "v2", "template_shift_v1"])
 def test_all_scenarios_validate_against_committed_json_schema(suite_name: str) -> None:
     with SCHEMA_PATH.open(encoding="utf-8") as schema_file:
         schema = json.load(schema_file)

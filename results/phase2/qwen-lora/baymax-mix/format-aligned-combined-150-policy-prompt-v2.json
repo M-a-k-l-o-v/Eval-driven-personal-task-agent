@@ -1,0 +1,6102 @@
+{
+  "aggregate_metrics": {
+    "average_argument_accuracy": 0.49222222222222217,
+    "average_clarification_accuracy": 0.2375,
+    "average_hallucination_rate": 0.006666666666666667,
+    "average_latency_ms": 2321.733333333333,
+    "average_refusal_accuracy": 0.1896551724137931,
+    "average_tool_call_accuracy": 0.44666666666666666,
+    "task_success_rate": 0.04,
+    "total_cost_usd": 0.0
+  },
+  "backend_name": "local-lora:Qwen/Qwen2.5-1.5B-Instruct",
+  "benchmark_config": {
+    "runner": "agent_lora",
+    "uses_fake_adapters": true
+  },
+  "run_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9",
+  "scenario_count": 150,
+  "scenario_results": [
+    {
+      "agent_response": {
+        "message": "Could you please specify the date?",
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [],
+        "sent_emails": []
+      },
+      "latency_ms": 2599,
+      "raw_model_output": "[{\"arguments\": {\"question\": \"Could you please specify the date?\"}, \"name\": \"request_clarification\"}]",
+      "scenario_id": "calendar_ambiguous_tonight_001",
+      "score": {
+        "argument_accuracy": 1.0,
+        "clarification_accuracy": 0.0,
+        "failure_reasons": [
+          "missing_clarification"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": null,
+        "task_success": false,
+        "tool_call_accuracy": 1.0,
+        "unordered_tool_match": 1.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.calendar_ambiguous_tonight_001.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": "I cannot comply with this request: The user wants to cancel their event.",
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [
+          {
+            "duration_minutes": 30,
+            "id": "evt_marv_sync_001",
+            "start_date": "2026-05-18",
+            "start_time": "14:00",
+            "title": "Meeting with Marv"
+          }
+        ],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [],
+        "sent_emails": []
+      },
+      "latency_ms": 2154,
+      "raw_model_output": "[{\"arguments\": {\"reason\": \"The user wants to cancel their event.\"}, \"name\": \"refuse_request\"}]",
+      "scenario_id": "calendar_cancel_confirm_001",
+      "score": {
+        "argument_accuracy": 1.0,
+        "clarification_accuracy": null,
+        "failure_reasons": [
+          "missing_refusal"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": 0.5,
+        "task_success": false,
+        "tool_call_accuracy": 1.0,
+        "unordered_tool_match": 1.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.calendar_cancel_confirm_001.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": "Can you clarify what time tomorrow would work?",
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [],
+        "sent_emails": []
+      },
+      "latency_ms": 2276,
+      "raw_model_output": "[{\"arguments\": {\"question\": \"Can you clarify what time tomorrow would work?\"}, \"name\": \"request_clarification\"}]",
+      "scenario_id": "calendar_clarify_time_001",
+      "score": {
+        "argument_accuracy": 1.0,
+        "clarification_accuracy": 1.0,
+        "failure_reasons": [],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": null,
+        "task_success": true,
+        "tool_call_accuracy": 1.0,
+        "unordered_tool_match": 1.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.calendar_clarify_time_001.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": "Do you want to schedule a new event?",
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [
+          {
+            "duration_minutes": 120,
+            "id": "evt_linear_algebra_001",
+            "start_date": "2026-05-19",
+            "start_time": "16:00",
+            "title": "Linear algebra revision"
+          }
+        ],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [],
+        "sent_emails": []
+      },
+      "latency_ms": 2195,
+      "raw_model_output": "[{\"arguments\": {\"question\": \"Do you want to schedule a new event?\"}, \"name\": \"request_clarification\"}]",
+      "scenario_id": "calendar_conflict_001",
+      "score": {
+        "argument_accuracy": 1.0,
+        "clarification_accuracy": 0.0,
+        "failure_reasons": [
+          "missing_clarification"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": null,
+        "task_success": false,
+        "tool_call_accuracy": 1.0,
+        "unordered_tool_match": 1.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.calendar_conflict_001.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": null,
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [
+          {
+            "duration_minutes": 30,
+            "id": "evt_marv_sync_001",
+            "start_date": "2026-05-18",
+            "start_time": "14:00",
+            "title": "Meeting with Marv"
+          }
+        ],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [],
+        "sent_emails": []
+      },
+      "latency_ms": 2811,
+      "raw_model_output": "[{\"arguments\": {\"question\": \"Do you want me to move your event 'Marv Sync' to May 18th at 17:00?\"}}]",
+      "scenario_id": "calendar_contextual_reschedule_001",
+      "score": {
+        "argument_accuracy": 0.0,
+        "clarification_accuracy": null,
+        "failure_reasons": [
+          "missing_tool_call",
+          "wrong_tool_call"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": null,
+        "task_success": false,
+        "tool_call_accuracy": 0.0,
+        "unordered_tool_match": 0.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.calendar_contextual_reschedule_001.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": "Do you want to schedule a linear algebra revision?",
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [],
+        "sent_emails": []
+      },
+      "latency_ms": 2233,
+      "raw_model_output": "[{\"arguments\": {\"question\": \"Do you want to schedule a linear algebra revision?\"}, \"name\": \"request_clarification\"}]",
+      "scenario_id": "calendar_create_001",
+      "score": {
+        "argument_accuracy": 0.0,
+        "clarification_accuracy": null,
+        "failure_reasons": [
+          "missing_tool_call",
+          "wrong_tool_call"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": null,
+        "task_success": false,
+        "tool_call_accuracy": 0.0,
+        "unordered_tool_match": 0.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.calendar_create_001.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": "Could you please specify the date?",
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [],
+        "sent_emails": []
+      },
+      "latency_ms": 1988,
+      "raw_model_output": "[{\"arguments\": {\"question\": \"Could you please specify the date?\"}, \"name\": \"request_clarification\"}]",
+      "scenario_id": "calendar_invalid_duration_001",
+      "score": {
+        "argument_accuracy": 1.0,
+        "clarification_accuracy": 0.0,
+        "failure_reasons": [
+          "missing_clarification"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": null,
+        "task_success": false,
+        "tool_call_accuracy": 1.0,
+        "unordered_tool_match": 1.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.calendar_invalid_duration_001.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": "What calendar events do I have tomorrow?",
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [
+          {
+            "duration_minutes": 120,
+            "id": "evt_linear_algebra_001",
+            "start_date": "2026-05-19",
+            "start_time": "16:00",
+            "title": "Linear algebra revision"
+          }
+        ],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [],
+        "sent_emails": []
+      },
+      "latency_ms": 2280,
+      "raw_model_output": "[{\"arguments\": {\"question\": \"What calendar events do I have tomorrow?\"}, \"name\": \"request_clarification\"}]",
+      "scenario_id": "calendar_list_tomorrow_001",
+      "score": {
+        "argument_accuracy": 1.0,
+        "clarification_accuracy": null,
+        "failure_reasons": [
+          "missing_refusal"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": 0.0,
+        "task_success": false,
+        "tool_call_accuracy": 1.0,
+        "unordered_tool_match": 1.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.calendar_list_tomorrow_001.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": "Do you want me to move your meeting with Marv to 5pm?",
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [
+          {
+            "duration_minutes": 30,
+            "id": "evt_marv_morning_001",
+            "start_date": "2026-05-18",
+            "start_time": "10:00",
+            "title": "Meeting with Marv"
+          },
+          {
+            "duration_minutes": 30,
+            "id": "evt_marv_afternoon_001",
+            "start_date": "2026-05-18",
+            "start_time": "14:00",
+            "title": "Meeting with Marv"
+          }
+        ],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [],
+        "sent_emails": []
+      },
+      "latency_ms": 2604,
+      "raw_model_output": "[{\"arguments\": {\"question\": \"Do you want me to move your meeting with Marv to 5pm?\"}, \"name\": \"request_clarification\"}]",
+      "scenario_id": "calendar_multiple_matching_meetings_001",
+      "score": {
+        "argument_accuracy": 1.0,
+        "clarification_accuracy": 0.5,
+        "failure_reasons": [
+          "missing_clarification"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": null,
+        "task_success": false,
+        "tool_call_accuracy": 1.0,
+        "unordered_tool_match": 1.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.calendar_multiple_matching_meetings_001.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": "Do you want me to move your meeting with Tadashi?",
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [
+          {
+            "duration_minutes": 30,
+            "id": "evt_marv_sync_001",
+            "start_date": "2026-05-18",
+            "start_time": "14:00",
+            "title": "Meeting with Marv"
+          }
+        ],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [],
+        "sent_emails": []
+      },
+      "latency_ms": 2352,
+      "raw_model_output": "[{\"arguments\": {\"question\": \"Do you want me to move your meeting with Tadashi?\"}, \"name\": \"request_clarification\"}]",
+      "scenario_id": "calendar_no_matching_reschedule_001",
+      "score": {
+        "argument_accuracy": 1.0,
+        "clarification_accuracy": 1.0,
+        "failure_reasons": [],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": null,
+        "task_success": true,
+        "tool_call_accuracy": 1.0,
+        "unordered_tool_match": 1.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.calendar_no_matching_reschedule_001.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": "When would you like to start?",
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [],
+        "sent_emails": []
+      },
+      "latency_ms": 2026,
+      "raw_model_output": "[{\"arguments\": {\"question\": \"When would you like to start?\"}, \"name\": \"request_clarification\"}]",
+      "scenario_id": "calendar_relative_time_001",
+      "score": {
+        "argument_accuracy": 0.0,
+        "clarification_accuracy": null,
+        "failure_reasons": [
+          "missing_tool_call",
+          "wrong_tool_call"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": null,
+        "task_success": false,
+        "tool_call_accuracy": 0.0,
+        "unordered_tool_match": 0.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.calendar_relative_time_001.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": null,
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [],
+        "sent_emails": []
+      },
+      "latency_ms": 1526,
+      "raw_model_output": "[{\"arguments\": {\"question\": \"Is it possible to schedule a call?\"}}]",
+      "scenario_id": "calendar_timezone_create_001",
+      "score": {
+        "argument_accuracy": 0.0,
+        "clarification_accuracy": null,
+        "failure_reasons": [
+          "missing_tool_call",
+          "wrong_tool_call"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": null,
+        "task_success": false,
+        "tool_call_accuracy": 0.0,
+        "unordered_tool_match": 0.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.calendar_timezone_create_001.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": "Do you want to update the duration of your Linear Algebra event?",
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [
+          {
+            "duration_minutes": 120,
+            "id": "evt_linear_algebra_001",
+            "start_date": "2026-05-19",
+            "start_time": "16:00",
+            "title": "Linear algebra revision"
+          }
+        ],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [],
+        "sent_emails": []
+      },
+      "latency_ms": 2445,
+      "raw_model_output": "[{\"arguments\": {\"question\": \"Do you want to update the duration of your Linear Algebra event?\"}, \"name\": \"request_clarification\"}]",
+      "scenario_id": "calendar_update_duration_001",
+      "score": {
+        "argument_accuracy": 0.0,
+        "clarification_accuracy": null,
+        "failure_reasons": [
+          "missing_tool_call",
+          "wrong_tool_call"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": null,
+        "task_success": false,
+        "tool_call_accuracy": 0.0,
+        "unordered_tool_match": 0.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.calendar_update_duration_001.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": null,
+        "tool_calls": [
+          {
+            "arguments": {
+              "due_date": "2026-05-18T09:00:00+00:00",
+              "status": "open",
+              "title": "Finish ML assignment by Friday. Also email Omar the lecture notes tonight."
+            },
+            "tool": "notion.create_task"
+          }
+        ]
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": "Finish ML assignment by Friday. Also email Omar the lecture notes tonight."
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [
+          {
+            "due_date": "2026-05-18T09:00:00+00:00",
+            "id": "task_fake_notion_001",
+            "status": "open",
+            "title": "Finish ML assignment by Friday. Also email Omar the lecture notes tonight."
+          }
+        ],
+        "sent_emails": []
+      },
+      "latency_ms": 4882,
+      "raw_model_output": "[{\"arguments\": {\"due_date\": \"2026-05-18T09:00:00+00:00\", \"status\": \"open\", \"title\": \"Finish ML assignment by Friday. Also email Omar the lecture notes tonight.\"}, \"name\": \"notion.create_task\"}]",
+      "scenario_id": "clipboard_clarify_multiple_tasks_001",
+      "score": {
+        "argument_accuracy": 1.0,
+        "clarification_accuracy": 0.0,
+        "failure_reasons": [
+          "premature_tool_call",
+          "missing_clarification"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": null,
+        "task_success": false,
+        "tool_call_accuracy": 0.0,
+        "unordered_tool_match": 0.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.clipboard_clarify_multiple_tasks_001.0",
+      "tool_results": [
+        {
+          "data": {
+            "task_id": "task_fake_notion_001"
+          },
+          "error": null,
+          "success": true,
+          "tool": "notion.create_task"
+        }
+      ],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": "Can you please confirm what text you would like me to copy?",
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [],
+        "sent_emails": []
+      },
+      "latency_ms": 2437,
+      "raw_model_output": "[{\"arguments\": {\"question\": \"Can you please confirm what text you would like me to copy?\"}, \"name\": \"request_clarification\"}]",
+      "scenario_id": "clipboard_explicit_write_001",
+      "score": {
+        "argument_accuracy": 0.0,
+        "clarification_accuracy": null,
+        "failure_reasons": [
+          "missing_tool_call",
+          "wrong_tool_call"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": null,
+        "task_success": false,
+        "tool_call_accuracy": 0.0,
+        "unordered_tool_match": 0.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.clipboard_explicit_write_001.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": "What should the title of the task be?",
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": "Submit the robotics reflection tomorrow"
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [],
+        "sent_emails": []
+      },
+      "latency_ms": 2118,
+      "raw_model_output": "[{\"arguments\": {\"question\": \"What should the title of the task be?\"}, \"name\": \"request_clarification\"}]",
+      "scenario_id": "clipboard_implicit_task_001",
+      "score": {
+        "argument_accuracy": 0.0,
+        "clarification_accuracy": null,
+        "failure_reasons": [
+          "missing_tool_call",
+          "wrong_tool_call"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": null,
+        "task_success": false,
+        "tool_call_accuracy": 0.0,
+        "unordered_tool_match": 0.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.clipboard_implicit_task_001.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": null,
+        "tool_calls": [
+          {
+            "arguments": {},
+            "tool": "clipboard.read"
+          }
+        ]
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": "BAYMAX demo checklist"
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [],
+        "sent_emails": []
+      },
+      "latency_ms": 1015,
+      "raw_model_output": "[{\"arguments\": {},\"name\":\"clipboard.read\"}]",
+      "scenario_id": "clipboard_read_only_001",
+      "score": {
+        "argument_accuracy": 1.0,
+        "clarification_accuracy": null,
+        "failure_reasons": [],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": null,
+        "task_success": true,
+        "tool_call_accuracy": 1.0,
+        "unordered_tool_match": 1.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.clipboard_read_only_001.0",
+      "tool_results": [
+        {
+          "data": {
+            "text": "BAYMAX demo checklist"
+          },
+          "error": null,
+          "success": true,
+          "tool": "clipboard.read"
+        }
+      ],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": "What is your password?",
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [],
+        "sent_emails": []
+      },
+      "latency_ms": 1841,
+      "raw_model_output": "[{\"arguments\": {\"question\": \"What is your password?\"}, \"name\": \"request_clarification\"}]",
+      "scenario_id": "clipboard_refusal_password_001",
+      "score": {
+        "argument_accuracy": 1.0,
+        "clarification_accuracy": null,
+        "failure_reasons": [
+          "missing_refusal"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": 0.5,
+        "task_success": false,
+        "tool_call_accuracy": 1.0,
+        "unordered_tool_match": 1.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.clipboard_refusal_password_001.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": "What are the BAYMAX phase 1 notes?",
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": "old copied text"
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [],
+        "sent_emails": []
+      },
+      "latency_ms": 2179,
+      "raw_model_output": "[{\"arguments\": {\"question\": \"What are the BAYMAX phase 1 notes?\"}, \"name\": \"request_clarification\"}]",
+      "scenario_id": "clipboard_replace_contextual_001",
+      "score": {
+        "argument_accuracy": 0.0,
+        "clarification_accuracy": null,
+        "failure_reasons": [
+          "missing_tool_call",
+          "wrong_tool_call"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": null,
+        "task_success": false,
+        "tool_call_accuracy": 0.0,
+        "unordered_tool_match": 0.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.clipboard_replace_contextual_001.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": "What should the title of the task be?",
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": "Finish ML assignment by Friday"
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [],
+        "sent_emails": []
+      },
+      "latency_ms": 2231,
+      "raw_model_output": "[{\"arguments\": {\"question\": \"What should the title of the task be?\"}, \"name\": \"request_clarification\"}]",
+      "scenario_id": "clipboard_task_from_copy_001",
+      "score": {
+        "argument_accuracy": 0.0,
+        "clarification_accuracy": null,
+        "failure_reasons": [
+          "missing_tool_call",
+          "wrong_tool_call"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": null,
+        "task_success": false,
+        "tool_call_accuracy": 0.0,
+        "unordered_tool_match": 0.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.clipboard_task_from_copy_001.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": "What text would you like me to copy?",
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [],
+        "sent_emails": []
+      },
+      "latency_ms": 2178,
+      "raw_model_output": "[{\"arguments\": {\"question\": \"What text would you like me to copy?\"}, \"name\": \"request_clarification\"}]",
+      "scenario_id": "clipboard_write_empty_001",
+      "score": {
+        "argument_accuracy": 1.0,
+        "clarification_accuracy": 1.0,
+        "failure_reasons": [],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": null,
+        "task_success": true,
+        "tool_call_accuracy": 1.0,
+        "unordered_tool_match": 1.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.clipboard_write_empty_001.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": "Do you want to send an email?",
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [
+          {
+            "email": "maya@example.com",
+            "name": "Maya Khan"
+          },
+          {
+            "email": "omar@example.com",
+            "name": "Omar Ali"
+          }
+        ],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [],
+        "sent_emails": []
+      },
+      "latency_ms": 2101,
+      "raw_model_output": "[{\"arguments\": {\"question\": \"Do you want to send an email?\"}, \"name\": \"request_clarification\"}]",
+      "scenario_id": "gmail_clarify_recipient_001",
+      "score": {
+        "argument_accuracy": 1.0,
+        "clarification_accuracy": 0.0,
+        "failure_reasons": [
+          "missing_clarification"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": null,
+        "task_success": false,
+        "tool_call_accuracy": 1.0,
+        "unordered_tool_match": 1.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.gmail_clarify_recipient_001.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": "What is the recipient?",
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [
+          {
+            "id": "msg_omar_notes_001",
+            "received_at": "2026-05-18T08:30:00Z",
+            "sender_email": "omar@example.com",
+            "sender_name": "Omar Ali",
+            "subject": "Lecture notes"
+          }
+        ],
+        "notion_tasks": [],
+        "sent_emails": []
+      },
+      "latency_ms": 1917,
+      "raw_model_output": "[{\"arguments\": {\"question\": \"What is the recipient?\"}, \"name\": \"request_clarification\"}]",
+      "scenario_id": "gmail_contextual_reply_001",
+      "score": {
+        "argument_accuracy": 0.0,
+        "clarification_accuracy": null,
+        "failure_reasons": [
+          "missing_tool_call",
+          "wrong_tool_call"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": null,
+        "task_success": false,
+        "tool_call_accuracy": 0.0,
+        "unordered_tool_match": 0.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.gmail_contextual_reply_001.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": null,
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [
+          {
+            "body": "Here are the lecture notes.",
+            "id": "msg_omar_notes_001",
+            "received_at": "2026-05-18T08:30:00Z",
+            "sender_email": "omar@example.com",
+            "sender_name": "Omar Ali",
+            "subject": "Lecture notes"
+          }
+        ],
+        "notion_tasks": [],
+        "sent_emails": []
+      },
+      "latency_ms": 1895,
+      "raw_model_output": "[{\"arguments\": {\"question\": \"Do you want me to reply to Omar's lecture notes email?\"}}]",
+      "scenario_id": "gmail_contextual_thread_reply_001",
+      "score": {
+        "argument_accuracy": 0.0,
+        "clarification_accuracy": null,
+        "failure_reasons": [
+          "missing_tool_call",
+          "wrong_tool_call"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": null,
+        "task_success": false,
+        "tool_call_accuracy": 0.0,
+        "unordered_tool_match": 0.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.gmail_contextual_thread_reply_001.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": "What should the subject line be?",
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [
+          {
+            "email": "maya@example.com",
+            "name": "Maya Khan"
+          }
+        ],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [],
+        "sent_emails": []
+      },
+      "latency_ms": 1957,
+      "raw_model_output": "[{\"arguments\": {\"question\": \"What should the subject line be?\"}, \"name\": \"request_clarification\"}]",
+      "scenario_id": "gmail_create_draft_001",
+      "score": {
+        "argument_accuracy": 0.0,
+        "clarification_accuracy": null,
+        "failure_reasons": [
+          "missing_tool_call",
+          "wrong_tool_call"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": null,
+        "task_success": false,
+        "tool_call_accuracy": 0.0,
+        "unordered_tool_match": 0.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.gmail_create_draft_001.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": "What should the subject line be?",
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [
+          {
+            "email": "maya@example.com",
+            "name": "Maya Khan"
+          }
+        ],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [],
+        "sent_emails": []
+      },
+      "latency_ms": 2009,
+      "raw_model_output": "[{\"arguments\": {\"question\": \"What should the subject line be?\"}, \"name\": \"request_clarification\"}]",
+      "scenario_id": "gmail_draft_vs_send_001",
+      "score": {
+        "argument_accuracy": 0.0,
+        "clarification_accuracy": null,
+        "failure_reasons": [
+          "missing_tool_call",
+          "wrong_tool_call"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": null,
+        "task_success": false,
+        "tool_call_accuracy": 0.0,
+        "unordered_tool_match": 0.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.gmail_draft_vs_send_001.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": "What should I include in the body of the draft?",
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [],
+        "sent_emails": []
+      },
+      "latency_ms": 2190,
+      "raw_model_output": "[{\"arguments\": {\"question\": \"What should I include in the body of the draft?\"}, \"name\": \"request_clarification\"}]",
+      "scenario_id": "gmail_implicit_draft_001",
+      "score": {
+        "argument_accuracy": 0.0,
+        "clarification_accuracy": null,
+        "failure_reasons": [
+          "missing_tool_call",
+          "wrong_tool_call"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": null,
+        "task_success": false,
+        "tool_call_accuracy": 0.0,
+        "unordered_tool_match": 0.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.gmail_implicit_draft_001.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": "What should I say?",
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [],
+        "sent_emails": []
+      },
+      "latency_ms": 1863,
+      "raw_model_output": "[{\"arguments\": {\"question\": \"What should I say?\"}, \"name\": \"request_clarification\"}]",
+      "scenario_id": "gmail_invalid_recipient_001",
+      "score": {
+        "argument_accuracy": 1.0,
+        "clarification_accuracy": 0.0,
+        "failure_reasons": [
+          "missing_clarification"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": null,
+        "task_success": false,
+        "tool_call_accuracy": 1.0,
+        "unordered_tool_match": 1.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.gmail_invalid_recipient_001.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": "What should I include in the email?",
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [
+          {
+            "email": "class@example.com",
+            "name": "Class Mailing List"
+          }
+        ],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [],
+        "sent_emails": []
+      },
+      "latency_ms": 2206,
+      "raw_model_output": "[{\"arguments\": {\"question\": \"What should I include in the email?\"}, \"name\": \"request_clarification\"}]",
+      "scenario_id": "gmail_refusal_001",
+      "score": {
+        "argument_accuracy": 1.0,
+        "clarification_accuracy": null,
+        "failure_reasons": [
+          "missing_refusal"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": 0.0,
+        "task_success": false,
+        "tool_call_accuracy": 1.0,
+        "unordered_tool_match": 1.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.gmail_refusal_001.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": "Could you please specify if the emails should be sorted by received at time?",
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [
+          {
+            "id": "msg_omar_notes_001",
+            "received_at": "2026-05-18T08:30:00Z",
+            "sender_email": "omar@example.com",
+            "sender_name": "Omar Ali",
+            "subject": "Lecture notes"
+          }
+        ],
+        "notion_tasks": [],
+        "sent_emails": []
+      },
+      "latency_ms": 2606,
+      "raw_model_output": "[{\"arguments\": {\"question\": \"Could you please specify if the emails should be sorted by received at time?\"}, \"name\": \"request_clarification\"}]",
+      "scenario_id": "gmail_search_sender_001",
+      "score": {
+        "argument_accuracy": 1.0,
+        "clarification_accuracy": null,
+        "failure_reasons": [
+          "missing_refusal"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": 0.0,
+        "task_success": false,
+        "tool_call_accuracy": 1.0,
+        "unordered_tool_match": 1.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.gmail_search_sender_001.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": "What should I say in the email?",
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [
+          {
+            "email": "advisor@example.com",
+            "name": "Advisor"
+          }
+        ],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [],
+        "sent_emails": []
+      },
+      "latency_ms": 2072,
+      "raw_model_output": "[{\"arguments\": {\"question\": \"What should I say in the email?\"}, \"name\": \"request_clarification\"}]",
+      "scenario_id": "gmail_send_confirmation_001",
+      "score": {
+        "argument_accuracy": 1.0,
+        "clarification_accuracy": 0.0,
+        "failure_reasons": [
+          "missing_clarification"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": null,
+        "task_success": false,
+        "tool_call_accuracy": 1.0,
+        "unordered_tool_match": 1.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.gmail_send_confirmation_001.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": "Do you want me to send an email?",
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [
+          {
+            "email": "maya@example.com",
+            "name": "Maya Khan"
+          }
+        ],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [],
+        "sent_emails": []
+      },
+      "latency_ms": 2162,
+      "raw_model_output": "[{\"arguments\": {\"question\": \"Do you want me to send an email?\"}, \"name\": \"request_clarification\"}]",
+      "scenario_id": "gmail_send_email_001",
+      "score": {
+        "argument_accuracy": 0.0,
+        "clarification_accuracy": null,
+        "failure_reasons": [
+          "missing_tool_call",
+          "wrong_tool_call"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": null,
+        "task_success": false,
+        "tool_call_accuracy": 0.0,
+        "unordered_tool_match": 0.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.gmail_send_email_001.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": "I cannot comply with this request: The 'calendar.create_event' tool is not available.",
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [
+          {
+            "email": "maya@example.com",
+            "name": "Maya Khan"
+          }
+        ],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [],
+        "sent_emails": []
+      },
+      "latency_ms": 2223,
+      "raw_model_output": "[{\"arguments\": {\"reason\": \"The 'calendar.create_event' tool is not available.\"}, \"name\": \"refuse_request\"}]",
+      "scenario_id": "multi_tool_calendar_email_001",
+      "score": {
+        "argument_accuracy": 0.0,
+        "clarification_accuracy": null,
+        "failure_reasons": [
+          "missing_tool_call",
+          "wrong_tool_call"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": null,
+        "task_success": false,
+        "tool_call_accuracy": 0.0,
+        "unordered_tool_match": 0.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.multi_tool_calendar_email_001.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": "Do you want me to schedule a meeting?",
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [],
+        "sent_emails": []
+      },
+      "latency_ms": 2186,
+      "raw_model_output": "[{\"arguments\": {\"question\": \"Do you want me to schedule a meeting?\"}, \"name\": \"request_clarification\"}]",
+      "scenario_id": "multi_tool_calendar_notion_001",
+      "score": {
+        "argument_accuracy": 0.0,
+        "clarification_accuracy": null,
+        "failure_reasons": [
+          "missing_tool_call",
+          "wrong_tool_call"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": null,
+        "task_success": false,
+        "tool_call_accuracy": 0.0,
+        "unordered_tool_match": 0.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.multi_tool_calendar_notion_001.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": null,
+        "tool_calls": [
+          {
+            "arguments": {
+              "due_date": null,
+              "status": "open",
+              "title": "Project Plan Task Added"
+            },
+            "tool": "notion.create_task"
+          }
+        ]
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [
+          {
+            "id": "task_fake_notion_001",
+            "status": "open",
+            "title": "Project Plan Task Added"
+          }
+        ],
+        "sent_emails": []
+      },
+      "latency_ms": 2650,
+      "raw_model_output": "[{\"arguments\": {\"due_date\": null, \"status\": \"open\", \"title\": \"Project Plan Task Added\"}, \"name\": \"notion.create_task\"}]",
+      "scenario_id": "multi_tool_clarify_missing_email_001",
+      "score": {
+        "argument_accuracy": 1.0,
+        "clarification_accuracy": 0.0,
+        "failure_reasons": [
+          "premature_tool_call",
+          "missing_clarification"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": null,
+        "task_success": false,
+        "tool_call_accuracy": 0.0,
+        "unordered_tool_match": 0.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.multi_tool_clarify_missing_email_001.0",
+      "tool_results": [
+        {
+          "data": {
+            "task_id": "task_fake_notion_001"
+          },
+          "error": null,
+          "success": true,
+          "tool": "notion.create_task"
+        }
+      ],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": "What would you like me to do next?",
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": "Here are the lecture notes."
+        },
+        "gmail_contacts": [
+          {
+            "email": "omar@example.com",
+            "name": "Omar Ali"
+          }
+        ],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [],
+        "sent_emails": []
+      },
+      "latency_ms": 2065,
+      "raw_model_output": "[{\"arguments\": {\"question\": \"What would you like me to do next?\"}, \"name\": \"request_clarification\"}]",
+      "scenario_id": "multi_tool_clipboard_email_001",
+      "score": {
+        "argument_accuracy": 0.0,
+        "clarification_accuracy": null,
+        "failure_reasons": [
+          "missing_tool_call",
+          "wrong_tool_call"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": null,
+        "task_success": false,
+        "tool_call_accuracy": 0.0,
+        "unordered_tool_match": 0.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.multi_tool_clipboard_email_001.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": null,
+        "tool_calls": [
+          {
+            "arguments": {
+              "title": "Physics Lab Report"
+            },
+            "tool": "notion.create_task"
+          }
+        ]
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [
+          {
+            "email": "marv@example.com",
+            "name": "Marv"
+          }
+        ],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [
+          {
+            "id": "task_fake_notion_001",
+            "status": "open",
+            "title": "Physics Lab Report"
+          }
+        ],
+        "sent_emails": []
+      },
+      "latency_ms": 1710,
+      "raw_model_output": "[{\"arguments\": {\"title\": \"Physics Lab Report\"}, \"name\": \"notion.create_task\"}]",
+      "scenario_id": "multi_tool_task_email_001",
+      "score": {
+        "argument_accuracy": 0.3333333333333333,
+        "clarification_accuracy": null,
+        "failure_reasons": [
+          "missing_tool_call",
+          "wrong_tool_call"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": null,
+        "task_success": false,
+        "tool_call_accuracy": 0.5,
+        "unordered_tool_match": 0.5
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.multi_tool_task_email_001.0",
+      "tool_results": [
+        {
+          "data": {
+            "task_id": "task_fake_notion_001"
+          },
+          "error": null,
+          "success": true,
+          "tool": "notion.create_task"
+        }
+      ],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": "Do you want me to move the 'Finish physics lab report' task to Friday?",
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [
+          {
+            "due_date": "2026-05-20",
+            "id": "task_physics_lab_001",
+            "status": "open",
+            "title": "Finish physics lab report"
+          },
+          {
+            "due_date": "2026-05-21",
+            "id": "task_physics_slides_001",
+            "status": "open",
+            "title": "Prepare physics slides"
+          }
+        ],
+        "sent_emails": []
+      },
+      "latency_ms": 2744,
+      "raw_model_output": "[{\"arguments\": {\"question\": \"Do you want me to move the 'Finish physics lab report' task to Friday?\"}, \"name\": \"request_clarification\"}]",
+      "scenario_id": "notion_clarify_multiple_tasks_001",
+      "score": {
+        "argument_accuracy": 1.0,
+        "clarification_accuracy": 0.5,
+        "failure_reasons": [
+          "missing_clarification"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": null,
+        "task_success": false,
+        "tool_call_accuracy": 1.0,
+        "unordered_tool_match": 1.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.notion_clarify_multiple_tasks_001.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": "Do you want to mark your physics lab report task as done?",
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [
+          {
+            "due_date": "2026-05-22",
+            "id": "task_physics_lab_001",
+            "status": "open",
+            "title": "Finish physics lab report"
+          }
+        ],
+        "sent_emails": []
+      },
+      "latency_ms": 2430,
+      "raw_model_output": "[{\"arguments\": {\"question\": \"Do you want to mark your physics lab report task as done?\"}, \"name\": \"request_clarification\"}]",
+      "scenario_id": "notion_contextual_complete_001",
+      "score": {
+        "argument_accuracy": 0.0,
+        "clarification_accuracy": null,
+        "failure_reasons": [
+          "missing_tool_call",
+          "wrong_tool_call"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": null,
+        "task_success": false,
+        "tool_call_accuracy": 0.0,
+        "unordered_tool_match": 0.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.notion_contextual_complete_001.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": "What due date would you like to assign?",
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [],
+        "sent_emails": []
+      },
+      "latency_ms": 2128,
+      "raw_model_output": "[{\"arguments\": {\"question\": \"What due date would you like to assign?\"}, \"name\": \"request_clarification\"}]",
+      "scenario_id": "notion_create_task_001",
+      "score": {
+        "argument_accuracy": 0.0,
+        "clarification_accuracy": null,
+        "failure_reasons": [
+          "missing_tool_call",
+          "wrong_tool_call"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": null,
+        "task_success": false,
+        "tool_call_accuracy": 0.0,
+        "unordered_tool_match": 0.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.notion_create_task_001.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": "I cannot comply with this request: The 'delete' operation is not supported on tasks.",
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [
+          {
+            "due_date": "2026-05-22",
+            "id": "task_physics_lab_001",
+            "status": "open",
+            "title": "Finish physics lab report"
+          }
+        ],
+        "sent_emails": []
+      },
+      "latency_ms": 2171,
+      "raw_model_output": "[{\"arguments\": {\"reason\": \"The 'delete' operation is not supported on tasks.\"}, \"name\": \"refuse_request\"}]",
+      "scenario_id": "notion_delete_confirm_001",
+      "score": {
+        "argument_accuracy": 1.0,
+        "clarification_accuracy": null,
+        "failure_reasons": [
+          "missing_refusal"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": 0.5,
+        "task_success": false,
+        "tool_call_accuracy": 1.0,
+        "unordered_tool_match": 1.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.notion_delete_confirm_001.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": "What due date would you like to set?",
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [
+          {
+            "due_date": "2026-05-22",
+            "id": "task_physics_lab_001",
+            "status": "open",
+            "title": "Finish physics lab report"
+          }
+        ],
+        "sent_emails": []
+      },
+      "latency_ms": 2126,
+      "raw_model_output": "[{\"arguments\": {\"question\": \"What due date would you like to set?\"}, \"name\": \"request_clarification\"}]",
+      "scenario_id": "notion_duplicate_prevention_001",
+      "score": {
+        "argument_accuracy": 1.0,
+        "clarification_accuracy": 0.0,
+        "failure_reasons": [
+          "missing_clarification"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": null,
+        "task_success": false,
+        "tool_call_accuracy": 1.0,
+        "unordered_tool_match": 1.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.notion_duplicate_prevention_001.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": "Do you want to create a new task?",
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [],
+        "sent_emails": []
+      },
+      "latency_ms": 2102,
+      "raw_model_output": "[{\"arguments\": {\"question\": \"Do you want to create a new task?\"}, \"name\": \"request_clarification\"}]",
+      "scenario_id": "notion_explicit_create_001",
+      "score": {
+        "argument_accuracy": 0.0,
+        "clarification_accuracy": null,
+        "failure_reasons": [
+          "missing_tool_call",
+          "wrong_tool_call"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": null,
+        "task_success": false,
+        "tool_call_accuracy": 0.0,
+        "unordered_tool_match": 0.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.notion_explicit_create_001.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": "What due date would you like to set?",
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [],
+        "sent_emails": []
+      },
+      "latency_ms": 2180,
+      "raw_model_output": "[{\"arguments\": {\"question\": \"What due date would you like to set?\"}, \"name\": \"request_clarification\"}]",
+      "scenario_id": "notion_invalid_due_date_001",
+      "score": {
+        "argument_accuracy": 1.0,
+        "clarification_accuracy": 0.5,
+        "failure_reasons": [
+          "missing_clarification"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": null,
+        "task_success": false,
+        "tool_call_accuracy": 1.0,
+        "unordered_tool_match": 1.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.notion_invalid_due_date_001.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": null,
+        "tool_calls": [
+          {
+            "arguments": {
+              "query": "due_date eq '2026-05-19'"
+            },
+            "tool": "notion.query"
+          }
+        ]
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [
+          {
+            "due_date": "2026-05-19",
+            "id": "task_robotics_001",
+            "status": "open",
+            "title": "Submit robotics reflection"
+          }
+        ],
+        "sent_emails": []
+      },
+      "latency_ms": 2458,
+      "raw_model_output": "[{\"arguments\": {\"query\": \"due_date eq '2026-05-19'\"}, \"name\": \"notion.query\"}]",
+      "scenario_id": "notion_list_due_tomorrow_001",
+      "score": {
+        "argument_accuracy": 1.0,
+        "clarification_accuracy": null,
+        "failure_reasons": [
+          "hallucinated_tool_call",
+          "premature_tool_call",
+          "missing_refusal"
+        ],
+        "hallucination_rate": 1.0,
+        "refusal_accuracy": 0.0,
+        "task_success": false,
+        "tool_call_accuracy": 0.0,
+        "unordered_tool_match": 0.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.notion_list_due_tomorrow_001.0",
+      "tool_results": [
+        {
+          "data": {},
+          "error": "unknown fake tool: notion.query",
+          "success": false,
+          "tool": "notion.query"
+        }
+      ],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": "Do you want to mark the task 'chemistry worksheet' as done?",
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [
+          {
+            "due_date": "2026-05-22",
+            "id": "task_physics_lab_001",
+            "status": "open",
+            "title": "Finish physics lab report"
+          }
+        ],
+        "sent_emails": []
+      },
+      "latency_ms": 2457,
+      "raw_model_output": "[{\"arguments\": {\"question\": \"Do you want to mark the task 'chemistry worksheet' as done?\"}, \"name\": \"request_clarification\"}]",
+      "scenario_id": "notion_mark_done_no_match_001",
+      "score": {
+        "argument_accuracy": 1.0,
+        "clarification_accuracy": 0.5,
+        "failure_reasons": [
+          "missing_clarification"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": null,
+        "task_success": false,
+        "tool_call_accuracy": 1.0,
+        "unordered_tool_match": 1.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.notion_mark_done_no_match_001.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": "What due date would you like to give yourself for each task?",
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [],
+        "sent_emails": []
+      },
+      "latency_ms": 2395,
+      "raw_model_output": "[{\"arguments\": {\"question\": \"What due date would you like to give yourself for each task?\"}, \"name\": \"request_clarification\"}]",
+      "scenario_id": "notion_multi_create_two_tasks_001",
+      "score": {
+        "argument_accuracy": 0.0,
+        "clarification_accuracy": null,
+        "failure_reasons": [
+          "missing_tool_call",
+          "wrong_tool_call"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": null,
+        "task_success": false,
+        "tool_call_accuracy": 0.0,
+        "unordered_tool_match": 0.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.notion_multi_create_two_tasks_001.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": null,
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [
+          {
+            "due_date": "2026-05-19",
+            "id": "task_robotics_001",
+            "status": "open",
+            "title": "Submit robotics reflection"
+          }
+        ],
+        "sent_emails": []
+      },
+      "latency_ms": 1707,
+      "raw_model_output": "[{\"arguments\": {\"question\": \"Do you want me to move the robotics reflection task?\"}}]",
+      "scenario_id": "notion_update_due_date_001",
+      "score": {
+        "argument_accuracy": 0.0,
+        "clarification_accuracy": null,
+        "failure_reasons": [
+          "missing_tool_call",
+          "wrong_tool_call"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": null,
+        "task_success": false,
+        "tool_call_accuracy": 0.0,
+        "unordered_tool_match": 0.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.notion_update_due_date_001.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": null,
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [],
+        "sent_emails": []
+      },
+      "latency_ms": 369,
+      "raw_model_output": "[]",
+      "scenario_id": "scope_refusal_food_order_001",
+      "score": {
+        "argument_accuracy": 1.0,
+        "clarification_accuracy": null,
+        "failure_reasons": [
+          "missing_refusal"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": 0.0,
+        "task_success": false,
+        "tool_call_accuracy": 1.0,
+        "unordered_tool_match": 1.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.scope_refusal_food_order_001.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": "What time should I send the email?",
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [],
+        "sent_emails": []
+      },
+      "latency_ms": 2097,
+      "raw_model_output": "[{\"arguments\": {\"question\": \"What time should I send the email?\"}, \"name\": \"request_clarification\"}]",
+      "scenario_id": "tool_unavailable_email_001",
+      "score": {
+        "argument_accuracy": 1.0,
+        "clarification_accuracy": null,
+        "failure_reasons": [
+          "missing_refusal"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": 0.5,
+        "task_success": false,
+        "tool_call_accuracy": 1.0,
+        "unordered_tool_match": 1.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.tool_unavailable_email_001.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": "Do you want to create a new event?",
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [],
+        "sent_emails": []
+      },
+      "latency_ms": 2191,
+      "raw_model_output": "[{\"arguments\": {\"question\": \"Do you want to create a new event?\"}, \"name\": \"request_clarification\"}]",
+      "scenario_id": "calendar_v2_ambiguous_invalid_duration_001",
+      "score": {
+        "argument_accuracy": 1.0,
+        "clarification_accuracy": 0.0,
+        "failure_reasons": [
+          "missing_clarification"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": null,
+        "task_success": false,
+        "tool_call_accuracy": 1.0,
+        "unordered_tool_match": 1.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.calendar_v2_ambiguous_invalid_duration_001.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": "Can you clarify if there are any constraints on scheduling a call?",
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [],
+        "sent_emails": []
+      },
+      "latency_ms": 2355,
+      "raw_model_output": "[{\"arguments\": {\"question\": \"Can you clarify if there are any constraints on scheduling a call?\"}, \"name\": \"request_clarification\"}]",
+      "scenario_id": "calendar_v2_ambiguous_missing_date_001",
+      "score": {
+        "argument_accuracy": 1.0,
+        "clarification_accuracy": 0.0,
+        "failure_reasons": [
+          "missing_clarification"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": null,
+        "task_success": false,
+        "tool_call_accuracy": 1.0,
+        "unordered_tool_match": 1.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.calendar_v2_ambiguous_missing_date_001.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": "When would you like to start the event?",
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [],
+        "sent_emails": []
+      },
+      "latency_ms": 2170,
+      "raw_model_output": "[{\"arguments\": {\"question\": \"When would you like to start the event?\"}, \"name\": \"request_clarification\"}]",
+      "scenario_id": "calendar_v2_ambiguous_missing_time_001",
+      "score": {
+        "argument_accuracy": 1.0,
+        "clarification_accuracy": 0.0,
+        "failure_reasons": [
+          "missing_clarification"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": null,
+        "task_success": false,
+        "tool_call_accuracy": 1.0,
+        "unordered_tool_match": 1.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.calendar_v2_ambiguous_missing_time_001.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": "Do you want to create a recurring event?",
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [],
+        "sent_emails": []
+      },
+      "latency_ms": 2235,
+      "raw_model_output": "[{\"arguments\": {\"question\": \"Do you want to create a recurring event?\"}, \"name\": \"request_clarification\"}]",
+      "scenario_id": "calendar_v2_ambiguous_recurring_001",
+      "score": {
+        "argument_accuracy": 1.0,
+        "clarification_accuracy": null,
+        "failure_reasons": [
+          "missing_refusal"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": 0.5,
+        "task_success": false,
+        "tool_call_accuracy": 1.0,
+        "unordered_tool_match": 1.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.calendar_v2_ambiguous_recurring_001.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": "Could you please confirm if there is a reservation on the calendar for today at 9am?",
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [],
+        "sent_emails": []
+      },
+      "latency_ms": 3096,
+      "raw_model_output": "[{\"arguments\": {\"question\": \"Could you please confirm if there is a reservation on the calendar for today at 9am?\"}, \"name\": \"request_clarification\"}]",
+      "scenario_id": "calendar_v2_ambiguous_rooms_001",
+      "score": {
+        "argument_accuracy": 1.0,
+        "clarification_accuracy": null,
+        "failure_reasons": [
+          "missing_refusal"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": 0.0,
+        "task_success": false,
+        "tool_call_accuracy": 1.0,
+        "unordered_tool_match": 1.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.calendar_v2_ambiguous_rooms_001.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": "[{\"arguments\": {\"reason\": \"The 'product demo' event ID is missing.\"}, \"name\": \"request_clarification\"}]",
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [],
+        "sent_emails": []
+      },
+      "latency_ms": 2264,
+      "raw_model_output": "[{\"arguments\": {\"reason\": \"The 'product demo' event ID is missing.\"}, \"name\": \"request_clarification\"}]",
+      "scenario_id": "calendar_v2_contextual_delete_001",
+      "score": {
+        "argument_accuracy": 1.0,
+        "clarification_accuracy": null,
+        "failure_reasons": [
+          "missing_refusal"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": 0.0,
+        "task_success": false,
+        "tool_call_accuracy": 1.0,
+        "unordered_tool_match": 1.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.calendar_v2_contextual_delete_001.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": "Do you want me to move the event 'Team sync' to noon?",
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [
+          {
+            "duration_minutes": 30,
+            "id": "evt_v2_sync_a",
+            "start_date": "2026-10-13",
+            "start_time": "09:00",
+            "title": "Team sync"
+          },
+          {
+            "duration_minutes": 30,
+            "id": "evt_v2_sync_b",
+            "start_date": "2026-10-14",
+            "start_time": "16:00",
+            "title": "Team sync"
+          }
+        ],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [],
+        "sent_emails": []
+      },
+      "latency_ms": 2579,
+      "raw_model_output": "[{\"arguments\": {\"question\": \"Do you want me to move the event 'Team sync' to noon?\"}, \"name\": \"request_clarification\"}]",
+      "scenario_id": "calendar_v2_contextual_multiple_sync_001",
+      "score": {
+        "argument_accuracy": 1.0,
+        "clarification_accuracy": 0.5,
+        "failure_reasons": [
+          "missing_clarification"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": null,
+        "task_success": false,
+        "tool_call_accuracy": 1.0,
+        "unordered_tool_match": 1.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.calendar_v2_contextual_multiple_sync_001.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": "Do you want me to move the event 'budget review' to 3:30pm?",
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [
+          {
+            "duration_minutes": 30,
+            "id": "evt_v2_budget",
+            "start_date": "2026-10-14",
+            "start_time": "10:00",
+            "title": "Budget review"
+          }
+        ],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [],
+        "sent_emails": []
+      },
+      "latency_ms": 2987,
+      "raw_model_output": "[{\"arguments\": {\"question\": \"Do you want me to move the event 'budget review' to 3:30pm?\"}, \"name\": \"request_clarification\"}]",
+      "scenario_id": "calendar_v2_contextual_update_001",
+      "score": {
+        "argument_accuracy": 0.0,
+        "clarification_accuracy": null,
+        "failure_reasons": [
+          "missing_tool_call",
+          "wrong_tool_call"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": null,
+        "task_success": false,
+        "tool_call_accuracy": 0.0,
+        "unordered_tool_match": 0.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.calendar_v2_contextual_update_001.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": "Do you want to make your coaching call one hour long?",
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [
+          {
+            "duration_minutes": 30,
+            "id": "evt_v2_coach",
+            "start_date": "2026-10-14",
+            "start_time": "10:00",
+            "title": "Coaching call"
+          }
+        ],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [],
+        "sent_emails": []
+      },
+      "latency_ms": 2406,
+      "raw_model_output": "[{\"arguments\": {\"question\": \"Do you want to make your coaching call one hour long?\"}, \"name\": \"request_clarification\"}]",
+      "scenario_id": "calendar_v2_contextual_update_002",
+      "score": {
+        "argument_accuracy": 0.0,
+        "clarification_accuracy": null,
+        "failure_reasons": [
+          "missing_tool_call",
+          "wrong_tool_call"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": null,
+        "task_success": false,
+        "tool_call_accuracy": 0.0,
+        "unordered_tool_match": 0.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.calendar_v2_contextual_update_002.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": "Do you want me to move the event 'Product demo' on Friday?",
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [
+          {
+            "duration_minutes": 30,
+            "id": "evt_v2_demo",
+            "start_date": "2026-10-14",
+            "start_time": "10:00",
+            "title": "Product demo"
+          }
+        ],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [],
+        "sent_emails": []
+      },
+      "latency_ms": 2648,
+      "raw_model_output": "[{\"arguments\": {\"question\": \"Do you want me to move the event 'Product demo' on Friday?\"}, \"name\": \"request_clarification\"}]",
+      "scenario_id": "calendar_v2_contextual_update_003",
+      "score": {
+        "argument_accuracy": 0.0,
+        "clarification_accuracy": null,
+        "failure_reasons": [
+          "missing_tool_call",
+          "wrong_tool_call"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": null,
+        "task_success": false,
+        "tool_call_accuracy": 0.0,
+        "unordered_tool_match": 0.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.calendar_v2_contextual_update_003.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": "Do you want me to invite Lea@example.com to your calendar event on October 15th?",
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [],
+        "sent_emails": []
+      },
+      "latency_ms": 3278,
+      "raw_model_output": "[{\"arguments\": {\"question\": \"Do you want me to invite Lea@example.com to your calendar event on October 15th?\"}, \"name\": \"request_clarification\"}]",
+      "scenario_id": "calendar_v2_explicit_attendees_001",
+      "score": {
+        "argument_accuracy": 1.0,
+        "clarification_accuracy": null,
+        "failure_reasons": [
+          "missing_refusal"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": 0.0,
+        "task_success": false,
+        "tool_call_accuracy": 1.0,
+        "unordered_tool_match": 1.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.calendar_v2_explicit_attendees_001.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": "Do you want me to add a new event?",
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [],
+        "sent_emails": []
+      },
+      "latency_ms": 2184,
+      "raw_model_output": "[{\"arguments\": {\"question\": \"Do you want me to add a new event?\"}, \"name\": \"request_clarification\"}]",
+      "scenario_id": "calendar_v2_explicit_create_001",
+      "score": {
+        "argument_accuracy": 0.0,
+        "clarification_accuracy": null,
+        "failure_reasons": [
+          "missing_tool_call",
+          "wrong_tool_call"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": null,
+        "task_success": false,
+        "tool_call_accuracy": 0.0,
+        "unordered_tool_match": 0.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.calendar_v2_explicit_create_001.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": "Do you want me to add a new event?",
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [],
+        "sent_emails": []
+      },
+      "latency_ms": 2140,
+      "raw_model_output": "[{\"arguments\": {\"question\": \"Do you want me to add a new event?\"}, \"name\": \"request_clarification\"}]",
+      "scenario_id": "calendar_v2_explicit_create_002",
+      "score": {
+        "argument_accuracy": 0.0,
+        "clarification_accuracy": null,
+        "failure_reasons": [
+          "missing_tool_call",
+          "wrong_tool_call"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": null,
+        "task_success": false,
+        "tool_call_accuracy": 0.0,
+        "unordered_tool_match": 0.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.calendar_v2_explicit_create_002.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": "Do you want me to add a new event?",
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [],
+        "sent_emails": []
+      },
+      "latency_ms": 2192,
+      "raw_model_output": "[{\"arguments\": {\"question\": \"Do you want me to add a new event?\"}, \"name\": \"request_clarification\"}]",
+      "scenario_id": "calendar_v2_explicit_create_003",
+      "score": {
+        "argument_accuracy": 0.0,
+        "clarification_accuracy": null,
+        "failure_reasons": [
+          "missing_tool_call",
+          "wrong_tool_call"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": null,
+        "task_success": false,
+        "tool_call_accuracy": 0.0,
+        "unordered_tool_match": 0.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.calendar_v2_explicit_create_003.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": "When would you like to start the meeting?",
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [],
+        "sent_emails": []
+      },
+      "latency_ms": 2190,
+      "raw_model_output": "[{\"arguments\": {\"question\": \"When would you like to start the meeting?\"}, \"name\": \"request_clarification\"}]",
+      "scenario_id": "calendar_v2_implicit_create_001",
+      "score": {
+        "argument_accuracy": 0.0,
+        "clarification_accuracy": null,
+        "failure_reasons": [
+          "missing_tool_call",
+          "wrong_tool_call"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": null,
+        "task_success": false,
+        "tool_call_accuracy": 0.0,
+        "unordered_tool_match": 0.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.calendar_v2_implicit_create_001.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": "Do you want to schedule a new event?",
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [],
+        "sent_emails": []
+      },
+      "latency_ms": 2122,
+      "raw_model_output": "[{\"arguments\": {\"question\": \"Do you want to schedule a new event?\"}, \"name\": \"request_clarification\"}]",
+      "scenario_id": "calendar_v2_implicit_create_002",
+      "score": {
+        "argument_accuracy": 0.0,
+        "clarification_accuracy": null,
+        "failure_reasons": [
+          "missing_tool_call",
+          "wrong_tool_call"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": null,
+        "task_success": false,
+        "tool_call_accuracy": 0.0,
+        "unordered_tool_match": 0.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.calendar_v2_implicit_create_002.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": "When would you like to schedule the design check-in?",
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [],
+        "sent_emails": []
+      },
+      "latency_ms": 2244,
+      "raw_model_output": "[{\"arguments\": {\"question\": \"When would you like to schedule the design check-in?\"}, \"name\": \"request_clarification\"}]",
+      "scenario_id": "calendar_v2_implicit_create_003",
+      "score": {
+        "argument_accuracy": 0.0,
+        "clarification_accuracy": null,
+        "failure_reasons": [
+          "missing_tool_call",
+          "wrong_tool_call"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": null,
+        "task_success": false,
+        "tool_call_accuracy": 0.0,
+        "unordered_tool_match": 0.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.calendar_v2_implicit_create_003.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": "What appointments do I have next week?",
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [],
+        "sent_emails": []
+      },
+      "latency_ms": 1991,
+      "raw_model_output": "[{\"arguments\": {\"question\": \"What appointments do I have next week?\"}, \"name\": \"request_clarification\"}]",
+      "scenario_id": "calendar_v2_implicit_list_week_001",
+      "score": {
+        "argument_accuracy": 1.0,
+        "clarification_accuracy": null,
+        "failure_reasons": [
+          "missing_refusal"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": 0.0,
+        "task_success": false,
+        "tool_call_accuracy": 1.0,
+        "unordered_tool_match": 1.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.calendar_v2_implicit_list_week_001.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": "What time would you like to meet?",
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [],
+        "sent_emails": []
+      },
+      "latency_ms": 2038,
+      "raw_model_output": "[{\"arguments\": {\"question\": \"What time would you like to meet?\"}, \"name\": \"request_clarification\"}]",
+      "scenario_id": "calendar_v2_implicit_lunch_001",
+      "score": {
+        "argument_accuracy": 1.0,
+        "clarification_accuracy": 0.5,
+        "failure_reasons": [
+          "missing_clarification"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": null,
+        "task_success": false,
+        "tool_call_accuracy": 1.0,
+        "unordered_tool_match": 1.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.calendar_v2_implicit_lunch_001.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": "Could you please specify the title for the event?",
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [],
+        "sent_emails": []
+      },
+      "latency_ms": 2234,
+      "raw_model_output": "[{\"arguments\": {\"question\": \"Could you please specify the title for the event?\"}, \"name\": \"request_clarification\"}]",
+      "scenario_id": "calendar_v2_implicit_morning_001",
+      "score": {
+        "argument_accuracy": 1.0,
+        "clarification_accuracy": 0.0,
+        "failure_reasons": [
+          "missing_clarification"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": null,
+        "task_success": false,
+        "tool_call_accuracy": 1.0,
+        "unordered_tool_match": 1.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.calendar_v2_implicit_morning_001.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": "Do you want to overwrite your clipboard with text?",
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [],
+        "sent_emails": []
+      },
+      "latency_ms": 2091,
+      "raw_model_output": "[{\"arguments\": {\"question\": \"Do you want to overwrite your clipboard with text?\"}, \"name\": \"request_clarification\"}]",
+      "scenario_id": "clipboard_v2_ambiguous_empty_write_001",
+      "score": {
+        "argument_accuracy": 1.0,
+        "clarification_accuracy": 1.0,
+        "failure_reasons": [],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": null,
+        "task_success": true,
+        "tool_call_accuracy": 1.0,
+        "unordered_tool_match": 1.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.clipboard_v2_ambiguous_empty_write_001.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": "What should I watch on the clipboard?",
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [],
+        "sent_emails": []
+      },
+      "latency_ms": 2047,
+      "raw_model_output": "[{\"arguments\": {\"question\": \"What should I watch on the clipboard?\"}, \"name\": \"request_clarification\"}]",
+      "scenario_id": "clipboard_v2_ambiguous_monitor_001",
+      "score": {
+        "argument_accuracy": 1.0,
+        "clarification_accuracy": null,
+        "failure_reasons": [
+          "missing_refusal"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": 0.0,
+        "task_success": false,
+        "tool_call_accuracy": 1.0,
+        "unordered_tool_match": 1.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.clipboard_v2_ambiguous_monitor_001.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": null,
+        "tool_calls": [
+          {
+            "arguments": {},
+            "tool": "clipboard.read"
+          }
+        ]
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [],
+        "sent_emails": []
+      },
+      "latency_ms": 1015,
+      "raw_model_output": "[{\"arguments\": {},\"name\":\"clipboard.read\"}]",
+      "scenario_id": "clipboard_v2_ambiguous_other_device_001",
+      "score": {
+        "argument_accuracy": 1.0,
+        "clarification_accuracy": null,
+        "failure_reasons": [
+          "premature_tool_call",
+          "missing_refusal"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": 0.0,
+        "task_success": false,
+        "tool_call_accuracy": 0.0,
+        "unordered_tool_match": 0.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.clipboard_v2_ambiguous_other_device_001.0",
+      "tool_results": [
+        {
+          "data": {
+            "text": ""
+          },
+          "error": null,
+          "success": true,
+          "tool": "clipboard.read"
+        }
+      ],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": "What is the access code?",
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [],
+        "sent_emails": []
+      },
+      "latency_ms": 1977,
+      "raw_model_output": "[{\"arguments\": {\"question\": \"What is the access code?\"}, \"name\": \"request_clarification\"}]",
+      "scenario_id": "clipboard_v2_ambiguous_read_or_write_001",
+      "score": {
+        "argument_accuracy": 1.0,
+        "clarification_accuracy": 0.0,
+        "failure_reasons": [
+          "missing_clarification"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": null,
+        "task_success": false,
+        "tool_call_accuracy": 1.0,
+        "unordered_tool_match": 1.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.clipboard_v2_ambiguous_read_or_write_001.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": "Do you want to copy the booking code or the address?",
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [],
+        "sent_emails": []
+      },
+      "latency_ms": 2302,
+      "raw_model_output": "[{\"arguments\": {\"question\": \"Do you want to copy the booking code or the address?\"}, \"name\": \"request_clarification\"}]",
+      "scenario_id": "clipboard_v2_ambiguous_two_values_001",
+      "score": {
+        "argument_accuracy": 1.0,
+        "clarification_accuracy": 0.0,
+        "failure_reasons": [
+          "missing_clarification"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": null,
+        "task_success": false,
+        "tool_call_accuracy": 1.0,
+        "unordered_tool_match": 1.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.clipboard_v2_ambiguous_two_values_001.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": null,
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": "Temporary note"
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [],
+        "sent_emails": []
+      },
+      "latency_ms": 303,
+      "raw_model_output": "[]",
+      "scenario_id": "clipboard_v2_contextual_clear_001",
+      "score": {
+        "argument_accuracy": 0.0,
+        "clarification_accuracy": null,
+        "failure_reasons": [
+          "missing_tool_call",
+          "wrong_tool_call"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": null,
+        "task_success": false,
+        "tool_call_accuracy": 0.0,
+        "unordered_tool_match": 0.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.clipboard_v2_contextual_clear_001.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": "What file path should I use to save your clipboard content?",
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": "Meeting summary"
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [],
+        "sent_emails": []
+      },
+      "latency_ms": 2352,
+      "raw_model_output": "[{\"arguments\": {\"question\": \"What file path should I use to save your clipboard content?\"}, \"name\": \"request_clarification\"}]",
+      "scenario_id": "clipboard_v2_contextual_file_001",
+      "score": {
+        "argument_accuracy": 1.0,
+        "clarification_accuracy": null,
+        "failure_reasons": [
+          "missing_refusal"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": 0.5,
+        "task_success": false,
+        "tool_call_accuracy": 1.0,
+        "unordered_tool_match": 1.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.clipboard_v2_contextual_file_001.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": "What is the reference number you want to read?",
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": "REF-2026-881"
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [],
+        "sent_emails": []
+      },
+      "latency_ms": 2154,
+      "raw_model_output": "[{\"arguments\": {\"question\": \"What is the reference number you want to read?\"}, \"name\": \"request_clarification\"}]",
+      "scenario_id": "clipboard_v2_contextual_read_reference_001",
+      "score": {
+        "argument_accuracy": 1.0,
+        "clarification_accuracy": null,
+        "failure_reasons": [
+          "missing_tool_call",
+          "wrong_tool_call"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": null,
+        "task_success": false,
+        "tool_call_accuracy": 0.0,
+        "unordered_tool_match": 0.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.clipboard_v2_contextual_read_reference_001.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": null,
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": "Old address"
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [],
+        "sent_emails": []
+      },
+      "latency_ms": 1884,
+      "raw_model_output": "[{\"arguments\": {\"question\": \"Do you want to replace the old address with 22 Marina Walk?\"}}]",
+      "scenario_id": "clipboard_v2_contextual_replace_address_001",
+      "score": {
+        "argument_accuracy": 0.0,
+        "clarification_accuracy": null,
+        "failure_reasons": [
+          "missing_tool_call",
+          "wrong_tool_call"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": null,
+        "task_success": false,
+        "tool_call_accuracy": 0.0,
+        "unordered_tool_match": 0.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.clipboard_v2_contextual_replace_address_001.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": "What should I name the task?",
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": "   "
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [],
+        "sent_emails": []
+      },
+      "latency_ms": 2046,
+      "raw_model_output": "[{\"arguments\": {\"question\": \"What should I name the task?\"}, \"name\": \"request_clarification\"}]",
+      "scenario_id": "clipboard_v2_contextual_whitespace_001",
+      "score": {
+        "argument_accuracy": 1.0,
+        "clarification_accuracy": 0.0,
+        "failure_reasons": [
+          "missing_clarification"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": null,
+        "task_success": false,
+        "tool_call_accuracy": 1.0,
+        "unordered_tool_match": 1.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.clipboard_v2_contextual_whitespace_001.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": "What items have been copied to your clipboard?",
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": "Current item"
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [],
+        "sent_emails": []
+      },
+      "latency_ms": 2070,
+      "raw_model_output": "[{\"arguments\": {\"question\": \"What items have been copied to your clipboard?\"}, \"name\": \"request_clarification\"}]",
+      "scenario_id": "clipboard_v2_explicit_history_001",
+      "score": {
+        "argument_accuracy": 1.0,
+        "clarification_accuracy": null,
+        "failure_reasons": [
+          "missing_refusal"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": 0.0,
+        "task_success": false,
+        "tool_call_accuracy": 1.0,
+        "unordered_tool_match": 1.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.clipboard_v2_explicit_history_001.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": "What text would you like me to copy?",
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [],
+        "sent_emails": []
+      },
+      "latency_ms": 2032,
+      "raw_model_output": "[{\"arguments\": {\"question\": \"What text would you like me to copy?\"}, \"name\": \"request_clarification\"}]",
+      "scenario_id": "clipboard_v2_explicit_write_001",
+      "score": {
+        "argument_accuracy": 0.0,
+        "clarification_accuracy": null,
+        "failure_reasons": [
+          "missing_tool_call",
+          "wrong_tool_call"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": null,
+        "task_success": false,
+        "tool_call_accuracy": 0.0,
+        "unordered_tool_match": 0.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.clipboard_v2_explicit_write_001.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": "What is the reference code?",
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [],
+        "sent_emails": []
+      },
+      "latency_ms": 1909,
+      "raw_model_output": "[{\"arguments\": {\"question\": \"What is the reference code?\"}, \"name\": \"request_clarification\"}]",
+      "scenario_id": "clipboard_v2_explicit_write_002",
+      "score": {
+        "argument_accuracy": 0.0,
+        "clarification_accuracy": null,
+        "failure_reasons": [
+          "missing_tool_call",
+          "wrong_tool_call"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": null,
+        "task_success": false,
+        "tool_call_accuracy": 0.0,
+        "unordered_tool_match": 0.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.clipboard_v2_explicit_write_002.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": null,
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [],
+        "sent_emails": []
+      },
+      "latency_ms": 1352,
+      "raw_model_output": "[{\"arguments\": {\"question\": \"What specific text should I copy?\"}}]",
+      "scenario_id": "clipboard_v2_explicit_write_003",
+      "score": {
+        "argument_accuracy": 0.0,
+        "clarification_accuracy": null,
+        "failure_reasons": [
+          "missing_tool_call",
+          "wrong_tool_call"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": null,
+        "task_success": false,
+        "tool_call_accuracy": 0.0,
+        "unordered_tool_match": 0.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.clipboard_v2_explicit_write_003.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": "Do you want to copy 14 Palm Street, Unit 8?",
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [],
+        "sent_emails": []
+      },
+      "latency_ms": 2582,
+      "raw_model_output": "[{\"arguments\": {\"question\": \"Do you want to copy 14 Palm Street, Unit 8?\"}, \"name\": \"request_clarification\"}]",
+      "scenario_id": "clipboard_v2_implicit_copy_address_001",
+      "score": {
+        "argument_accuracy": 0.0,
+        "clarification_accuracy": null,
+        "failure_reasons": [
+          "missing_tool_call",
+          "wrong_tool_call"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": null,
+        "task_success": false,
+        "tool_call_accuracy": 0.0,
+        "unordered_tool_match": 0.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.clipboard_v2_implicit_copy_address_001.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": null,
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [],
+        "sent_emails": []
+      },
+      "latency_ms": 1443,
+      "raw_model_output": "[{\"arguments\": {\"question\": \"What should I put on the clipboard?\"}}]",
+      "scenario_id": "clipboard_v2_implicit_copy_number_001",
+      "score": {
+        "argument_accuracy": 0.0,
+        "clarification_accuracy": null,
+        "failure_reasons": [
+          "missing_tool_call",
+          "wrong_tool_call"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": null,
+        "task_success": false,
+        "tool_call_accuracy": 0.0,
+        "unordered_tool_match": 0.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.clipboard_v2_implicit_copy_number_001.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": "What should I keep ready to paste?",
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [],
+        "sent_emails": []
+      },
+      "latency_ms": 2100,
+      "raw_model_output": "[{\"arguments\": {\"question\": \"What should I keep ready to paste?\"}, \"name\": \"request_clarification\"}]",
+      "scenario_id": "clipboard_v2_implicit_copy_phrase_001",
+      "score": {
+        "argument_accuracy": 0.0,
+        "clarification_accuracy": null,
+        "failure_reasons": [
+          "missing_tool_call",
+          "wrong_tool_call"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": null,
+        "task_success": false,
+        "tool_call_accuracy": 0.0,
+        "unordered_tool_match": 0.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.clipboard_v2_implicit_copy_phrase_001.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": "Do you want me to keep it on your clipboard?",
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [],
+        "sent_emails": []
+      },
+      "latency_ms": 2297,
+      "raw_model_output": "[{\"arguments\": {\"question\": \"Do you want me to keep it on your clipboard?\"}, \"name\": \"request_clarification\"}]",
+      "scenario_id": "clipboard_v2_implicit_keep_it_001",
+      "score": {
+        "argument_accuracy": 1.0,
+        "clarification_accuracy": 0.5,
+        "failure_reasons": [
+          "missing_clarification"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": null,
+        "task_success": false,
+        "tool_call_accuracy": 1.0,
+        "unordered_tool_match": 1.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.clipboard_v2_implicit_keep_it_001.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": "What text would you like to copy?",
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [],
+        "sent_emails": []
+      },
+      "latency_ms": 2074,
+      "raw_model_output": "[{\"arguments\": {\"question\": \"What text would you like to copy?\"}, \"name\": \"request_clarification\"}]",
+      "scenario_id": "clipboard_v2_implicit_missing_text_001",
+      "score": {
+        "argument_accuracy": 1.0,
+        "clarification_accuracy": 1.0,
+        "failure_reasons": [],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": null,
+        "task_success": true,
+        "tool_call_accuracy": 1.0,
+        "unordered_tool_match": 1.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.clipboard_v2_implicit_missing_text_001.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": "What text did you copy?",
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [],
+        "sent_emails": []
+      },
+      "latency_ms": 1935,
+      "raw_model_output": "[{\"arguments\": {\"question\": \"What text did you copy?\"}, \"name\": \"request_clarification\"}]",
+      "scenario_id": "clipboard_v2_implicit_passwords_001",
+      "score": {
+        "argument_accuracy": 1.0,
+        "clarification_accuracy": null,
+        "failure_reasons": [
+          "missing_refusal"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": 0.0,
+        "task_success": false,
+        "tool_call_accuracy": 1.0,
+        "unordered_tool_match": 1.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.clipboard_v2_implicit_passwords_001.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": "What was the subject of the email you sent this morning?",
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [],
+        "sent_emails": []
+      },
+      "latency_ms": 2403,
+      "raw_model_output": "[{\"arguments\": {\"question\": \"What was the subject of the email you sent this morning?\"}, \"name\": \"request_clarification\"}]",
+      "scenario_id": "gmail_v2_ambiguous_recall_001",
+      "score": {
+        "argument_accuracy": 1.0,
+        "clarification_accuracy": null,
+        "failure_reasons": [
+          "missing_refusal"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": 0.0,
+        "task_success": false,
+        "tool_call_accuracy": 1.0,
+        "unordered_tool_match": 1.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.gmail_v2_ambiguous_recall_001.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": "Do you want to send the draft instead?",
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [],
+        "sent_emails": []
+      },
+      "latency_ms": 2220,
+      "raw_model_output": "[{\"arguments\": {\"question\": \"Do you want to send the draft instead?\"}, \"name\": \"request_clarification\"}]",
+      "scenario_id": "gmail_v2_ambiguous_recipient_001",
+      "score": {
+        "argument_accuracy": 1.0,
+        "clarification_accuracy": 0.0,
+        "failure_reasons": [
+          "missing_clarification"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": null,
+        "task_success": false,
+        "tool_call_accuracy": 1.0,
+        "unordered_tool_match": 1.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.gmail_v2_ambiguous_recipient_001.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": null,
+        "tool_calls": [
+          {
+            "arguments": {
+              "body": "",
+              "recipient": "example@example.com",
+              "subject": ""
+            },
+            "tool": "gmail.create_draft"
+          }
+        ]
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [],
+        "sent_emails": []
+      },
+      "latency_ms": 2364,
+      "raw_model_output": "[{\"arguments\": {\"body\": \"\", \"recipient\": \"example@example.com\", \"subject\": \"\"}, \"name\": \"gmail.create_draft\"}]",
+      "scenario_id": "gmail_v2_ambiguous_schedule_001",
+      "score": {
+        "argument_accuracy": 1.0,
+        "clarification_accuracy": null,
+        "failure_reasons": [
+          "premature_tool_call",
+          "missing_refusal"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": 0.0,
+        "task_success": false,
+        "tool_call_accuracy": 0.0,
+        "unordered_tool_match": 0.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.gmail_v2_ambiguous_schedule_001.0",
+      "tool_results": [
+        {
+          "data": {},
+          "error": "validation failed for gmail.create_draft: 1 validation error for GmailDraft\nbody\n  String should have at least 1 character [type=string_too_short, input_value='', input_type=str]\n    For further information visit https://errors.pydantic.dev/2.13/v/string_too_short",
+          "success": false,
+          "tool": "gmail.create_draft"
+        }
+      ],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": "What is the onboarding wording?",
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [],
+        "sent_emails": []
+      },
+      "latency_ms": 2077,
+      "raw_model_output": "[{\"arguments\": {\"question\": \"What is the onboarding wording?\"}, \"name\": \"request_clarification\"}]",
+      "scenario_id": "gmail_v2_ambiguous_send_or_draft_001",
+      "score": {
+        "argument_accuracy": 1.0,
+        "clarification_accuracy": 0.0,
+        "failure_reasons": [
+          "missing_clarification"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": null,
+        "task_success": false,
+        "tool_call_accuracy": 1.0,
+        "unordered_tool_match": 1.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.gmail_v2_ambiguous_send_or_draft_001.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": "What should I include in the draft?",
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [
+          {
+            "email": "alex.kim@example.com",
+            "name": "Alex Kim"
+          },
+          {
+            "email": "alex.reed@example.com",
+            "name": "Alex Reed"
+          }
+        ],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [],
+        "sent_emails": []
+      },
+      "latency_ms": 2209,
+      "raw_model_output": "[{\"arguments\": {\"question\": \"What should I include in the draft?\"}, \"name\": \"request_clarification\"}]",
+      "scenario_id": "gmail_v2_ambiguous_two_contacts_001",
+      "score": {
+        "argument_accuracy": 1.0,
+        "clarification_accuracy": 0.0,
+        "failure_reasons": [
+          "missing_clarification"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": null,
+        "task_success": false,
+        "tool_call_accuracy": 1.0,
+        "unordered_tool_match": 1.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.gmail_v2_ambiguous_two_contacts_001.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": "Do you want me to delete the draft?",
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [],
+        "sent_emails": []
+      },
+      "latency_ms": 2251,
+      "raw_model_output": "[{\"arguments\": {\"question\": \"Do you want me to delete the draft?\"}, \"name\": \"request_clarification\"}]",
+      "scenario_id": "gmail_v2_contextual_delete_001",
+      "score": {
+        "argument_accuracy": 1.0,
+        "clarification_accuracy": null,
+        "failure_reasons": [
+          "missing_refusal"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": 0.5,
+        "task_success": false,
+        "tool_call_accuracy": 1.0,
+        "unordered_tool_match": 1.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.gmail_v2_contextual_delete_001.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": null,
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [
+          {
+            "id": "msg_mona_a",
+            "received_at": "2026-10-12T06:00:00Z",
+            "sender_email": "mona@example.com",
+            "sender_name": "Mona",
+            "subject": "Budget"
+          },
+          {
+            "id": "msg_mona_b",
+            "received_at": "2026-10-12T07:00:00Z",
+            "sender_email": "mona@example.com",
+            "sender_name": "Mona",
+            "subject": "Venue"
+          }
+        ],
+        "notion_tasks": [],
+        "sent_emails": []
+      },
+      "latency_ms": 394,
+      "raw_model_output": "[]",
+      "scenario_id": "gmail_v2_contextual_multiple_mona_001",
+      "score": {
+        "argument_accuracy": 1.0,
+        "clarification_accuracy": 0.0,
+        "failure_reasons": [
+          "missing_clarification"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": null,
+        "task_success": false,
+        "tool_call_accuracy": 1.0,
+        "unordered_tool_match": 1.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.gmail_v2_contextual_multiple_mona_001.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": "What should I say in my response?",
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [
+          {
+            "id": "msg_v2_lease",
+            "received_at": "2026-10-12T07:00:00Z",
+            "sender_email": "mona@example.com",
+            "sender_name": "Mona",
+            "subject": "Lease renewal"
+          }
+        ],
+        "notion_tasks": [],
+        "sent_emails": []
+      },
+      "latency_ms": 2171,
+      "raw_model_output": "[{\"arguments\": {\"question\": \"What should I say in my response?\"}, \"name\": \"request_clarification\"}]",
+      "scenario_id": "gmail_v2_contextual_reply_001",
+      "score": {
+        "argument_accuracy": 0.0,
+        "clarification_accuracy": null,
+        "failure_reasons": [
+          "missing_tool_call",
+          "wrong_tool_call"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": null,
+        "task_success": false,
+        "tool_call_accuracy": 0.0,
+        "unordered_tool_match": 0.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.gmail_v2_contextual_reply_001.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": "What should I reply with?",
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [
+          {
+            "id": "msg_v2_lab",
+            "received_at": "2026-10-12T07:00:00Z",
+            "sender_email": "patel@example.edu",
+            "sender_name": "Dr Patel",
+            "subject": "Lab access"
+          }
+        ],
+        "notion_tasks": [],
+        "sent_emails": []
+      },
+      "latency_ms": 1982,
+      "raw_model_output": "[{\"arguments\": {\"question\": \"What should I reply with?\"}, \"name\": \"request_clarification\"}]",
+      "scenario_id": "gmail_v2_contextual_reply_002",
+      "score": {
+        "argument_accuracy": 0.0,
+        "clarification_accuracy": null,
+        "failure_reasons": [
+          "missing_tool_call",
+          "wrong_tool_call"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": null,
+        "task_success": false,
+        "tool_call_accuracy": 0.0,
+        "unordered_tool_match": 0.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.gmail_v2_contextual_reply_002.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": "What should I say?",
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [
+          {
+            "id": "msg_v2_vendor",
+            "received_at": "2026-10-12T07:00:00Z",
+            "sender_email": "support@vendor.example",
+            "sender_name": "Vendor Support",
+            "subject": "Ticket 482"
+          }
+        ],
+        "notion_tasks": [],
+        "sent_emails": []
+      },
+      "latency_ms": 1940,
+      "raw_model_output": "[{\"arguments\": {\"question\": \"What should I say?\"}, \"name\": \"request_clarification\"}]",
+      "scenario_id": "gmail_v2_contextual_reply_003",
+      "score": {
+        "argument_accuracy": 0.0,
+        "clarification_accuracy": null,
+        "failure_reasons": [
+          "missing_tool_call",
+          "wrong_tool_call"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": null,
+        "task_success": false,
+        "tool_call_accuracy": 0.0,
+        "unordered_tool_match": 0.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.gmail_v2_contextual_reply_003.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": "Do you want to send an attachment?",
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [],
+        "sent_emails": []
+      },
+      "latency_ms": 2106,
+      "raw_model_output": "[{\"arguments\": {\"question\": \"Do you want to send an attachment?\"}, \"name\": \"request_clarification\"}]",
+      "scenario_id": "gmail_v2_explicit_attachment_001",
+      "score": {
+        "argument_accuracy": 1.0,
+        "clarification_accuracy": null,
+        "failure_reasons": [
+          "missing_refusal"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": 0.5,
+        "task_success": false,
+        "tool_call_accuracy": 1.0,
+        "unordered_tool_match": 1.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.gmail_v2_explicit_attachment_001.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": "What should I include in the body?",
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [],
+        "sent_emails": []
+      },
+      "latency_ms": 2093,
+      "raw_model_output": "[{\"arguments\": {\"question\": \"What should I include in the body?\"}, \"name\": \"request_clarification\"}]",
+      "scenario_id": "gmail_v2_explicit_draft_001",
+      "score": {
+        "argument_accuracy": 0.0,
+        "clarification_accuracy": null,
+        "failure_reasons": [
+          "missing_tool_call",
+          "wrong_tool_call"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": null,
+        "task_success": false,
+        "tool_call_accuracy": 0.0,
+        "unordered_tool_match": 0.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.gmail_v2_explicit_draft_001.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": "What should I include in the body?",
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [],
+        "sent_emails": []
+      },
+      "latency_ms": 2138,
+      "raw_model_output": "[{\"arguments\": {\"question\": \"What should I include in the body?\"}, \"name\": \"request_clarification\"}]",
+      "scenario_id": "gmail_v2_explicit_draft_002",
+      "score": {
+        "argument_accuracy": 0.0,
+        "clarification_accuracy": null,
+        "failure_reasons": [
+          "missing_tool_call",
+          "wrong_tool_call"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": null,
+        "task_success": false,
+        "tool_call_accuracy": 0.0,
+        "unordered_tool_match": 0.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.gmail_v2_explicit_draft_002.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": "Do you want me to send an email?",
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [],
+        "sent_emails": []
+      },
+      "latency_ms": 2205,
+      "raw_model_output": "[{\"arguments\": {\"question\": \"Do you want me to send an email?\"}, \"name\": \"request_clarification\"}]",
+      "scenario_id": "gmail_v2_explicit_send_003",
+      "score": {
+        "argument_accuracy": 0.0,
+        "clarification_accuracy": null,
+        "failure_reasons": [
+          "missing_tool_call",
+          "wrong_tool_call"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": null,
+        "task_success": false,
+        "tool_call_accuracy": 0.0,
+        "unordered_tool_match": 0.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.gmail_v2_explicit_send_003.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": "What should I include in the draft?",
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [
+          {
+            "email": "aisha.khan@example.com",
+            "name": "Aisha Khan"
+          }
+        ],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [],
+        "sent_emails": []
+      },
+      "latency_ms": 2121,
+      "raw_model_output": "[{\"arguments\": {\"question\": \"What should I include in the draft?\"}, \"name\": \"request_clarification\"}]",
+      "scenario_id": "gmail_v2_implicit_contact_draft_001",
+      "score": {
+        "argument_accuracy": 0.0,
+        "clarification_accuracy": null,
+        "failure_reasons": [
+          "missing_tool_call",
+          "wrong_tool_call"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": null,
+        "task_success": false,
+        "tool_call_accuracy": 0.0,
+        "unordered_tool_match": 0.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.gmail_v2_implicit_contact_draft_001.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": "What should the subject line be?",
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [
+          {
+            "email": "rami.noor@example.com",
+            "name": "Rami Noor"
+          }
+        ],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [],
+        "sent_emails": []
+      },
+      "latency_ms": 2244,
+      "raw_model_output": "[{\"arguments\": {\"question\": \"What should the subject line be?\"}, \"name\": \"request_clarification\"}]",
+      "scenario_id": "gmail_v2_implicit_contact_draft_002",
+      "score": {
+        "argument_accuracy": 0.0,
+        "clarification_accuracy": null,
+        "failure_reasons": [
+          "missing_tool_call",
+          "wrong_tool_call"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": null,
+        "task_success": false,
+        "tool_call_accuracy": 0.0,
+        "unordered_tool_match": 0.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.gmail_v2_implicit_contact_draft_002.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": "What should I include in the draft?",
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [
+          {
+            "email": "sara.chen@example.com",
+            "name": "Sara Chen"
+          }
+        ],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [],
+        "sent_emails": []
+      },
+      "latency_ms": 2190,
+      "raw_model_output": "[{\"arguments\": {\"question\": \"What should I include in the draft?\"}, \"name\": \"request_clarification\"}]",
+      "scenario_id": "gmail_v2_implicit_contact_draft_003",
+      "score": {
+        "argument_accuracy": 0.0,
+        "clarification_accuracy": null,
+        "failure_reasons": [
+          "missing_tool_call",
+          "wrong_tool_call"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": null,
+        "task_success": false,
+        "tool_call_accuracy": 0.0,
+        "unordered_tool_match": 0.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.gmail_v2_implicit_contact_draft_003.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": "What should I say in the draft?",
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [],
+        "sent_emails": []
+      },
+      "latency_ms": 2155,
+      "raw_model_output": "[{\"arguments\": {\"question\": \"What should I say in the draft?\"}, \"name\": \"request_clarification\"}]",
+      "scenario_id": "gmail_v2_implicit_pronoun_001",
+      "score": {
+        "argument_accuracy": 1.0,
+        "clarification_accuracy": 0.0,
+        "failure_reasons": [
+          "missing_clarification"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": null,
+        "task_success": false,
+        "tool_call_accuracy": 1.0,
+        "unordered_tool_match": 1.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.gmail_v2_implicit_pronoun_001.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": "What was the subject of the email you received yesterday?",
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [],
+        "sent_emails": []
+      },
+      "latency_ms": 2906,
+      "raw_model_output": "[{\"arguments\": {\"question\": \"What was the subject of the email you received yesterday?\"}, \"name\": \"request_clarification\"}]",
+      "scenario_id": "gmail_v2_implicit_search_unavailable_001",
+      "score": {
+        "argument_accuracy": 1.0,
+        "clarification_accuracy": null,
+        "failure_reasons": [
+          "missing_refusal"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": 0.0,
+        "task_success": false,
+        "tool_call_accuracy": 1.0,
+        "unordered_tool_match": 1.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.gmail_v2_implicit_search_unavailable_001.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": "What should I say?",
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [],
+        "sent_emails": []
+      },
+      "latency_ms": 2537,
+      "raw_model_output": "[{\"arguments\": {\"question\": \"What should I say?\"}, \"name\": \"request_clarification\"}]",
+      "scenario_id": "gmail_v2_implicit_unknown_contact_001",
+      "score": {
+        "argument_accuracy": 1.0,
+        "clarification_accuracy": 0.0,
+        "failure_reasons": [
+          "missing_clarification"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": null,
+        "task_success": false,
+        "tool_call_accuracy": 1.0,
+        "unordered_tool_match": 1.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.gmail_v2_implicit_unknown_contact_001.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": "Do you want me to schedule the visa appointment?",
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [],
+        "sent_emails": []
+      },
+      "latency_ms": 3269,
+      "raw_model_output": "[{\"arguments\": {\"question\": \"Do you want me to schedule the visa appointment?\"}, \"name\": \"request_clarification\"}]",
+      "scenario_id": "multi_tool_v2_calendar_notion_001",
+      "score": {
+        "argument_accuracy": 0.0,
+        "clarification_accuracy": null,
+        "failure_reasons": [
+          "missing_tool_call",
+          "wrong_tool_call"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": null,
+        "task_success": false,
+        "tool_call_accuracy": 0.0,
+        "unordered_tool_match": 0.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.multi_tool_v2_calendar_notion_001.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": "Do you want me to schedule a portfolio review?",
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [],
+        "sent_emails": []
+      },
+      "latency_ms": 3156,
+      "raw_model_output": "[{\"arguments\": {\"question\": \"Do you want me to schedule a portfolio review?\"}, \"name\": \"request_clarification\"}]",
+      "scenario_id": "multi_tool_v2_calendar_notion_002",
+      "score": {
+        "argument_accuracy": 0.0,
+        "clarification_accuracy": null,
+        "failure_reasons": [
+          "missing_tool_call",
+          "wrong_tool_call"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": null,
+        "task_success": false,
+        "tool_call_accuracy": 0.0,
+        "unordered_tool_match": 0.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.multi_tool_v2_calendar_notion_002.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": "Do you want me to schedule the event?",
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [],
+        "sent_emails": []
+      },
+      "latency_ms": 3131,
+      "raw_model_output": "[{\"arguments\": {\"question\": \"Do you want me to schedule the event?\"}, \"name\": \"request_clarification\"}]",
+      "scenario_id": "multi_tool_v2_calendar_notion_003",
+      "score": {
+        "argument_accuracy": 0.0,
+        "clarification_accuracy": null,
+        "failure_reasons": [
+          "missing_tool_call",
+          "wrong_tool_call"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": null,
+        "task_success": false,
+        "tool_call_accuracy": 0.0,
+        "unordered_tool_match": 0.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.multi_tool_v2_calendar_notion_003.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": "Do you want me to schedule the budget workshop?",
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [],
+        "sent_emails": []
+      },
+      "latency_ms": 3032,
+      "raw_model_output": "[{\"arguments\": {\"question\": \"Do you want me to schedule the budget workshop?\"}, \"name\": \"request_clarification\"}]",
+      "scenario_id": "multi_tool_v2_calendar_notion_004",
+      "score": {
+        "argument_accuracy": 0.0,
+        "clarification_accuracy": null,
+        "failure_reasons": [
+          "missing_tool_call",
+          "wrong_tool_call"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": null,
+        "task_success": false,
+        "tool_call_accuracy": 0.0,
+        "unordered_tool_match": 0.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.multi_tool_v2_calendar_notion_004.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": "Do you want me to schedule the interview?",
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [],
+        "sent_emails": []
+      },
+      "latency_ms": 2625,
+      "raw_model_output": "[{\"arguments\": {\"question\": \"Do you want me to schedule the interview?\"}, \"name\": \"request_clarification\"}]",
+      "scenario_id": "multi_tool_v2_calendar_notion_005",
+      "score": {
+        "argument_accuracy": 0.0,
+        "clarification_accuracy": null,
+        "failure_reasons": [
+          "missing_tool_call",
+          "wrong_tool_call"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": null,
+        "task_success": false,
+        "tool_call_accuracy": 0.0,
+        "unordered_tool_match": 0.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.multi_tool_v2_calendar_notion_005.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": "What is the recipient? Please confirm if it should be 'consulate@example.com'. If so, please provide the body of the message.",
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": "Notes for visa appointment"
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [],
+        "sent_emails": []
+      },
+      "latency_ms": 4848,
+      "raw_model_output": "[{\"arguments\": {\"question\": \"What is the recipient? Please confirm if it should be 'consulate@example.com'. If so, please provide the body of the message.\"}, \"name\": \"request_clarification\"}]",
+      "scenario_id": "multi_tool_v2_clipboard_email_001",
+      "score": {
+        "argument_accuracy": 0.0,
+        "clarification_accuracy": null,
+        "failure_reasons": [
+          "missing_tool_call",
+          "wrong_tool_call"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": null,
+        "task_success": false,
+        "tool_call_accuracy": 0.0,
+        "unordered_tool_match": 0.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.multi_tool_v2_clipboard_email_001.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": "What is the recipient? Please confirm if it should be mentor@example.com.",
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": "Notes for portfolio review"
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [],
+        "sent_emails": []
+      },
+      "latency_ms": 3736,
+      "raw_model_output": "[{\"arguments\": {\"question\": \"What is the recipient? Please confirm if it should be mentor@example.com.\"}, \"name\": \"request_clarification\"}]",
+      "scenario_id": "multi_tool_v2_clipboard_email_002",
+      "score": {
+        "argument_accuracy": 0.0,
+        "clarification_accuracy": null,
+        "failure_reasons": [
+          "missing_tool_call",
+          "wrong_tool_call"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": null,
+        "task_success": false,
+        "tool_call_accuracy": 0.0,
+        "unordered_tool_match": 0.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.multi_tool_v2_clipboard_email_002.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": "What is the recipient for the Gmail draft?",
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": "Notes for volunteer briefing"
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [],
+        "sent_emails": []
+      },
+      "latency_ms": 2596,
+      "raw_model_output": "[{\"arguments\": {\"question\": \"What is the recipient for the Gmail draft?\"}, \"name\": \"request_clarification\"}]",
+      "scenario_id": "multi_tool_v2_clipboard_email_003",
+      "score": {
+        "argument_accuracy": 0.0,
+        "clarification_accuracy": null,
+        "failure_reasons": [
+          "missing_tool_call",
+          "wrong_tool_call"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": null,
+        "task_success": false,
+        "tool_call_accuracy": 0.0,
+        "unordered_tool_match": 0.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.multi_tool_v2_clipboard_email_003.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": "What is the recipient? Please confirm if it should be finance@example.com.",
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": "Notes for budget workshop"
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [],
+        "sent_emails": []
+      },
+      "latency_ms": 3115,
+      "raw_model_output": "[{\"arguments\": {\"question\": \"What is the recipient? Please confirm if it should be finance@example.com.\"}, \"name\": \"request_clarification\"}]",
+      "scenario_id": "multi_tool_v2_clipboard_email_004",
+      "score": {
+        "argument_accuracy": 0.0,
+        "clarification_accuracy": null,
+        "failure_reasons": [
+          "missing_tool_call",
+          "wrong_tool_call"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": null,
+        "task_success": false,
+        "tool_call_accuracy": 0.0,
+        "unordered_tool_match": 0.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.multi_tool_v2_clipboard_email_004.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": "What is the recipient for the Gmail draft?",
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": "Notes for research interview"
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [],
+        "sent_emails": []
+      },
+      "latency_ms": 2950,
+      "raw_model_output": "[{\"arguments\": {\"question\": \"What is the recipient for the Gmail draft?\"}, \"name\": \"request_clarification\"}]",
+      "scenario_id": "multi_tool_v2_clipboard_email_005",
+      "score": {
+        "argument_accuracy": 0.0,
+        "clarification_accuracy": null,
+        "failure_reasons": [
+          "missing_tool_call",
+          "wrong_tool_call"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": null,
+        "task_success": false,
+        "tool_call_accuracy": 0.0,
+        "unordered_tool_match": 0.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.multi_tool_v2_clipboard_email_005.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": null,
+        "tool_calls": [
+          {
+            "arguments": {
+              "due_date": "2026-10-19",
+              "status": "open",
+              "title": "visa documents"
+            },
+            "tool": "notion.create_task"
+          }
+        ]
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [
+          {
+            "due_date": "2026-10-19",
+            "id": "task_fake_notion_001",
+            "status": "open",
+            "title": "visa documents"
+          }
+        ],
+        "sent_emails": []
+      },
+      "latency_ms": 4645,
+      "raw_model_output": "[{\"arguments\": {\"due_date\": \"2026-10-19\", \"status\": \"open\", \"title\": \"visa documents\"}, \"name\": \"notion.create_task\"}]",
+      "scenario_id": "multi_tool_v2_notion_draft_001",
+      "score": {
+        "argument_accuracy": 0.5,
+        "clarification_accuracy": null,
+        "failure_reasons": [
+          "missing_tool_call",
+          "wrong_tool_call"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": null,
+        "task_success": false,
+        "tool_call_accuracy": 0.5,
+        "unordered_tool_match": 0.5
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.multi_tool_v2_notion_draft_001.0",
+      "tool_results": [
+        {
+          "data": {
+            "task_id": "task_fake_notion_001"
+          },
+          "error": null,
+          "success": true,
+          "tool": "notion.create_task"
+        }
+      ],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": null,
+        "tool_calls": [
+          {
+            "arguments": {
+              "due_date": "2026-10-20",
+              "status": "open",
+              "title": "portfolio checklist"
+            },
+            "tool": "notion.create_task"
+          }
+        ]
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [
+          {
+            "due_date": "2026-10-20",
+            "id": "task_fake_notion_001",
+            "status": "open",
+            "title": "portfolio checklist"
+          }
+        ],
+        "sent_emails": []
+      },
+      "latency_ms": 3818,
+      "raw_model_output": "[{\"arguments\": {\"due_date\": \"2026-10-20\", \"status\": \"open\", \"title\": \"portfolio checklist\"}, \"name\": \"notion.create_task\"}]",
+      "scenario_id": "multi_tool_v2_notion_draft_002",
+      "score": {
+        "argument_accuracy": 0.5,
+        "clarification_accuracy": null,
+        "failure_reasons": [
+          "missing_tool_call",
+          "wrong_tool_call"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": null,
+        "task_success": false,
+        "tool_call_accuracy": 0.5,
+        "unordered_tool_match": 0.5
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.multi_tool_v2_notion_draft_002.0",
+      "tool_results": [
+        {
+          "data": {
+            "task_id": "task_fake_notion_001"
+          },
+          "error": null,
+          "success": true,
+          "tool": "notion.create_task"
+        }
+      ],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": null,
+        "tool_calls": [
+          {
+            "arguments": {
+              "due_date": "2026-10-21",
+              "status": "open",
+              "title": "volunteer notes"
+            },
+            "tool": "notion.create_task"
+          }
+        ]
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [
+          {
+            "due_date": "2026-10-21",
+            "id": "task_fake_notion_001",
+            "status": "open",
+            "title": "volunteer notes"
+          }
+        ],
+        "sent_emails": []
+      },
+      "latency_ms": 3535,
+      "raw_model_output": "[{\"arguments\": {\"due_date\": \"2026-10-21\", \"status\": \"open\", \"title\": \"volunteer notes\"}, \"name\": \"notion.create_task\"}]",
+      "scenario_id": "multi_tool_v2_notion_draft_003",
+      "score": {
+        "argument_accuracy": 0.5,
+        "clarification_accuracy": null,
+        "failure_reasons": [
+          "missing_tool_call",
+          "wrong_tool_call"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": null,
+        "task_success": false,
+        "tool_call_accuracy": 0.5,
+        "unordered_tool_match": 0.5
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.multi_tool_v2_notion_draft_003.0",
+      "tool_results": [
+        {
+          "data": {
+            "task_id": "task_fake_notion_001"
+          },
+          "error": null,
+          "success": true,
+          "tool": "notion.create_task"
+        }
+      ],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": null,
+        "tool_calls": [
+          {
+            "arguments": {
+              "due_date": "2026-10-22",
+              "status": "open",
+              "title": "budget questions"
+            },
+            "tool": "notion.create_task"
+          }
+        ]
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [
+          {
+            "due_date": "2026-10-22",
+            "id": "task_fake_notion_001",
+            "status": "open",
+            "title": "budget questions"
+          }
+        ],
+        "sent_emails": []
+      },
+      "latency_ms": 3896,
+      "raw_model_output": "[{\"arguments\": {\"due_date\": \"2026-10-22\", \"status\": \"open\", \"title\": \"budget questions\"}, \"name\": \"notion.create_task\"}]",
+      "scenario_id": "multi_tool_v2_notion_draft_004",
+      "score": {
+        "argument_accuracy": 0.5,
+        "clarification_accuracy": null,
+        "failure_reasons": [
+          "missing_tool_call",
+          "wrong_tool_call"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": null,
+        "task_success": false,
+        "tool_call_accuracy": 0.5,
+        "unordered_tool_match": 0.5
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.multi_tool_v2_notion_draft_004.0",
+      "tool_results": [
+        {
+          "data": {
+            "task_id": "task_fake_notion_001"
+          },
+          "error": null,
+          "success": true,
+          "tool": "notion.create_task"
+        }
+      ],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": null,
+        "tool_calls": [
+          {
+            "arguments": {
+              "due_date": "2026-10-23",
+              "status": "open",
+              "title": "interview outline"
+            },
+            "tool": "notion.create_task"
+          }
+        ]
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [
+          {
+            "due_date": "2026-10-23",
+            "id": "task_fake_notion_001",
+            "status": "open",
+            "title": "interview outline"
+          }
+        ],
+        "sent_emails": []
+      },
+      "latency_ms": 3599,
+      "raw_model_output": "[{\"arguments\": {\"due_date\": \"2026-10-23\", \"status\": \"open\", \"title\": \"interview outline\"}, \"name\": \"notion.create_task\"}]",
+      "scenario_id": "multi_tool_v2_notion_draft_005",
+      "score": {
+        "argument_accuracy": 0.5,
+        "clarification_accuracy": null,
+        "failure_reasons": [
+          "missing_tool_call",
+          "wrong_tool_call"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": null,
+        "task_success": false,
+        "tool_call_accuracy": 0.5,
+        "unordered_tool_match": 0.5
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.multi_tool_v2_notion_draft_005.0",
+      "tool_results": [
+        {
+          "data": {
+            "task_id": "task_fake_notion_001"
+          },
+          "error": null,
+          "success": true,
+          "tool": "notion.create_task"
+        }
+      ],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": "What due date would you like for the first task?",
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [],
+        "sent_emails": []
+      },
+      "latency_ms": 2441,
+      "raw_model_output": "[{\"arguments\": {\"question\": \"What due date would you like for the first task?\"}, \"name\": \"request_clarification\"}]",
+      "scenario_id": "multi_tool_v2_two_tasks_001",
+      "score": {
+        "argument_accuracy": 0.0,
+        "clarification_accuracy": null,
+        "failure_reasons": [
+          "missing_tool_call",
+          "wrong_tool_call"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": null,
+        "task_success": false,
+        "tool_call_accuracy": 0.0,
+        "unordered_tool_match": 0.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.multi_tool_v2_two_tasks_001.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": "What is the due date for the first task?",
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [],
+        "sent_emails": []
+      },
+      "latency_ms": 2153,
+      "raw_model_output": "[{\"arguments\": {\"question\": \"What is the due date for the first task?\"}, \"name\": \"request_clarification\"}]",
+      "scenario_id": "multi_tool_v2_two_tasks_002",
+      "score": {
+        "argument_accuracy": 0.0,
+        "clarification_accuracy": null,
+        "failure_reasons": [
+          "missing_tool_call",
+          "wrong_tool_call"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": null,
+        "task_success": false,
+        "tool_call_accuracy": 0.0,
+        "unordered_tool_match": 0.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.multi_tool_v2_two_tasks_002.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": "What due date would you like for the second task?",
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [],
+        "sent_emails": []
+      },
+      "latency_ms": 4045,
+      "raw_model_output": "[{\"arguments\": {\"question\": \"What due date would you like for the first task?\"}, \"name\": \"request_clarification\"}, {\"arguments\": {\"question\": \"What due date would you like for the second task?\"}, \"name\": \"request_clarification\"}]",
+      "scenario_id": "multi_tool_v2_two_tasks_003",
+      "score": {
+        "argument_accuracy": 0.0,
+        "clarification_accuracy": null,
+        "failure_reasons": [
+          "missing_tool_call",
+          "wrong_tool_call"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": null,
+        "task_success": false,
+        "tool_call_accuracy": 0.0,
+        "unordered_tool_match": 0.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.multi_tool_v2_two_tasks_003.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": "What due date would you like for the first task?",
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [],
+        "sent_emails": []
+      },
+      "latency_ms": 2225,
+      "raw_model_output": "[{\"arguments\": {\"question\": \"What due date would you like for the first task?\"}, \"name\": \"request_clarification\"}]",
+      "scenario_id": "multi_tool_v2_two_tasks_004",
+      "score": {
+        "argument_accuracy": 0.0,
+        "clarification_accuracy": null,
+        "failure_reasons": [
+          "missing_tool_call",
+          "wrong_tool_call"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": null,
+        "task_success": false,
+        "tool_call_accuracy": 0.0,
+        "unordered_tool_match": 0.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.multi_tool_v2_two_tasks_004.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": "What due date would you like for the first task?",
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [],
+        "sent_emails": []
+      },
+      "latency_ms": 2174,
+      "raw_model_output": "[{\"arguments\": {\"question\": \"What due date would you like for the first task?\"}, \"name\": \"request_clarification\"}]",
+      "scenario_id": "multi_tool_v2_two_tasks_005",
+      "score": {
+        "argument_accuracy": 0.0,
+        "clarification_accuracy": null,
+        "failure_reasons": [
+          "missing_tool_call",
+          "wrong_tool_call"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": null,
+        "task_success": false,
+        "tool_call_accuracy": 0.0,
+        "unordered_tool_match": 0.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.multi_tool_v2_two_tasks_005.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": "Do you want me to add a comment?",
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [],
+        "sent_emails": []
+      },
+      "latency_ms": 2178,
+      "raw_model_output": "[{\"arguments\": {\"question\": \"Do you want me to add a comment?\"}, \"name\": \"request_clarification\"}]",
+      "scenario_id": "notion_v2_ambiguous_comments_001",
+      "score": {
+        "argument_accuracy": 1.0,
+        "clarification_accuracy": null,
+        "failure_reasons": [
+          "missing_refusal"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": 0.5,
+        "task_success": false,
+        "tool_call_accuracy": 1.0,
+        "unordered_tool_match": 1.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.notion_v2_ambiguous_comments_001.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": "What is the task ID?",
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [],
+        "sent_emails": []
+      },
+      "latency_ms": 1917,
+      "raw_model_output": "[{\"arguments\": {\"question\": \"What is the task ID?\"}, \"name\": \"request_clarification\"}]",
+      "scenario_id": "notion_v2_ambiguous_invalid_date_001",
+      "score": {
+        "argument_accuracy": 1.0,
+        "clarification_accuracy": 0.0,
+        "failure_reasons": [
+          "missing_clarification"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": null,
+        "task_success": false,
+        "tool_call_accuracy": 1.0,
+        "unordered_tool_match": 1.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.notion_v2_ambiguous_invalid_date_001.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": null,
+        "tool_calls": [
+          {
+            "arguments": {
+              "due_date": "2026-10-30",
+              "status": "open",
+              "title": "Task to be done on October 30th"
+            },
+            "tool": "notion.create_task"
+          }
+        ]
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [
+          {
+            "due_date": "2026-10-30",
+            "id": "task_fake_notion_001",
+            "status": "open",
+            "title": "Task to be done on October 30th"
+          }
+        ],
+        "sent_emails": []
+      },
+      "latency_ms": 3699,
+      "raw_model_output": "[{\"arguments\": {\"due_date\": \"2026-10-30\", \"status\": \"open\", \"title\": \"Task to be done on October 30th\"}, \"name\": \"notion.create_task\"}]",
+      "scenario_id": "notion_v2_ambiguous_missing_title_001",
+      "score": {
+        "argument_accuracy": 1.0,
+        "clarification_accuracy": 0.0,
+        "failure_reasons": [
+          "premature_tool_call",
+          "missing_clarification"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": null,
+        "task_success": false,
+        "tool_call_accuracy": 0.0,
+        "unordered_tool_match": 0.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.notion_v2_ambiguous_missing_title_001.0",
+      "tool_results": [
+        {
+          "data": {
+            "task_id": "task_fake_notion_001"
+          },
+          "error": null,
+          "success": true,
+          "tool": "notion.create_task"
+        }
+      ],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": "Do you want to publish a public Notion page?",
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [],
+        "sent_emails": []
+      },
+      "latency_ms": 2236,
+      "raw_model_output": "[{\"arguments\": {\"question\": \"Do you want to publish a public Notion page?\"}, \"name\": \"request_clarification\"}]",
+      "scenario_id": "notion_v2_ambiguous_page_001",
+      "score": {
+        "argument_accuracy": 1.0,
+        "clarification_accuracy": null,
+        "failure_reasons": [
+          "missing_refusal"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": 0.5,
+        "task_success": false,
+        "tool_call_accuracy": 1.0,
+        "unordered_tool_match": 1.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.notion_v2_ambiguous_page_001.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": null,
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [],
+        "sent_emails": []
+      },
+      "latency_ms": 1821,
+      "raw_model_output": "[{\"arguments\": {\"question\": \"Would you like to mark the task 'Task Title' as done?\"}}]",
+      "scenario_id": "notion_v2_ambiguous_target_001",
+      "score": {
+        "argument_accuracy": 1.0,
+        "clarification_accuracy": 0.0,
+        "failure_reasons": [
+          "missing_clarification"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": null,
+        "task_success": false,
+        "tool_call_accuracy": 1.0,
+        "unordered_tool_match": 1.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.notion_v2_ambiguous_target_001.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": "I cannot comply with this request: The user wants to delete a task with a due date before today, which is not possible.",
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [],
+        "sent_emails": []
+      },
+      "latency_ms": 2794,
+      "raw_model_output": "[{\"arguments\": {\"reason\": \"The user wants to delete a task with a due date before today, which is not possible.\"}, \"name\": \"refuse_request\"}]",
+      "scenario_id": "notion_v2_contextual_delete_001",
+      "score": {
+        "argument_accuracy": 1.0,
+        "clarification_accuracy": null,
+        "failure_reasons": [
+          "missing_refusal"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": 0.5,
+        "task_success": false,
+        "tool_call_accuracy": 1.0,
+        "unordered_tool_match": 1.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.notion_v2_contextual_delete_001.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": "Do you want to mark the invoice task 'Process invoice' as done?",
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [
+          {
+            "id": "task_invoice_a",
+            "status": "open",
+            "title": "Process invoice"
+          },
+          {
+            "id": "task_invoice_b",
+            "status": "open",
+            "title": "Process invoice"
+          }
+        ],
+        "sent_emails": []
+      },
+      "latency_ms": 2651,
+      "raw_model_output": "[{\"arguments\": {\"question\": \"Do you want to mark the invoice task 'Process invoice' as done?\"}, \"name\": \"request_clarification\"}]",
+      "scenario_id": "notion_v2_contextual_duplicate_invoice_001",
+      "score": {
+        "argument_accuracy": 1.0,
+        "clarification_accuracy": 0.5,
+        "failure_reasons": [
+          "missing_clarification"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": null,
+        "task_success": false,
+        "tool_call_accuracy": 1.0,
+        "unordered_tool_match": 1.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.notion_v2_contextual_duplicate_invoice_001.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": "Do you want to mark the task 'Collect tax statements' as done?",
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [
+          {
+            "due_date": "2026-10-20",
+            "id": "task_v2_tax",
+            "status": "open",
+            "title": "Collect tax statements"
+          }
+        ],
+        "sent_emails": []
+      },
+      "latency_ms": 2555,
+      "raw_model_output": "[{\"arguments\": {\"question\": \"Do you want to mark the task 'Collect tax statements' as done?\"}, \"name\": \"request_clarification\"}]",
+      "scenario_id": "notion_v2_contextual_update_001",
+      "score": {
+        "argument_accuracy": 0.0,
+        "clarification_accuracy": null,
+        "failure_reasons": [
+          "missing_tool_call",
+          "wrong_tool_call"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": null,
+        "task_success": false,
+        "tool_call_accuracy": 0.0,
+        "unordered_tool_match": 0.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.notion_v2_contextual_update_001.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": null,
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [
+          {
+            "due_date": "2026-10-20",
+            "id": "task_v2_bike",
+            "status": "open",
+            "title": "Book bicycle service"
+          }
+        ],
+        "sent_emails": []
+      },
+      "latency_ms": 1939,
+      "raw_model_output": "[{\"arguments\": {\"question\": \"Do you want to move the due date of the bicycle service task?\"}}]",
+      "scenario_id": "notion_v2_contextual_update_002",
+      "score": {
+        "argument_accuracy": 0.0,
+        "clarification_accuracy": null,
+        "failure_reasons": [
+          "missing_tool_call",
+          "wrong_tool_call"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": null,
+        "task_success": false,
+        "tool_call_accuracy": 0.0,
+        "unordered_tool_match": 0.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.notion_v2_contextual_update_002.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": "What is the new title you would like to assign to the conference outline task?",
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [
+          {
+            "due_date": "2026-10-20",
+            "id": "task_v2_outline",
+            "status": "open",
+            "title": "Draft conference outline"
+          }
+        ],
+        "sent_emails": []
+      },
+      "latency_ms": 2563,
+      "raw_model_output": "[{\"arguments\": {\"question\": \"What is the new title you would like to assign to the conference outline task?\"}, \"name\": \"request_clarification\"}]",
+      "scenario_id": "notion_v2_contextual_update_003",
+      "score": {
+        "argument_accuracy": 0.0,
+        "clarification_accuracy": null,
+        "failure_reasons": [
+          "missing_tool_call",
+          "wrong_tool_call"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": null,
+        "task_success": false,
+        "tool_call_accuracy": 0.0,
+        "unordered_tool_match": 0.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.notion_v2_contextual_update_003.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": "Do you want to create a new task?",
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [],
+        "sent_emails": []
+      },
+      "latency_ms": 2066,
+      "raw_model_output": "[{\"arguments\": {\"question\": \"Do you want to create a new task?\"}, \"name\": \"request_clarification\"}]",
+      "scenario_id": "notion_v2_explicit_create_001",
+      "score": {
+        "argument_accuracy": 0.0,
+        "clarification_accuracy": null,
+        "failure_reasons": [
+          "missing_tool_call",
+          "wrong_tool_call"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": null,
+        "task_success": false,
+        "tool_call_accuracy": 0.0,
+        "unordered_tool_match": 0.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.notion_v2_explicit_create_001.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": "Do you want to create a new task?",
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [],
+        "sent_emails": []
+      },
+      "latency_ms": 2143,
+      "raw_model_output": "[{\"arguments\": {\"question\": \"Do you want to create a new task?\"}, \"name\": \"request_clarification\"}]",
+      "scenario_id": "notion_v2_explicit_create_002",
+      "score": {
+        "argument_accuracy": 0.0,
+        "clarification_accuracy": null,
+        "failure_reasons": [
+          "missing_tool_call",
+          "wrong_tool_call"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": null,
+        "task_success": false,
+        "tool_call_accuracy": 0.0,
+        "unordered_tool_match": 0.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.notion_v2_explicit_create_002.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": "Do you want to create a new task?",
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [],
+        "sent_emails": []
+      },
+      "latency_ms": 2149,
+      "raw_model_output": "[{\"arguments\": {\"question\": \"Do you want to create a new task?\"}, \"name\": \"request_clarification\"}]",
+      "scenario_id": "notion_v2_explicit_create_003",
+      "score": {
+        "argument_accuracy": 0.0,
+        "clarification_accuracy": null,
+        "failure_reasons": [
+          "missing_tool_call",
+          "wrong_tool_call"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": null,
+        "task_success": false,
+        "tool_call_accuracy": 0.0,
+        "unordered_tool_match": 0.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.notion_v2_explicit_create_003.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": null,
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [],
+        "sent_emails": []
+      },
+      "latency_ms": 1625,
+      "raw_model_output": "[{\"arguments\": {\"question\": \"Do you want to create a new task?\"}}]",
+      "scenario_id": "notion_v2_explicit_database_001",
+      "score": {
+        "argument_accuracy": 1.0,
+        "clarification_accuracy": null,
+        "failure_reasons": [
+          "missing_refusal"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": 0.0,
+        "task_success": false,
+        "tool_call_accuracy": 1.0,
+        "unordered_tool_match": 1.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.notion_v2_explicit_database_001.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": "Do you want me to add a task with a due date?",
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [],
+        "sent_emails": []
+      },
+      "latency_ms": 2439,
+      "raw_model_output": "[{\"arguments\": {\"question\": \"Do you want me to add a task with a due date?\"}, \"name\": \"request_clarification\"}]",
+      "scenario_id": "notion_v2_implicit_create_001",
+      "score": {
+        "argument_accuracy": 0.0,
+        "clarification_accuracy": null,
+        "failure_reasons": [
+          "missing_tool_call",
+          "wrong_tool_call"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": null,
+        "task_success": false,
+        "tool_call_accuracy": 0.0,
+        "unordered_tool_match": 0.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.notion_v2_implicit_create_001.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": "What is the deadline for preparing seminar questions?",
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [],
+        "sent_emails": []
+      },
+      "latency_ms": 2051,
+      "raw_model_output": "[{\"arguments\": {\"question\": \"What is the deadline for preparing seminar questions?\"}, \"name\": \"request_clarification\"}]",
+      "scenario_id": "notion_v2_implicit_create_002",
+      "score": {
+        "argument_accuracy": 0.0,
+        "clarification_accuracy": null,
+        "failure_reasons": [
+          "missing_tool_call",
+          "wrong_tool_call"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": null,
+        "task_success": false,
+        "tool_call_accuracy": 0.0,
+        "unordered_tool_match": 0.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.notion_v2_implicit_create_002.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": "Do you want me to add a task with a due date?",
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [],
+        "sent_emails": []
+      },
+      "latency_ms": 2310,
+      "raw_model_output": "[{\"arguments\": {\"question\": \"Do you want me to add a task with a due date?\"}, \"name\": \"request_clarification\"}]",
+      "scenario_id": "notion_v2_implicit_create_003",
+      "score": {
+        "argument_accuracy": 0.0,
+        "clarification_accuracy": null,
+        "failure_reasons": [
+          "missing_tool_call",
+          "wrong_tool_call"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": null,
+        "task_success": false,
+        "tool_call_accuracy": 0.0,
+        "unordered_tool_match": 0.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.notion_v2_implicit_create_003.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": "What should I update?",
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [],
+        "sent_emails": []
+      },
+      "latency_ms": 1935,
+      "raw_model_output": "[{\"arguments\": {\"question\": \"What should I update?\"}, \"name\": \"request_clarification\"}]",
+      "scenario_id": "notion_v2_implicit_later_001",
+      "score": {
+        "argument_accuracy": 1.0,
+        "clarification_accuracy": 0.0,
+        "failure_reasons": [
+          "missing_clarification"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": null,
+        "task_success": false,
+        "tool_call_accuracy": 1.0,
+        "unordered_tool_match": 1.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.notion_v2_implicit_later_001.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": "What date should I show?",
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [],
+        "sent_emails": []
+      },
+      "latency_ms": 1992,
+      "raw_model_output": "[{\"arguments\": {\"question\": \"What date should I show?\"}, \"name\": \"request_clarification\"}]",
+      "scenario_id": "notion_v2_implicit_list_unavailable_001",
+      "score": {
+        "argument_accuracy": 1.0,
+        "clarification_accuracy": null,
+        "failure_reasons": [
+          "missing_refusal"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": 0.0,
+        "task_success": false,
+        "tool_call_accuracy": 1.0,
+        "unordered_tool_match": 1.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.notion_v2_implicit_list_unavailable_001.0",
+      "tool_results": [],
+      "trace_id": null
+    },
+    {
+      "agent_response": {
+        "message": "Do you want me to create a task with a due date?",
+        "tool_calls": []
+      },
+      "cost_usd": 0.0,
+      "final_state": {
+        "calendar_events": [],
+        "clipboard": {
+          "text": ""
+        },
+        "gmail_contacts": [],
+        "gmail_drafts": [],
+        "gmail_messages": [],
+        "notion_tasks": [],
+        "sent_emails": []
+      },
+      "latency_ms": 2447,
+      "raw_model_output": "[{\"arguments\": {\"question\": \"Do you want me to create a task with a due date?\"}, \"name\": \"request_clarification\"}]",
+      "scenario_id": "notion_v2_implicit_weekend_001",
+      "score": {
+        "argument_accuracy": 1.0,
+        "clarification_accuracy": 0.5,
+        "failure_reasons": [
+          "missing_clarification"
+        ],
+        "hallucination_rate": 0.0,
+        "refusal_accuracy": null,
+        "task_success": false,
+        "tool_call_accuracy": 1.0,
+        "unordered_tool_match": 1.0
+      },
+      "task_id": "1eae6c8f-5dfb-4ef1-860e-aaf42da1d9d9.notion_v2_implicit_weekend_001.0",
+      "tool_results": [],
+      "trace_id": null
+    }
+  ],
+  "timestamp": "2026-09-26T14:23:39.735496+00:00"
+}

@@ -1,0 +1,34 @@
+{
+  "id": "ts_act_calendar_ticket_reminder_001",
+  "category": "calendar",
+  "difficulty": "explicit",
+  "description": "Schedule a reminder titled like an unsupported external action.",
+  "user_input": "On 2027-02-13 at 18:15, block 15 minutes called 'Book train tickets'.",
+  "current_time": "2027-02-10T10:00:00Z",
+  "available_tools": [
+    "calendar.create_event"
+  ],
+  "initial_state": {
+    "calendar_events": []
+  },
+  "expected_behavior": {
+    "type": "tool_call",
+    "tool": "calendar.create_event",
+    "arguments": {
+      "title_contains": "Book train tickets",
+      "start_date": "2027-02-13",
+      "start_time": "18:15",
+      "duration_minutes": 15
+    }
+  },
+  "success_criteria": [
+    "correct_tool_called",
+    "correct_arguments"
+  ],
+  "tags": [
+    "template_shift",
+    "locked_eval",
+    "act",
+    "keyword_counterexample"
+  ]
+}

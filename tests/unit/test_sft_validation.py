@@ -3,8 +3,18 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from baymax.models.sft_dataset import SFTBuildConfig, build_sft_dataset_from_rows
-from baymax.models.sft_validation import validate_sft_dataset
+import pytest
+
+from baymax.models.sft_dataset import (
+    SFTBuildConfig,
+    build_sft_dataset_from_rows,
+    convert_xlam_row_to_sft_example,
+)
+from baymax.models.sft_validation import (
+    validate_sft_dataset,
+    validate_sft_target_contract,
+    validate_training_targets,
+)
 
 
 def test_validate_sft_dataset_accepts_valid_generated_dataset(tmp_path: Path) -> None:
@@ -101,6 +111,127 @@ def test_validate_sft_dataset_reports_missing_revision(tmp_path: Path) -> None:
 
     assert report.valid is False
     assert any("dataset revision must be pinned" in issue.message for issue in report.issues)
+
+
+@pytest.mark.parametrize(
+    "calls",
+    [
+        [{"arguments": {"item_id": 1}}],
+        [{"name": "missing", "arguments": {}}],
+        [{"name": "lookup_item", "arguments": {"item_id": "wrong"}}],
+        [{"name": "lookup_item", "arguments": {"unknown": 1}}],
+        [{"name": "request_clarification", "arguments": {"reason": "Need details"}}],
+        [{"name": "refuse_request", "arguments": {"question": "Which one?"}}],
+        [{"name": "request_clarification", "arguments": {"question": " "}}],
+        [
+            {"name": "request_clarification", "arguments": {"question": "Which?"}},
+            {"name": "lookup_item", "arguments": {"item_id": 1}},
+        ],
+        [],
+    ],
+)
+def test_target_contract_rejects_bad_names_arguments_and_mixed_decisions(calls) -> None:
+    row = _xlam_row(1)
+    row["answers"] = json.dumps(calls)
+    example = convert_xlam_row_to_sft_example(row, system_prompt="system")
+    assert validate_sft_target_contract(example, location="train.jsonl:1")
+
+
+@pytest.mark.parametrize(
+    "name,field",
+    [
+        ("request_clarification", "question"),
+        ("refuse_request", "reason"),
+    ],
+)
+def test_target_contract_accepts_canonical_meta_tools(name: str, field: str) -> None:
+    row = _xlam_row(1)
+    row["answers"] = json.dumps([{"name": name, "arguments": {field: "Necessary text"}}])
+    example = convert_xlam_row_to_sft_example(row, system_prompt="system")
+    assert validate_sft_target_contract(example, location="test:1") == []
+
+
+def test_target_contract_checks_declared_json_schema_without_exposing_values() -> None:
+    row = _xlam_row(1)
+    row["tools"] = json.dumps(
+        [
+            {
+                "name": "lookup_item",
+                "parameters": {
+                    "type": "object",
+                    "properties": {"item_id": {"type": "integer"}},
+                    "required": ["item_id"],
+                    "additionalProperties": False,
+                },
+            }
+        ]
+    )
+    row["answers"] = json.dumps([{"name": "lookup_item", "arguments": {"item_id": "PRIVATE"}}])
+    example = convert_xlam_row_to_sft_example(row, system_prompt="system")
+    issues = validate_sft_target_contract(example, location="test:1")
+    assert issues
+    assert all("PRIVATE" not in issue.message for issue in issues)
+    row["answers"] = json.dumps([{"name": "lookup_item", "arguments": {}}])
+    assert validate_sft_target_contract(
+        convert_xlam_row_to_sft_example(row, system_prompt="system"), location="test:1"
+    )
+
+
+def test_target_contract_fails_closed_for_unverifiable_types_and_references() -> None:
+    for parameters in (
+        {"item_id": {"type": "MysteryType"}},
+        {"type": "object", "$ref": "https://example.invalid/schema"},
+        {"type": "object", "$dynamicRef": "https://example.invalid/schema"},
+    ):
+        row = _xlam_row(1)
+        row["tools"] = json.dumps([{"name": "lookup_item", "parameters": parameters}])
+        example = convert_xlam_row_to_sft_example(row, system_prompt="system")
+        assert validate_sft_target_contract(example, location="test:1")
+
+
+@pytest.mark.parametrize(
+    "definition,arguments",
+    [
+        ({"type": "int", "required": True}, {}),
+        ({"type": "int", "minimum": 2}, {"item_id": 1}),
+        ({"type": "int", "enum": [2, 3]}, {"item_id": 1}),
+        ({"type": "list", "items": {"type": "integer"}}, {"item_id": ["wrong"]}),
+        ({"type": "str", "format": "date"}, {"item_id": "2026-02-30"}),
+    ],
+)
+def test_target_contract_checks_native_required_fields_and_nested_constraints(
+    definition, arguments
+) -> None:
+    row = _xlam_row(1)
+    row["tools"] = json.dumps([{"name": "lookup_item", "parameters": {"item_id": definition}}])
+    row["answers"] = json.dumps([{"name": "lookup_item", "arguments": arguments}])
+    example = convert_xlam_row_to_sft_example(row, system_prompt="system")
+    assert validate_sft_target_contract(example, location="test:1")
+
+
+def test_target_contract_rejects_missing_or_drifted_meta_tool_definitions() -> None:
+    example = convert_xlam_row_to_sft_example(_xlam_row(1), system_prompt="system")
+    header, context = example.messages[1].content.split("\n\nUser request:\n", 1)
+    prefix, tools_json = header.split("\n", 1)
+    tools = json.loads(tools_json)
+    tools = [tool for tool in tools if tool["name"] != "refuse_request"]
+    tools[0]["parameters"] = {"type": "object", "properties": {"reason": {"type": "string"}}}
+    example.messages[1].content = (
+        prefix + "\n" + json.dumps(tools) + "\n\nUser request:\n" + context
+    )
+    issues = validate_sft_target_contract(example, location="test:1")
+    assert any("missing" in issue.message for issue in issues)
+    assert any("differs" in issue.message for issue in issues)
+
+
+def test_training_target_gate_reports_path_and_line_without_repairing() -> None:
+    row = _xlam_row(1)
+    row["answers"] = json.dumps([{"name": "request_clarification", "arguments": {"reason": "x"}}])
+    example = convert_xlam_row_to_sft_example(row, system_prompt="system")
+    original = example.model_dump(mode="json")
+    with pytest.raises(ValueError, match="train.jsonl:1"):
+        validate_training_targets([original], path=Path("train.jsonl"))
+    assert original == example.model_dump(mode="json")
 
 
 def _build_dataset(output_dir: Path, *, row_count: int) -> None:

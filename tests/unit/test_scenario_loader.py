@@ -1,3 +1,4 @@
+from collections import Counter
 from json import JSONDecodeError
 from pathlib import Path
 
@@ -18,6 +19,7 @@ from baymax.eval.scenario_loader import (
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 SCENARIO_DIR = REPO_ROOT / "scenarios" / "v1"
+TEMPLATE_SHIFT_SCENARIO_DIR = REPO_ROOT / "scenarios" / "template_shift_v1"
 
 
 def test_loads_all_v1_scenarios() -> None:
@@ -84,6 +86,36 @@ def test_load_scenario_directories_combines_v1_and_v2() -> None:
 
     assert len(scenarios) == 150
     assert len({scenario.id for scenario in scenarios}) == 150
+
+
+def test_template_shift_suite_is_locked_balanced_and_distinct() -> None:
+    scenarios = load_scenarios(TEMPLATE_SHIFT_SCENARIO_DIR)
+    established_scenarios = load_scenario_directories(
+        [REPO_ROOT / "scenarios" / "v1", REPO_ROOT / "scenarios" / "v2"]
+    )
+    behavior_counts = Counter(
+        "act"
+        if isinstance(
+            scenario.expected_behavior,
+            (ToolCallExpectedBehavior, ToolCallsExpectedBehavior),
+        )
+        else scenario.expected_behavior.type
+        for scenario in scenarios
+    )
+
+    assert len(scenarios) == 30
+    assert behavior_counts == {
+        "act": 10,
+        "clarification": 10,
+        "refusal": 10,
+    }
+    assert all({"template_shift", "locked_eval"} <= set(scenario.tags) for scenario in scenarios)
+    assert {scenario.id for scenario in scenarios}.isdisjoint(
+        scenario.id for scenario in established_scenarios
+    )
+    assert {scenario.user_input for scenario in scenarios}.isdisjoint(
+        scenario.user_input for scenario in established_scenarios
+    )
 
 
 def test_load_scenario_directories_rejects_duplicate_ids(tmp_path: Path) -> None:

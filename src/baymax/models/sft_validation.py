@@ -2,12 +2,16 @@
 
 from __future__ import annotations
 
+import hashlib
 import json
 from pathlib import Path
 from typing import Any, Literal
 
+from jsonschema import Draft202012Validator, SchemaError
 from pydantic import BaseModel, ConfigDict, ValidationError
 
+from baymax.core.meta_tools import META_TOOL_NAMES, meta_tool_specs
+from baymax.models.sft_contract_audit import matches_declared_type
 from baymax.models.sft_dataset import SFTExample, SFTSplitManifest, SplitName
 
 IssueSeverity = Literal["error", "warning"]
@@ -64,6 +68,7 @@ def validate_sft_dataset(dataset_dir: Path) -> SFTDatasetValidationReport:
     manifest_path = dataset_dir / "split-manifest.json"
     issues: list[SFTValidationIssue] = []
     split_reports: dict[SplitName, SFTSplitValidationReport] = {}
+    seen_content: dict[str, tuple[SplitName, str]] = {}
 
     manifest = _load_manifest(manifest_path, issues)
     if manifest is None:
@@ -72,6 +77,7 @@ def validate_sft_dataset(dataset_dir: Path) -> SFTDatasetValidationReport:
                 split_name=split_name,
                 path=dataset_dir / f"{split_name}.jsonl",
                 manifest_count=None,
+                seen_content=seen_content,
             )
 
         return _report(
@@ -100,6 +106,7 @@ def validate_sft_dataset(dataset_dir: Path) -> SFTDatasetValidationReport:
                 split_name=split_name,
                 path=dataset_dir / f"{split_name}.jsonl",
                 manifest_count=None,
+                seen_content=seen_content,
             )
             continue
 
@@ -107,6 +114,7 @@ def validate_sft_dataset(dataset_dir: Path) -> SFTDatasetValidationReport:
             split_name=split_name,
             path=_resolve_split_path(dataset_dir, split.path),
             manifest_count=split.count,
+            seen_content=seen_content,
         )
 
     return _report(
@@ -236,6 +244,7 @@ def _validate_split_jsonl(
     split_name: SplitName,
     path: Path,
     manifest_count: int | None,
+    seen_content: dict[str, tuple[SplitName, str]],
 ) -> SFTSplitValidationReport:
     issues: list[SFTValidationIssue] = []
     actual_count = 0
@@ -283,6 +292,18 @@ def _validate_split_jsonl(
             continue
 
         issues.extend(_validate_example_shape(raw_example, location=line_location))
+        content_hash = hashlib.sha256(
+            json.dumps(raw_example, sort_keys=True, separators=(",", ":")).encode("utf-8")
+        ).hexdigest()
+        previous = seen_content.setdefault(content_hash, (split_name, line_location))
+        if previous[0] != split_name:
+            issues.append(
+                SFTValidationIssue(
+                    severity="error",
+                    location=line_location,
+                    message=f"identical SFT content also appears in {previous[0]} at {previous[1]}",
+                )
+            )
 
     if manifest_count is not None and actual_count != manifest_count:
         issues.append(
@@ -307,12 +328,12 @@ def _validate_split_jsonl(
 def _validate_example_shape(raw_example: Any, *, location: str) -> list[SFTValidationIssue]:
     try:
         example = SFTExample.model_validate(raw_example)
-    except ValidationError as error:
+    except ValidationError:
         return [
             SFTValidationIssue(
                 severity="error",
                 location=location,
-                message=f"invalid SFT example shape: {error}",
+                message="invalid SFT example shape: check message roles and content types",
             )
         ]
 
@@ -349,7 +370,154 @@ def _validate_example_shape(raw_example: Any, *, location: str) -> list[SFTValid
                     )
                 )
 
+    if roles == EXPECTED_MESSAGE_ROLES:
+        issues.extend(validate_sft_target_contract(example, location=location))
     return issues
+
+
+def _reject_constant(value: str) -> None:
+    raise ValueError("Non-standard JSON numeric constant.")
+
+
+def validate_sft_target_contract(example: SFTExample, *, location: str) -> list[SFTValidationIssue]:
+    """Validate targets against supplied schemas; never print argument values."""
+    issues: list[SFTValidationIssue] = []
+
+    def error(message: str) -> None:
+        issues.append(SFTValidationIssue(severity="error", location=location, message=message))
+
+    if [m.role for m in example.messages] != EXPECTED_MESSAGE_ROLES:
+        error("Target contract requires system/user/assistant messages.")
+        return issues
+    header, separator, context = example.messages[1].content.partition("\n\nUser request:\n")
+    try:
+        if not separator or "\n" not in header:
+            raise ValueError("Missing tool list or request wrapper.")
+        tools = json.loads(header.split("\n", 1)[1], parse_constant=_reject_constant)
+        wrapper = json.loads(context, parse_constant=_reject_constant)
+        calls = json.loads(example.messages[2].content, parse_constant=_reject_constant)
+        if not isinstance(wrapper, dict) or not isinstance(wrapper.get("request"), str):
+            raise ValueError("Invalid request wrapper.")
+        if not isinstance(tools, list) or not all(isinstance(t, dict) for t in tools):
+            raise ValueError("Invalid tool list.")
+        if not isinstance(calls, list) or not calls or not all(isinstance(c, dict) for c in calls):
+            raise ValueError("Targets must be a nonempty array of calls.")
+    except (ValueError, TypeError):
+        error("Cannot parse tool list, request wrapper, or target calls.")
+        return issues
+
+    schemas: dict[str, dict[str, Any]] = {}
+    for tool in tools:
+        name, parameters = tool.get("name"), tool.get("parameters")
+        if not isinstance(name, str) or not name.strip() or not isinstance(parameters, dict):
+            error("Tool definition needs a name and parameter schema.")
+        elif name in schemas:
+            error("Duplicate tool definitions make the target ambiguous.")
+        else:
+            schemas[name] = parameters
+    canonical_meta = {t["name"]: t["parameters"] for t in meta_tool_specs()}
+    for name in META_TOOL_NAMES:
+        if name not in schemas:
+            error("Shared meta-tool definition is missing from the supplied tool list.")
+        elif schemas[name] != canonical_meta[name]:
+            error("Meta-tool definition differs from the shared contract.")
+
+    for index, call in enumerate(calls):
+        name, arguments = call.get("name"), call.get("arguments")
+        prefix = f"Call {index}: "
+        if (
+            set(call) != {"name", "arguments"}
+            or not isinstance(name, str)
+            or not isinstance(arguments, dict)
+        ):
+            error(prefix + "requires exactly name and an arguments object.")
+            continue
+        if name not in schemas:
+            error(prefix + "tool is not in the supplied tool list.")
+            continue
+        if name in META_TOOL_NAMES:
+            field = "question" if name == "request_clarification" else "reason"
+            if (
+                len(calls) != 1
+                or set(arguments) != {field}
+                or not isinstance(arguments.get(field), str)
+                or not arguments[field].strip()
+            ):
+                error(prefix + "meta-tool must be exclusive with its required nonempty text field.")
+            continue
+        schema = schemas[name]
+        if _has_reference(schema):
+            error(prefix + "schema references are unsupported; no external retrieval is allowed.")
+            continue
+        if schema.get("type") == "object":
+            try:
+                Draft202012Validator.check_schema(schema)
+                validator = Draft202012Validator(
+                    schema, format_checker=Draft202012Validator.FORMAT_CHECKER
+                )
+                for failure in validator.iter_errors(arguments):
+                    error(prefix + f"argument schema violation ({failure.validator}).")
+            except SchemaError:
+                error(prefix + "parameter schema is not valid JSON Schema.")
+        else:
+            # xLAM also uses a parameter-name map with Python-style type expressions.
+            for key, definition in schema.items():
+                if not isinstance(definition, dict):
+                    error(prefix + "parameter definition must be an object.")
+                elif "required" in definition and not isinstance(definition["required"], bool):
+                    error(prefix + "native parameter requiredness must be boolean.")
+                elif definition.get("required") is True and key not in arguments:
+                    error(prefix + "an explicitly required parameter is missing.")
+            for key, value in arguments.items():
+                definition = schema.get(key)
+                if not isinstance(definition, dict):
+                    error(prefix + "argument is not declared by the tool.")
+                    continue
+                match = matches_declared_type(value, definition.get("type"))
+                if match is not True:
+                    error(
+                        prefix
+                        + (
+                            "argument type mismatch."
+                            if match is False
+                            else "argument type cannot be verified."
+                        )
+                    )
+                constraints = {
+                    key: value
+                    for key, value in definition.items()
+                    if key not in {"type", "description", "required", "default"}
+                }
+                try:
+                    Draft202012Validator.check_schema(constraints)
+                    validator = Draft202012Validator(
+                        constraints, format_checker=Draft202012Validator.FORMAT_CHECKER
+                    )
+                    for failure in validator.iter_errors(value):
+                        error(prefix + f"argument schema violation ({failure.validator}).")
+                except SchemaError:
+                    error(prefix + "parameter constraints cannot be verified.")
+    return issues
+
+
+def _has_reference(value: Any) -> bool:
+    if isinstance(value, dict):
+        return any(key in value for key in ("$ref", "$dynamicRef", "$recursiveRef")) or any(
+            _has_reference(child) for child in value.values()
+        )
+    return isinstance(value, list) and any(_has_reference(child) for child in value)
+
+
+def validate_training_targets(rows: list[dict[str, Any]], *, path: Path) -> None:
+    """Fail before loading a model if any selected SFT target violates its contract."""
+    issues = [
+        issue
+        for index, row in enumerate(rows, 1)
+        for issue in _validate_example_shape(row, location=f"{path}:{index}")
+    ]
+    if issues:
+        details = "\n".join(f"- {issue.location}: {issue.message}" for issue in issues[:20])
+        raise ValueError(f"Invalid SFT targets ({len(issues)} issues):\n{details}")
 
 
 def _resolve_split_path(dataset_dir: Path, manifest_path: str) -> Path:

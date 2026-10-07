@@ -1,0 +1,301 @@
+{
+  "format_version": 1,
+  "description": "Repository-relative old/new paths. SHA256 records original bytes; result contents and embedded historical source paths are preserved.",
+  "files": [
+    {
+      "old_path": "results/phase2/qwen-base/combined-150.json",
+      "new_path": "results/phase2/qwen-base/qwen-base-combined-150-historical.json",
+      "sha256": "8366a9cd15ad9454be890d827dd526cbc739f7dffb2c4e1645110075ed05c8fb"
+    },
+    {
+      "old_path": "results/phase2/qwen-base/decision-policy-v1-combined-150.json",
+      "new_path": "results/phase2/qwen-base/qwen-base-combined-150-policy-prompt-v1.json",
+      "sha256": "7481be21af0ef543ffc6a1d08ca8a0ae2630f0c8289d16d4297545c92b977cec"
+    },
+    {
+      "old_path": "results/phase2/qwen-base/decision-policy-prompt-v2-combined-150.json",
+      "new_path": "results/phase2/qwen-base/qwen-base-combined-150-policy-prompt-v2.json",
+      "sha256": "89318b3c135785058ef6cab819be860a06b53659a5856b96a28ebaf58166f3f9"
+    },
+    {
+      "old_path": "results/phase2/qwen-base/training-prompt-a314-combined-150.json",
+      "new_path": "results/phase2/qwen-base/qwen-base-combined-150-training-prompt-a314.json",
+      "sha256": "f01a5beaf76c8adcf8fec80235f0f692cb352419a0e2495b5b9aec8480aff197"
+    },
+    {
+      "old_path": "results/phase2/qwen-lora/baymax-control/full.json",
+      "new_path": "results/phase2/qwen-lora/baymax-control/synthetic-control-original-v1-50.json",
+      "sha256": "4f889f3761e94387230a52fb4d5e74e1958abaae27a72c001c7211f4e5dd351f"
+    },
+    {
+      "old_path": "results/phase2/qwen-lora/baymax-control/parser-fixed-full.json",
+      "new_path": "results/phase2/qwen-lora/baymax-control/synthetic-control-original-v1-50-early-parser-fix.json",
+      "sha256": "2492f7068421d29e05a1f01cd25bbba5a797aea2edf3c24fa9e346d2318863eb"
+    },
+    {
+      "old_path": "results/phase2/qwen-lora/baymax-control/contrast-full.json",
+      "new_path": "results/phase2/qwen-lora/baymax-control/synthetic-control-contrast-pairs-v1-50.json",
+      "sha256": "d9d46f7bca6c825c962d148bab5bce1de596303db4c46908d125778e25e627d8"
+    },
+    {
+      "old_path": "results/phase2/qwen-lora/baymax-control/policy-prompt-refusals.json",
+      "new_path": "results/phase2/qwen-lora/baymax-control/synthetic-control-policy-prompt-refusal-subset-7.json",
+      "sha256": "173e08e38c6f41e4ef0ffb7e09f494427908fecea990a6b21209ce2ad6e02f9a"
+    },
+    {
+      "old_path": "results/phase2/qwen-lora/baymax-control/policy-prompt-parser-fixed-refusals.json",
+      "new_path": "results/phase2/qwen-lora/baymax-control/synthetic-control-policy-prompt-refusal-subset-7-early-parser-fix.json",
+      "sha256": "ba711140c1ccf2895565192204bfc7010c91bc1b1810680fd1b8d6aa80d97356"
+    },
+    {
+      "old_path": "results/phase2/qwen-lora/baymax-control/targeted-refusal-full.json",
+      "new_path": "results/phase2/qwen-lora/baymax-control/synthetic-control-targeted-refusals-v1-50.json",
+      "sha256": "cf7f3783ede0cb79ecd1454430f2062455fb2eb96ee48a3976624e739a05532e"
+    },
+    {
+      "old_path": "results/phase2/qwen-lora/baymax-control/targeted-refusal-prompt-only-refusals.json",
+      "new_path": "results/phase2/qwen-lora/baymax-control/synthetic-control-targeted-refusals-prompt-only-subset-7.json",
+      "sha256": "cece280f5e7cfad6f54351b00b003cb0368fbcc881ed3615b38848d5aeab8452"
+    },
+    {
+      "old_path": "results/phase2/qwen-lora/baymax-mix/full.json",
+      "new_path": "results/phase2/qwen-lora/baymax-mix/original-xlam-control-mix-v1-50.json",
+      "sha256": "33763115031fd96d86f979a880a7ed3e8ba9bb9f979220788de495238619c98b"
+    },
+    {
+      "old_path": "results/phase2/qwen-lora/baymax-mix/parser-fixed-full.json",
+      "new_path": "results/phase2/qwen-lora/baymax-mix/original-xlam-control-mix-v1-50-early-parser-fix.json",
+      "sha256": "59aa8b89fc5cf83c4b3b771d6f6165ec6456ef3f210255fe20b73b8cb0d3763e"
+    },
+    {
+      "old_path": "results/phase2/qwen-lora/baymax-mix/v7-smoke-full.json",
+      "new_path": "results/phase2/qwen-lora/baymax-mix/synthetic-v7-smoke-v1-50.json",
+      "sha256": "ab279b0b0def948d06821aea6e838ae31a69071b205bf477c42a01dfc5b8aeff"
+    },
+    {
+      "old_path": "results/phase2/qwen-lora/baymax-mix/v7-weighted-medium-full.json",
+      "new_path": "results/phase2/qwen-lora/baymax-mix/synthetic-v7-weighted-v1-50.json",
+      "sha256": "45a9ad12dbabca77c10f04b74510cfcddbba875592578e3d1d44cba95e4fdc85"
+    },
+    {
+      "old_path": "results/phase2/qwen-lora/baymax-mix/v8-weighted-medium-full.json",
+      "new_path": "results/phase2/qwen-lora/baymax-mix/synthetic-v8-meta-tools-weighted-v1-50.json",
+      "sha256": "12b33fd27165106b3e335d251b5283fe59421dba5317df47ebaf48aa2290e7fa"
+    },
+    {
+      "old_path": "results/phase2/qwen-lora/baymax-mix/format-aligned-medium-full.json",
+      "new_path": "results/phase2/qwen-lora/baymax-mix/format-aligned-reference-v1-50.json",
+      "sha256": "7347534c27063a13bde06ee5c2a4b0738f9459b576639873f9cf9f32c844e223"
+    },
+    {
+      "old_path": "results/phase2/qwen-lora/baymax-mix/clar6-refusal12-medium-full.json",
+      "new_path": "results/phase2/qwen-lora/baymax-mix/clarification-extra6-refusal-extra12-v1-50.json",
+      "sha256": "b6610eaa5d87e6cf7856811e876e2248b8b52fd03b13dd1f35f77aff6b965a45"
+    },
+    {
+      "old_path": "results/phase2/qwen-lora/baymax-mix/boundary13-medium-full.json",
+      "new_path": "results/phase2/qwen-lora/baymax-mix/boundary-weighting-legacy13-v1-50.json",
+      "sha256": "fec0b7f3f9ae0bc806bcc1c33236228ff6d661d91c2496f95a084a2507bdea8a"
+    },
+    {
+      "old_path": "results/phase2/qwen-lora/baymax-mix/boundary-diverse-1k-full.json",
+      "new_path": "results/phase2/qwen-lora/baymax-mix/unique-boundaries-train1k-v1-50.json",
+      "sha256": "d45f3123e358ba27713e36e5cce1312aa0393f8906d3cc92539b22a176ace0f4"
+    },
+    {
+      "old_path": "results/phase2/qwen-lora/baymax-mix/boundary-diverse-1500-full.json",
+      "new_path": "results/phase2/qwen-lora/baymax-mix/unique-boundaries-train1500-v1-50.json",
+      "sha256": "472367fd5602ba06075ab38f83f40de1bf3f35501cfaaf5c11dc044759ccd17d"
+    },
+    {
+      "old_path": "results/phase2/qwen-lora/baymax-mix/boundary-diverse-1k-combined-150.json",
+      "new_path": "results/phase2/qwen-lora/baymax-mix/unique-boundaries-train1k-combined-150-historical-prompt.json",
+      "sha256": "45f957f23430902a38d65524e8d2181c0ce28be65ea5c5b87d8022a47d500ab2"
+    },
+    {
+      "old_path": "results/phase2/qwen-lora/baymax-mix/boundary-diverse-1500-combined-150.json",
+      "new_path": "results/phase2/qwen-lora/baymax-mix/unique-boundaries-train1500-combined-150-historical-prompt.json",
+      "sha256": "b2b1dcda0128d17779f9495e6f6640bbbb31a32fae3e03e3908074538414ee7f"
+    },
+    {
+      "old_path": "results/phase2/qwen-lora/baymax-mix/boundary-diverse-1k-training-prompt-a314-combined-150.json",
+      "new_path": "results/phase2/qwen-lora/baymax-mix/unique-boundaries-train1k-combined-150-training-prompt-a314.json",
+      "sha256": "2f3b3bd06a6cc6238660a7d75e8ac6a9ea45012d8007bd85f0d010340636dfd2"
+    },
+    {
+      "old_path": "results/phase2/qwen-lora/baymax-mix/boundary-diverse-1500-training-prompt-a314-combined-150.json",
+      "new_path": "results/phase2/qwen-lora/baymax-mix/unique-boundaries-train1500-combined-150-training-prompt-a314.json",
+      "sha256": "c9e9dbc5982f2e24a3f2e9ab73efd19bd5e7bb2ceac7d0bbaf40ffea7aefd607"
+    },
+    {
+      "old_path": "results/phase2/qwen-lora/baymax-mix/format-aligned-combined-150.json",
+      "new_path": "results/phase2/qwen-lora/baymax-mix/format-aligned-combined-150-historical-prompt.json",
+      "sha256": "2506f7fb5999b38e0f0a7807f44f601d664a123c14e9cffdb953e275a98b8c2d"
+    },
+    {
+      "old_path": "results/phase2/qwen-lora/baymax-mix/format-aligned-decision-policy-v1-combined-150.json",
+      "new_path": "results/phase2/qwen-lora/baymax-mix/format-aligned-combined-150-policy-prompt-v1.json",
+      "sha256": "08c1dd317f330262b322dbce257a5ca2143868abb10e39c0af7a52db3b83b852"
+    },
+    {
+      "old_path": "results/phase2/qwen-lora/baymax-mix/format-aligned-decision-policy-prompt-v2-combined-150.json",
+      "new_path": "results/phase2/qwen-lora/baymax-mix/format-aligned-combined-150-policy-prompt-v2.json",
+      "sha256": "e2b73c60c6eae8bafcc0de7b35f700304b79cad518292a80e260c04b32c621d6"
+    },
+    {
+      "old_path": "results/phase2/qwen-lora/baymax-mix/format-aligned-training-prompt-a314-combined-150.json",
+      "new_path": "results/phase2/qwen-lora/baymax-mix/format-aligned-combined-150-training-prompt-a314.json",
+      "sha256": "2f2df4641c3a0fe1ec0c72c36ff6505b817a77c1646b6c6d178bdad89998f62b"
+    },
+    {
+      "old_path": "results/phase2/qwen-lora/baymax-mix/acr-1k-combined-150.json",
+      "new_path": "results/phase2/qwen-lora/baymax-mix/act-clarify-refuse-train1k-combined-150.json",
+      "sha256": "cd1a478324999313184309ab2765b1c2adbeb26c3fb3813a760093dfc3add5ac"
+    },
+    {
+      "old_path": "results/phase2/qwen-lora/baymax-mix/acr-1k-2epoch-combined-150.json",
+      "new_path": "results/phase2/qwen-lora/baymax-mix/act-clarify-refuse-train1k-epochs2-combined-150.json",
+      "sha256": "eac9dc028d8473cf2b1000595911b77b85d1f17113c743c2f79cad5ae2ddac19"
+    },
+    {
+      "old_path": "results/phase2/qwen-lora/baymax-mix/schema-diverse-1k-combined-150.json",
+      "new_path": "results/phase2/qwen-lora/baymax-mix/schema-diverse-train1k-combined-150.json",
+      "sha256": "a22d1107e08a311ac8d12c66283bf198ccbed1475e8c8b2e0cd6b88dbcfcd661"
+    },
+    {
+      "old_path": "results/phase2/qwen-lora/baymax-mix/act-balanced-1k-combined-150.json",
+      "new_path": "results/phase2/qwen-lora/baymax-mix/act-balanced-train1k-combined-150-legacy-metrics.json",
+      "sha256": "7cfe7bbe2877796b83a9046673a2b7965f9bfa8bb535f58399a10a63f3027dd2"
+    },
+    {
+      "old_path": "results/phase2/qwen-lora/baymax-mix/act-balanced-1k-decision-aware-combined-150.json",
+      "new_path": "results/phase2/qwen-lora/baymax-mix/act-balanced-train1k-combined-150-decision-metrics.json",
+      "sha256": "e23d14d4ed4d99c777e7114e0d64ea47262fc1207c79a08c0465a3c666e13002"
+    },
+    {
+      "old_path": "results/phase2/qwen-lora/baymax-mix/act-midpoint-150-1k-decision-aware-combined-150.json",
+      "new_path": "results/phase2/qwen-lora/baymax-mix/act-midpoint150-train1k-combined-150-decision-metrics.json",
+      "sha256": "a8e272414a9a62e16e85ddce53cbfb89e31341f92236956a6f5d715a4312d66d"
+    },
+    {
+      "old_path": "results/phase2/qwen-lora/baymax-mix/content-groups-70-30-v12-1k-combined-150.json",
+      "new_path": "results/phase2/qwen-lora/baymax-mix/content-group-splits-generator12-train1k-70act-30boundary-combined-150.json",
+      "sha256": "727689e181e0a92090d5b271d237527c51b5d8a0a5108039219cc6dfa5fbde23"
+    },
+    {
+      "old_path": "results/phase2/template-shift/qwen-base.json",
+      "new_path": "results/phase2/template-shift/qwen-base-template-shift-30.json",
+      "sha256": "21ab3ed7429dc115c45cccd62c233bf6e8d8c4ed12a82277d1581e03b2584e5a"
+    },
+    {
+      "old_path": "results/phase2/template-shift/format-aligned.json",
+      "new_path": "results/phase2/template-shift/format-aligned-template-shift-30.json",
+      "sha256": "14557db9752f6f103b34cc211dd1c8a98899d47ed92b11da276bb8c1ff823c32"
+    },
+    {
+      "old_path": "results/phase2/template-shift/acr-1k.json",
+      "new_path": "results/phase2/template-shift/act-clarify-refuse-train1k-template-shift-30.json",
+      "sha256": "e7c7c2f8bc592754cace283859ffea9c2d48bb3bb447488beb95199dc7d0ab26"
+    },
+    {
+      "old_path": "results/phase2/template-shift/acr-1k-2epoch.json",
+      "new_path": "results/phase2/template-shift/act-clarify-refuse-train1k-epochs2-template-shift-30.json",
+      "sha256": "9597fc12e02e6bd9ac06d52728bd7830532f9e4a265e7784d9558a14be2a8603"
+    },
+    {
+      "old_path": "results/phase2/template-shift/schema-diverse-1k.json",
+      "new_path": "results/phase2/template-shift/schema-diverse-train1k-template-shift-30.json",
+      "sha256": "5ea74b085d0abf384be178cc775637488ed606be458b15673a4a901926f5a0db"
+    },
+    {
+      "old_path": "results/phase2/template-shift/act-balanced-1k.json",
+      "new_path": "results/phase2/template-shift/act-balanced-train1k-template-shift-30-legacy-metrics.json",
+      "sha256": "0090d011808de49f331a1d86bdaf2ac6cd97c4b7007f518e091f7949eb773c4c"
+    },
+    {
+      "old_path": "results/phase2/template-shift/act-balanced-1k-decision-aware.json",
+      "new_path": "results/phase2/template-shift/act-balanced-train1k-template-shift-30-decision-metrics.json",
+      "sha256": "2108a8584b22a1e1e8cbb6be84c3635e7db45deae160acc63990adfccf7604ae"
+    },
+    {
+      "old_path": "results/phase2/template-shift/act-midpoint-150-1k-decision-aware.json",
+      "new_path": "results/phase2/template-shift/act-midpoint150-train1k-template-shift-30-decision-metrics.json",
+      "sha256": "4724c322866a328067b6f79888d350cbd16a4fe63f6c8705185ff5bebb8db00b"
+    },
+    {
+      "old_path": "results/phase2/parser-integrity-v1/combined-150/acr-1k.json",
+      "new_path": "results/phase2/parser-integrity-v1/combined-150/act-clarify-refuse-train1k-combined-150-strict-parser-rescore.json",
+      "sha256": "c4055b3828a25ea2a1673d9975f7c958369d02a51f29a13e6051cefb4e067c96"
+    },
+    {
+      "old_path": "results/phase2/parser-integrity-v1/combined-150/schema-diverse-1k.json",
+      "new_path": "results/phase2/parser-integrity-v1/combined-150/schema-diverse-train1k-combined-150-strict-parser-rescore.json",
+      "sha256": "f49e705c590307b2a67e23f0c5c3cabe36d2aecbdefdeec3419c89060c57eb0f"
+    },
+    {
+      "old_path": "results/phase2/parser-integrity-v1/combined-150/act-balanced-1k.json",
+      "new_path": "results/phase2/parser-integrity-v1/combined-150/act-balanced-train1k-combined-150-strict-parser-rescore.json",
+      "sha256": "a7c2b38667d2897f50cecdc5d3946fd8bdb6ceb86cdb01a9fd0a35e55178f238"
+    },
+    {
+      "old_path": "results/phase2/parser-integrity-v1/combined-150/act-midpoint-150-1k.json",
+      "new_path": "results/phase2/parser-integrity-v1/combined-150/act-midpoint150-train1k-combined-150-strict-parser-rescore.json",
+      "sha256": "50c8ffdda8586490939b7c9ed5d9ddf1db5af8fc26f2d0a2042f8ae45be9f701"
+    },
+    {
+      "old_path": "results/phase2/parser-integrity-v1/template-shift/acr-1k.json",
+      "new_path": "results/phase2/parser-integrity-v1/template-shift/act-clarify-refuse-train1k-template-shift-30-strict-parser-rescore.json",
+      "sha256": "9f62d60a0c6155d0902d8c54ebcc8a0d046ddf7426e9507120980385a684cf5e"
+    },
+    {
+      "old_path": "results/phase2/parser-integrity-v1/template-shift/schema-diverse-1k.json",
+      "new_path": "results/phase2/parser-integrity-v1/template-shift/schema-diverse-train1k-template-shift-30-strict-parser-rescore.json",
+      "sha256": "85a67f64f84176ed2fb6a2aeb47ef286e6a44f14f062873c5852bd41edbce9a7"
+    },
+    {
+      "old_path": "results/phase2/parser-integrity-v1/template-shift/act-balanced-1k.json",
+      "new_path": "results/phase2/parser-integrity-v1/template-shift/act-balanced-train1k-template-shift-30-strict-parser-rescore.json",
+      "sha256": "568f9fbc7e7ff80cf882b06bb304d79c1d78330aee13ca7694334a93c8b709d2"
+    },
+    {
+      "old_path": "results/phase2/parser-integrity-v1/template-shift/act-midpoint-150-1k.json",
+      "new_path": "results/phase2/parser-integrity-v1/template-shift/act-midpoint150-train1k-template-shift-30-strict-parser-rescore.json",
+      "sha256": "21428d7aeb3cf89b19640d324a33ea042120f4f55a545d67b2aa50981221a1f0"
+    },
+    {
+      "old_path": "results/phase2/analysis/behavior-analysis-v1-sample5000.json",
+      "new_path": "results/phase2/analysis/original-mix-token-audit-5000-and-boundary-failures.json",
+      "sha256": "5926a6ae6e259d639414e4ae73e23357fc2d6aa679d126b4f3defc8268678e10"
+    },
+    {
+      "old_path": "results/phase2/analysis/behavior-analysis-clar6-refusal12-sample5000.json",
+      "new_path": "results/phase2/analysis/clarification-extra6-refusal-extra12-token-audit-5000-snapshot1.json",
+      "sha256": "35bd33c704a8aeec34136d7e6bdaacbd738d5cc2aeefbe3a20aab1005387fe67"
+    },
+    {
+      "old_path": "results/phase2/analysis/behavior-analysis-clar6-refusal12-results.json",
+      "new_path": "results/phase2/analysis/clarification-extra6-refusal-extra12-token-audit-5000-snapshot2.json",
+      "sha256": "2ba4d8376d1a08c5fcf44fa90efc83b566c732f70832d8d309c47279aca43e5d"
+    },
+    {
+      "old_path": "results/phase2/analysis/behavior-analysis-boundary13-sample5000.json",
+      "new_path": "results/phase2/analysis/boundary-weighting-legacy13-token-audit-5000-snapshot1.json",
+      "sha256": "b70a0575d768c7f1ff2ec4cffce07e36102e6677c89eb8499ae76751727bb96c"
+    },
+    {
+      "old_path": "results/phase2/analysis/behavior-analysis-boundary13-results.json",
+      "new_path": "results/phase2/analysis/boundary-weighting-legacy13-token-audit-5000-snapshot2.json",
+      "sha256": "c6aab7b1ab7f2bfb456174f5b46e21ffeb01d94d604af48579c960265a93d9f1"
+    },
+    {
+      "old_path": "results/phase2/analysis/decision-policy-base-failures.txt",
+      "new_path": "results/phase2/analysis/qwen-base-policy-prompt-v1-failure-summary.txt",
+      "sha256": "d5037ac6bd6b13066c3fbd7743a1b3ff2899728911410d124c0c6f34d67d8967"
+    },
+    {
+      "old_path": "results/phase2/analysis/decision-policy-aligned-failures.txt",
+      "new_path": "results/phase2/analysis/format-aligned-policy-prompt-v1-failure-summary.txt",
+      "sha256": "0c962407a7ea059daab44fbdbf7b86c778e88e0775bf0e37753864ff854cc834"
+    }
+  ]
+}

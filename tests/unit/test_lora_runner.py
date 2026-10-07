@@ -3,6 +3,8 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+import pytest
+
 from baymax.eval.lora_runner import (
     LocalLoraConfig,
     LocalLoraInvocation,
@@ -11,7 +13,7 @@ from baymax.eval.lora_runner import (
     run_lora_scenario,
 )
 from baymax.eval.scenario_loader import load_scenario
-from baymax.eval.scorer import AgentResponse, AgentToolCall
+from baymax.eval.scorer import AgentResponse, AgentToolCall, score_response
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 SCENARIO_DIR = REPO_ROOT / "scenarios" / "v1"
@@ -44,6 +46,7 @@ def test_parse_lora_agent_response_reads_xlam_tool_call() -> None:
     assert [call.tool for call in response.tool_calls] == ["calendar.create_event"]
     assert response.tool_calls[0].arguments["duration_minutes"] == 120
     assert response.message is None
+    assert response.decision_type == "act"
 
 
 def test_parse_lora_agent_response_reads_openai_style_function_call() -> None:
@@ -190,6 +193,7 @@ def test_parse_lora_agent_response_converts_meta_clarification_to_message() -> N
 
     assert response.tool_calls == []
     assert response.message == "Who should I email?"
+    assert response.decision_type == "clarify"
 
 
 def test_parse_lora_agent_response_normalizes_meta_refusal_message() -> None:
@@ -208,6 +212,7 @@ def test_parse_lora_agent_response_normalizes_meta_refusal_message() -> None:
     assert response.message == (
         "I cannot comply with this request: Unsupported task list on Notion API"
     )
+    assert response.decision_type == "refuse"
 
 
 def test_parse_lora_agent_response_preserves_unparseable_text_as_message() -> None:
@@ -215,6 +220,21 @@ def test_parse_lora_agent_response_preserves_unparseable_text_as_message() -> No
 
     assert response.tool_calls == []
     assert response.message == "I need the recipient."
+    assert response.decision_type is None
+
+
+def test_parse_lora_agent_response_reads_explicit_decision_type() -> None:
+    response = parse_lora_agent_response(
+        json.dumps(
+            {
+                "tool_calls": [],
+                "message": "That capability is unavailable.",
+                "decision_type": "refuse",
+            }
+        )
+    )
+
+    assert response.decision_type == "refuse"
 
 
 def test_build_lora_scenario_messages_includes_eval_context_and_tools() -> None:
@@ -271,3 +291,71 @@ class _FakeLoraAgent:
     def invoke(self, scenario: object) -> LocalLoraInvocation:
         del scenario
         return self._invocation
+
+
+@pytest.mark.parametrize(
+    "bad_call",
+    [
+        {"name": "delete_all_events", "arguments": {}},
+        {"name": "clipboard.read", "arguments": "{bad-json"},
+        {"name": "clipboard.read", "arguments": 7},
+        {"name": "clipboard.read", "arguments": [{}, 7]},
+        {"name": "request_clarification", "arguments": {"reason": "missing details"}},
+        7,
+    ],
+)
+def test_invalid_call_cannot_be_removed_to_produce_success(bad_call: object) -> None:
+    raw = json.dumps(
+        [
+            {
+                "name": "calendar.create_event",
+                "arguments": {
+                    "title": "Linear algebra revision",
+                    "start_date": "2026-05-19",
+                    "start_time": "16:00",
+                    "duration_minutes": 120,
+                },
+            },
+            bad_call,
+        ]
+    )
+    response = parse_lora_agent_response(raw)
+    scenario = load_scenario(SCENARIO_DIR / "calendar_create_001.json")
+    result = run_lora_scenario(
+        scenario, _FakeLoraAgent(LocalLoraInvocation(raw_text=raw, response=response))
+    )
+    assert response.parse_error is not None
+    assert response.tool_calls == []
+    assert not result.score.task_success
+    assert "invalid_model_output" in result.score.failure_reasons
+    assert result.raw_model_output == raw
+    assert result.tool_results == []
+    assert result.final_state["calendar_events"] == []
+
+
+@pytest.mark.parametrize(
+    "raw",
+    [
+        '[] [{"name":"calendar.delete_all","arguments":{}}]',
+        '[{"name":"clipboard.read","arguments":{}}',
+        '```json\n[]\n```\n[{"name":"calendar.delete_all","arguments":{}}]',
+        '{"tool_calls":[{"tool":"badtool","arguments":{}}],"message":"cannot email"}',
+        '{"tool_calls":"bad","message":"cannot email"}',
+        '[{"name":"refuse_request","arguments":{"reason":"cannot email"}},'
+        '{"name":"request_clarification","arguments":{"question":"who?"}}]',
+    ],
+)
+def test_invalid_output_fails_even_when_message_matches_refusal(raw: str) -> None:
+    response = parse_lora_agent_response(raw)
+    scenario = load_scenario(SCENARIO_DIR / "gmail_refusal_001.json")
+    score = score_response(scenario, response)
+    assert response.parse_error is not None
+    assert not score.task_success
+    assert score.refusal_accuracy == 0.0
+
+
+def test_parser_handles_json_delimiters_inside_strings() -> None:
+    raw = json.dumps([{"name": "clipboard.write", "arguments": {"text": "literal }] marker"}}])
+    response = parse_lora_agent_response(f"```json\n{raw}\n```")
+    assert response.parse_error is None
+    assert response.tool_calls[0].arguments["text"] == "literal }] marker"

@@ -201,6 +201,7 @@ dependencies = [
     { name = "fastapi" },
     { name = "httpx" },
     { name = "huggingface-hub" },
+    { name = "jsonschema" },
     { name = "openai" },
     { name = "pydantic" },
     { name = "requests" },
@@ -208,7 +209,6 @@ dependencies = [
 
 [package.dev-dependencies]
 dev = [
-    { name = "jsonschema" },
     { name = "pyright" },
     { name = "pytest" },
     { name = "pytest-asyncio" },
@@ -222,6 +222,7 @@ requires-dist = [
     { name = "fastapi", specifier = ">=0.128.8" },
     { name = "httpx", specifier = ">=0.28.1" },
     { name = "huggingface-hub", specifier = ">=1.26.0" },
+    { name = "jsonschema", specifier = ">=4.25.0" },
     { name = "openai", specifier = ">=2.41.0" },
     { name = "pydantic", specifier = ">=2.13.4" },
     { name = "requests", specifier = ">=2.32" },
@@ -229,7 +230,6 @@ requires-dist = [
 
 [package.metadata.requires-dev]
 dev = [
-    { name = "jsonschema", specifier = ">=4.25.0" },
     { name = "pyright", specifier = ">=1.1.410" },
     { name = "pytest", specifier = ">=8.4.2" },
     { name = "pytest-asyncio", specifier = ">=1.2.0" },
