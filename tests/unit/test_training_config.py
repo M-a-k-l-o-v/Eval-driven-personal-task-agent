@@ -171,6 +171,51 @@ def test_committed_qwen_lora_configs_are_valid(config_path: Path) -> None:
     assert config.lora.task_type == "CAUSAL_LM"
 
 
+@pytest.mark.parametrize(
+    ("suffix", "rank", "alpha", "learning_rate", "target_modules"),
+    [
+        ("rank16", 16, 32, 0.0002, ["q_proj", "v_proj"]),
+        ("lr1e-4", 8, 16, 0.0001, ["q_proj", "v_proj"]),
+        ("qkvo", 8, 16, 0.0002, ["q_proj", "k_proj", "v_proj", "o_proj"]),
+    ],
+    ids=["B-rank16", "C-lr1e-4", "E-qkvo"],
+)
+def test_sft_ablation_preserves_anchored_two_epoch_recipe(
+    suffix: str, rank: int, alpha: int, learning_rate: float, target_modules: list[str]
+) -> None:
+    baseline = load_training_config(
+        Path(
+            "configs/sft/qwen2_5_1_5b_lora_target_compatible_v14_act200_anchored_val200_epochs2.json"
+        )
+    )
+    candidate_path = Path(
+        "configs/sft/"
+        f"qwen2_5_1_5b_lora_target_compatible_v14_act200_anchored_val200_epochs2_{suffix}.json"
+    )
+    candidate = load_training_config(candidate_path)
+
+    assert validate_training_config(candidate_path).valid
+    assert candidate.base_model == baseline.base_model
+    assert candidate.data == baseline.data
+    assert candidate.training == baseline.training.model_copy(
+        update={"learning_rate": learning_rate}
+    )
+    assert candidate.output_adapter == baseline.output_adapter
+    assert candidate.lora == baseline.lora.model_copy(
+        update={"r": rank, "lora_alpha": alpha, "target_modules": target_modules}
+    )
+    assert candidate.runtime.model_dump(
+        exclude={"run_name", "output_dir", "expected_adapter_path"}
+    ) == baseline.runtime.model_dump(exclude={"run_name", "output_dir", "expected_adapter_path"})
+    assert candidate.config_name != baseline.config_name
+    assert candidate.config_hash != baseline.config_hash
+    assert candidate.runtime.run_name == candidate.config_name
+    assert candidate.runtime.output_dir != baseline.runtime.output_dir
+    assert PureWindowsPath(candidate.runtime.expected_adapter_path) == (
+        PureWindowsPath(candidate.runtime.output_dir) / "adapter"
+    )
+
+
 def test_auth_filtered_config_preserves_training_settings_and_uses_new_paths() -> None:
     previous = load_training_config(
         Path("configs/sft/qwen2_5_1_5b_lora_content_groups_70_30_v12.json")

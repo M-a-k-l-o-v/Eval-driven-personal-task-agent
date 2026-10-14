@@ -115,6 +115,16 @@ def main() -> int:
         default=None,
         help="Anchor caps to a previous mix; replace only reviewed xLAM exclusions.",
     )
+    parser.add_argument(
+        "--replace-reference-baymax-train",
+        action="store_true",
+        help="Replace reference BAYMAX training slots with contrasts; keep all held-out files.",
+    )
+    parser.add_argument(
+        "--rebalance-reference-train",
+        action="store_true",
+        help="Add unique boundary rows in place of capped xLAM; preserve reference held-out files.",
+    )
     args = parser.parse_args()
 
     try:
@@ -125,6 +135,8 @@ def main() -> int:
             seed=args.seed,
             preserve_contrast_groups=args.preserve_contrast_groups,
             reference_mix_dir=args.reference_mix_dir,
+            replace_reference_baymax_train=args.replace_reference_baymax_train,
+            rebalance_reference_train=args.rebalance_reference_train,
             train_baymax_repeat_count=args.train_baymax_repeat_count,
             train_baymax_clarification_extra_repeat_count=(
                 args.train_baymax_clarification_extra_repeat_count
@@ -167,10 +179,21 @@ def main() -> int:
         report_path = config.output_dir / "sampling-report.json"
         report = json.loads(report_path.read_text(encoding="utf-8"))
         for split, counts in report["splits"].items():
+            if "preserved_rows" in counts:
+                print(f"Reference {split}: preserved all {counts['preserved_rows']} rows")
+                continue
             print(
                 f"Reference {split}: kept BAYMAX={counts['kept_baymax']}, "
                 f"kept xLAM={counts['kept_xlam']}, replaced xLAM={counts['replaced_xlam']}"
             )
+            if "replaced_baymax" in counts:
+                print(
+                    f"Matched BAYMAX: replaced={counts['replaced_baymax']}, "
+                    f"complete groups={len(counts['complete_contrast_groups'])}, "
+                    f"held-out groups excluded={len(counts['excluded_heldout_groups'])}"
+                )
+            if "added_boundary_rows" in counts:
+                print(f"Added unique boundary rows: {counts['added_boundary_rows']}")
         print(f"Sampling report: {report_path}")
     return 0
 

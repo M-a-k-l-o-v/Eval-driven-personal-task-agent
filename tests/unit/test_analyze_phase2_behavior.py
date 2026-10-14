@@ -3,6 +3,8 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+import pytest
+
 from scripts.analyze_phase2_behavior import (
     analyze_failures_by_expected_behavior,
     analyze_trainable_tokens_by_behavior,
@@ -150,6 +152,52 @@ def test_classify_boundary_generation_identifies_common_failure_modes() -> None:
     assert (
         classify_boundary_generation(raw_model_output="not-json", expected_behavior="refusal")
         == "malformed_call"
+    )
+
+
+@pytest.mark.parametrize(
+    ("calls", "expected_behavior", "diagnostic"),
+    [
+        (
+            [{"name": "request_clarification", "arguments": {"reason": "More details needed."}}],
+            "clarification",
+            "attempted_clarification_invalid_arguments",
+        ),
+        (
+            [{"name": "request_clarification", "arguments": {"reason": "More details needed."}}],
+            "refusal",
+            "attempted_clarification_invalid_arguments",
+        ),
+        (
+            [{"name": "request_clarification", "arguments": {"question": ""}}],
+            "clarification",
+            "attempted_clarification_invalid_arguments",
+        ),
+        (
+            [{"name": "refuse_request", "arguments": {"question": "Who?"}}],
+            "refusal",
+            "attempted_refusal_invalid_arguments",
+        ),
+        ([{"arguments": {}}], "clarification", "malformed_call"),
+        ([], "refusal", "unknown_decision"),
+        (
+            [
+                {"name": "request_clarification", "arguments": {"question": "Who?"}},
+                {"name": "notion.create_task", "arguments": {"title": "Errand"}},
+            ],
+            "clarification",
+            "malformed_call",
+        ),
+    ],
+)
+def test_boundary_generation_separates_invalid_contracts_from_wording(
+    calls: list[dict[str, object]], expected_behavior: str, diagnostic: str
+) -> None:
+    assert (
+        classify_boundary_generation(
+            raw_model_output=json.dumps(calls), expected_behavior=expected_behavior
+        )
+        == diagnostic
     )
 
 

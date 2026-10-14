@@ -23,6 +23,15 @@ dependencies = [
     "requests>=2.32",
 ]
 
+[project.optional-dependencies]
+dpo = [
+    "torch==2.13.0",
+    "trl[peft]==1.14.0",
+    "peft==0.20.0",
+    "transformers==5.15.0",
+    "accelerate==1.14.0",
+]
+
 [build-system]
 requires = ["uv_build>=0.11.19,<0.12.0"]
 build-backend = "uv_build"

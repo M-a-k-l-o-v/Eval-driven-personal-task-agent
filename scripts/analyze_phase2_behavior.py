@@ -10,6 +10,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
+from baymax.eval.output_diagnostics import classify_boundary_generation
 from baymax.eval.scenario_loader import (
     ClarificationExpectedBehavior,
     RefusalExpectedBehavior,
@@ -271,36 +272,6 @@ def classify_boundary_failures(
             )
 
     return rows
-
-
-def classify_boundary_generation(
-    *,
-    raw_model_output: object,
-    expected_behavior: str,
-) -> FailureClass:
-    if not isinstance(raw_model_output, str) or not raw_model_output.strip():
-        return "empty_generation"
-
-    try:
-        payload = json.loads(raw_model_output)
-    except json.JSONDecodeError:
-        return "malformed_call"
-
-    if not isinstance(payload, list) or not payload:
-        return "malformed_call"
-    first_call = payload[0]
-    if not isinstance(first_call, dict):
-        return "malformed_call"
-
-    name = first_call.get("name")
-    expected_meta_tool = (
-        "request_clarification" if expected_behavior == "clarification" else "refuse_request"
-    )
-    if name == expected_meta_tool:
-        return "correct_decision_wrong_wording"
-    if name in {"request_clarification", "refuse_request"}:
-        return "wrong_meta_tool"
-    return "premature_tool"
 
 
 def format_behavior_analysis_report(report: dict[str, Any]) -> str:

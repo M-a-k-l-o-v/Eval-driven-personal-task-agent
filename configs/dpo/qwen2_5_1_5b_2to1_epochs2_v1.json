@@ -1,0 +1,17 @@
+{
+  "reference_config": "configs/sft/qwen2_5_1_5b_lora_target_compatible_v14_act200_anchored_val200_epochs2.json",
+  "initial_sft_config": "configs/sft/qwen2_5_1_5b_lora_target_compatible_v14_2to1_anchored_val200_epochs2.json",
+  "initial_sft_config_sha256": "59eae3479c7c949a0836fdaf9ba20cdc5133e5da3136b0cec3dd159acc31ac7b",
+  "preference_dir": "data/dpo/v1/anchored-epochs2-preferences",
+  "preference_manifest_sha256": "c79421b6fecb5bdfe51f1a014b389669598d6cfa71835c31fd2f45cc699c13d8",
+  "preference_review_sha256": "4eb18ed8b8b2d34f128fb4f4c37a132ebdcbf18192aad36dc927aa91f7e0bcb3",
+  "adapter_config_sha256": "30ed4ad63082ce230a3428d2ab4f3dbd07844f5d90828c350e15ef3112c03a59",
+  "adapter_weights_sha256": "a4dc2c7243fe0e0fdbd9e8488a821115ec04787d8e7211762a2af9ab77676862",
+  "output_dir": "models/qwen2_5_1_5b_2to1_epochs2_dpo_v1",
+  "learning_rate": 0.000005,
+  "beta": 0.1,
+  "num_train_epochs": 1,
+  "max_sequence_length": 1024,
+  "gradient_accumulation_steps": 16,
+  "seed": 1
+}

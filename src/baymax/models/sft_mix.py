@@ -5,6 +5,7 @@ from __future__ import annotations
 import hashlib
 import json
 import random
+import shutil
 from collections import Counter
 from collections.abc import Callable
 from itertools import islice
@@ -52,13 +53,27 @@ class SFTMixConfig(BaseModel):
     validation_cap_baymax_clarification_count: int = Field(default=30, ge=0)
     validation_cap_baymax_refusal_count: int = Field(default=30, ge=0)
     reference_mix_dir: Path | None = None
+    replace_reference_baymax_train: bool = False
+    rebalance_reference_train: bool = False
 
     @model_validator(mode="after")
     def validate_validation_quota(self) -> SFTMixConfig:
+        if self.rebalance_reference_train and (
+            self.reference_mix_dir is None
+            or self.replace_reference_baymax_train
+            or self.preserve_contrast_groups
+        ):
+            raise ValueError(
+                "Train rebalancing requires a reference mix and no contrast replacement."
+            )
+        if self.replace_reference_baymax_train and (
+            self.reference_mix_dir is None or not self.preserve_contrast_groups
+        ):
+            raise ValueError("BAYMAX replacement requires a reference mix and contrast groups.")
         if self.reference_mix_dir is not None and (
             self.train_cap_row_count is None
             or self.validation_cap_row_count is None
-            or self.preserve_contrast_groups
+            or (self.preserve_contrast_groups and not self.replace_reference_baymax_train)
             or self.train_baymax_repeat_count != 1
             or self.eval_baymax_repeat_count != 1
             or self.train_baymax_clarification_extra_repeat_count != 0
@@ -89,8 +104,10 @@ def mix_sft_datasets(config: SFTMixConfig) -> SFTSplitManifest:
     reference = _read_reference_sampling(config) if config.reference_mix_dir is not None else None
     sampling_report: dict[str, Any] = {"splits": {}}
     if reference is not None:
-        if config.output_dir.exists():
-            raise ValueError("Reference sampling requires a new output directory.")
+        if config.output_dir.exists() and (
+            not config.output_dir.is_dir() or any(config.output_dir.iterdir())
+        ):
+            raise ValueError("Reference sampling requires a new or empty output directory.")
         destination = config.output_dir.resolve()
         for directory in (config.xlam_dir, config.baymax_dir, config.reference_mix_dir):
             assert directory is not None
@@ -103,6 +120,11 @@ def mix_sft_datasets(config: SFTMixConfig) -> SFTSplitManifest:
     group_by_index = (
         _read_contrast_groups(config.baymax_dir, baymax_manifest)
         if config.preserve_contrast_groups
+        else None
+    )
+    reference_rows = (
+        _read_full_reference_rows(config)
+        if config.replace_reference_baymax_train or config.rebalance_reference_train
         else None
     )
     if (
@@ -122,6 +144,10 @@ def mix_sft_datasets(config: SFTMixConfig) -> SFTSplitManifest:
     output_source_index = 0
 
     for split_name in EXPECTED_SPLITS:
+        if reference_rows is not None and split_name != "train":
+            split_rows[split_name] = reference_rows[split_name]
+            sampling_report["splits"][split_name] = {"preserved_rows": len(split_rows[split_name])}
+            continue
         baymax_repeat_count = (
             config.train_baymax_repeat_count
             if split_name == "train"
@@ -135,7 +161,19 @@ def mix_sft_datasets(config: SFTMixConfig) -> SFTSplitManifest:
         )
         if config.shuffle:
             random.Random(_split_shuffle_seed(config.seed, split_name)).shuffle(rows)
-        if reference is not None and split_name in reference[0]:
+        if reference_rows is not None and config.rebalance_reference_train:
+            assert reference is not None
+            rows, report = _rebalance_reference_train_order(
+                rows, reference_rows, reference[1], config
+            )
+            sampling_report["splits"][split_name] = report
+        elif reference_rows is not None:
+            assert reference is not None and group_by_index is not None
+            rows, report = _contrast_reference_train_order(
+                rows, reference_rows, reference[1], config, group_by_index
+            )
+            sampling_report["splits"][split_name] = report
+        elif reference is not None and split_name in reference[0]:
             rows, report = _reference_cap_order(
                 rows, reference[0][split_name], reference[1], config, split_name
             )
@@ -157,7 +195,13 @@ def mix_sft_datasets(config: SFTMixConfig) -> SFTSplitManifest:
         if _read_reference_sampling(config)[2] != reference[2]:
             raise ValueError("Reference sampling inputs changed during the build.")
         for split_name, rows in split_rows.items():
-            _write_jsonl(output_paths[split_name], [row.example for row in rows])
+            if reference_rows is not None and split_name != "train":
+                assert config.reference_mix_dir is not None
+                shutil.copyfile(
+                    config.reference_mix_dir / f"{split_name}.jsonl", output_paths[split_name]
+                )
+            else:
+                _write_jsonl(output_paths[split_name], [row.example for row in rows])
         (config.output_dir / "sampling-report.json").write_text(
             json.dumps(sampling_report, indent=2) + "\n", encoding="utf-8"
         )
@@ -402,6 +446,26 @@ def _read_reference_sampling(
                 for row in rows
             ]
         )
+    replacement_identity: dict[str, Any] = {}
+    if config.replace_reference_baymax_train:
+        replacement_identity = {
+            "baymax_train_replacement_version": 1,
+            "reference_split_sha256": {
+                split: _file_sha256(config.reference_mix_dir / f"{split}.jsonl")
+                for split in EXPECTED_SPLITS
+            },
+            "replacement_train_sha256": _file_sha256(config.baymax_dir / "train.jsonl"),
+            "contrast_groups_sha256": _file_sha256(config.baymax_dir / "contrast-groups.json"),
+        }
+    elif config.rebalance_reference_train:
+        replacement_identity = {
+            "train_rebalance_version": 1,
+            "reference_split_sha256": {
+                split: _file_sha256(config.reference_mix_dir / f"{split}.jsonl")
+                for split in EXPECTED_SPLITS
+            },
+            "baymax_train_sha256": _file_sha256(config.baymax_dir / "train.jsonl"),
+        }
     return (
         prefixes,
         exclusions,
@@ -412,8 +476,232 @@ def _read_reference_sampling(
             "prefix_sha256": prefix_hashes,
             "exclusion_review_sha256": review_hash,
             "filter_provenance_sha256": hashlib.sha256(provenance_bytes).hexdigest(),
+            **replacement_identity,
         },
     )
+
+
+def _file_sha256(path: Path) -> str:
+    with path.open("rb") as source:
+        return hashlib.file_digest(source, "sha256").hexdigest()
+
+
+def _read_full_reference_rows(config: SFTMixConfig) -> dict[SplitName, list[PreparedSFTRow]]:
+    assert config.reference_mix_dir is not None
+    manifest = _read_manifest(config.reference_mix_dir)
+    result: dict[SplitName, list[PreparedSFTRow]] = {}
+    for split in EXPECTED_SPLITS:
+        entry = manifest.splits[split]
+        examples = _read_sft_examples(config.reference_mix_dir / f"{split}.jsonl")
+        if len(examples) != entry.count or len(entry.source_rows) != entry.count:
+            raise ValueError(f"{split}: full reference file and provenance counts differ.")
+        result[split] = [
+            PreparedSFTRow(source=source, example=example)
+            for source, example in zip(entry.source_rows, examples, strict=True)
+        ]
+    return result
+
+
+def _sft_input_hash(example: SFTExample) -> str:
+    return _sha256_json([m.model_dump(mode="json") for m in example.messages[:-1]])
+
+
+def _contrast_reference_train_order(
+    rows: list[PreparedSFTRow],
+    reference_rows: dict[SplitName, list[PreparedSFTRow]],
+    exclusions: dict[tuple[SplitName, str], list[str]],
+    config: SFTMixConfig,
+    group_by_index: dict[int, str],
+) -> tuple[list[PreparedSFTRow], dict[str, Any]]:
+    assert config.train_cap_row_count is not None
+    cap = config.train_cap_row_count
+    original = reference_rows["train"]
+    # Reuse reference quota/duplicate checks, without allowing any xLAM replacement.
+    _reference_cap_order(original, original[:cap], exclusions, config, "train")
+    if any(_source_name(row) != "xlam" for row in original[cap:]):
+        raise ValueError("Reference training tail must contain only xLAM rows.")
+    available_xlam = {_sft_example_hash(row.example) for row in rows if _source_name(row) == "xlam"}
+    if any(
+        _sft_example_hash(row.example) not in available_xlam
+        for row in original
+        if _source_name(row) == "xlam"
+    ):
+        raise ValueError("Matched replacement must preserve every reference xLAM training row.")
+    baymax_rows = [row for row in rows if _source_name(row) == "baymax"]
+    if len(baymax_rows) != _read_manifest(config.baymax_dir).splits["train"].count:
+        raise ValueError("Replacement training rows do not match their source manifest.")
+    protected_inputs = {
+        _sft_input_hash(row.example)
+        for split in ("validation", "test")
+        for row in reference_rows[split]
+    }
+    blocked_groups = {
+        group_by_index[_baymax_source_index(row)]
+        for row in baymax_rows
+        if _baymax_source_index(row) in group_by_index
+        and _sft_input_hash(row.example) in protected_inputs
+    }
+    eligible = [
+        row
+        for row in baymax_rows
+        if _sft_input_hash(row.example) not in protected_inputs
+        and group_by_index.get(_baymax_source_index(row)) not in blocked_groups
+    ]
+    eligible_groups = {
+        index: group for index, group in group_by_index.items() if group not in blocked_groups
+    }
+    fixed_xlam_prefix = [row for row in original[:cap] if _source_name(row) == "xlam"]
+    selected = _cap_aware_train_order(
+        eligible + fixed_xlam_prefix, config, group_by_index=eligible_groups
+    )
+    baymax_selected = [row for row in selected[:cap] if _source_name(row) == "baymax"]
+    grouped_counts = Counter(
+        eligible_groups[_baymax_source_index(row)]
+        for row in baymax_selected
+        if _baymax_source_index(row) in eligible_groups
+    )
+    group_sizes = Counter(eligible_groups.values())
+    complete_groups = sorted(g for g, count in grouped_counts.items() if count == group_sizes[g])
+    if not complete_groups:
+        raise ValueError("Matched replacement selected no complete contrast groups.")
+    buckets: dict[str, list[PreparedSFTRow]] = {}
+    for row in baymax_selected:
+        buckets.setdefault(_reference_behavior(row), []).append(row)
+    result = []
+    replacements = []
+    for position, row in enumerate(original, 1):
+        if _source_name(row) != "baymax":
+            result.append(row)
+            continue
+        replacement = buckets[_reference_behavior(row)].pop(0)
+        result.append(replacement)
+        old_hash, new_hash = _sft_example_hash(row.example), _sft_example_hash(replacement.example)
+        if old_hash != new_hash:
+            replacements.append(
+                {
+                    "position": position,
+                    "old_content_sha256": old_hash,
+                    "new_content_sha256": new_hash,
+                }
+            )
+    if any(buckets.values()):
+        raise ValueError("Matched replacement did not consume the requested BAYMAX contribution.")
+    return result, {
+        "cap_rows": cap,
+        "kept_baymax": len(baymax_selected) - len(replacements),
+        "replaced_baymax": len(replacements),
+        "kept_xlam": len(fixed_xlam_prefix),
+        "replaced_xlam": 0,
+        "preserved_xlam_total": len(original) - len(baymax_selected),
+        "excluded_heldout_groups": sorted(blocked_groups),
+        "complete_contrast_groups": complete_groups,
+        "baymax_class_counts": dict(Counter(_reference_behavior(row) for row in baymax_selected)),
+        "replacements": replacements,
+    }
+
+
+def _reference_behavior(row: PreparedSFTRow) -> str:
+    behavior = _row_behavior(row)
+    return behavior if behavior in {"request_clarification", "refuse_request"} else "productive"
+
+
+def _rebalance_reference_train_order(
+    rows: list[PreparedSFTRow],
+    reference_rows: dict[SplitName, list[PreparedSFTRow]],
+    exclusions: dict[tuple[SplitName, str], list[str]],
+    config: SFTMixConfig,
+) -> tuple[list[PreparedSFTRow], dict[str, Any]]:
+    """Add unique boundary rows in place of capped xLAM, retaining the reference controls."""
+    assert config.train_cap_row_count is not None
+    cap = config.train_cap_row_count
+    original = reference_rows["train"]
+    prefix = original[:cap]
+    counts = Counter(_reference_behavior(row) for row in prefix if _source_name(row) == "baymax")
+    old_config = config.model_copy(
+        update={
+            "train_cap_baymax_row_count": sum(counts.values()),
+            "train_cap_baymax_clarification_count": counts["request_clarification"],
+            "train_cap_baymax_refusal_count": counts["refuse_request"],
+        }
+    )
+    _, check = _reference_cap_order(rows, prefix, exclusions, old_config, "train")
+    if check["replaced_xlam"] or any(_source_name(row) != "xlam" for row in original[cap:]):
+        raise ValueError("Rebalancing requires a compatible reference with an xLAM-only tail.")
+    available_xlam = {_sft_example_hash(row.example) for row in rows if _source_name(row) == "xlam"}
+    if any(_sft_example_hash(row.example) not in available_xlam for row in original[cap:]):
+        raise ValueError("Rebalancing cannot retain reference xLAM rows missing from the source.")
+    productive_target = (
+        config.train_cap_baymax_row_count
+        - config.train_cap_baymax_clarification_count
+        - config.train_cap_baymax_refusal_count
+    )
+    if productive_target != counts["productive"]:
+        raise ValueError("Rebalancing must preserve the reference BAYMAX productive count.")
+    protected_inputs = {
+        _sft_input_hash(row.example) for split_rows in reference_rows.values() for row in split_rows
+    }
+    candidates = [
+        row
+        for row in rows
+        if _source_name(row) == "baymax" and _sft_input_hash(row.example) not in protected_inputs
+    ]
+    candidates.sort(
+        key=lambda row: _sha256_json(
+            {
+                "seed": config.seed,
+                "content_sha256": _sft_example_hash(row.example),
+            }
+        )
+    )
+    additions: list[PreparedSFTRow] = []
+    seen_inputs: set[str] = set()
+    for behavior, target in (
+        ("request_clarification", config.train_cap_baymax_clarification_count),
+        ("refuse_request", config.train_cap_baymax_refusal_count),
+    ):
+        needed = target - counts[behavior]
+        if needed < 0:
+            raise ValueError("Rebalancing cannot remove existing BAYMAX boundary rows.")
+        selected = 0
+        for row in candidates:
+            digest = _sft_input_hash(row.example)
+            if selected == needed:
+                break
+            if _reference_behavior(row) != behavior or digest in seen_inputs:
+                continue
+            additions.append(row)
+            seen_inputs.add(digest)
+            selected += 1
+        if selected != needed:
+            raise ValueError(
+                f"Not enough unique same-split {behavior} additions: "
+                f"found {selected}, need {needed}."
+            )
+    slots = [index for index, row in enumerate(prefix) if _source_name(row) == "xlam"]
+    if len(additions) > len(slots):
+        raise ValueError("Boundary additions exceed the available capped xLAM slots.")
+    random.Random(config.seed).shuffle(slots)
+    random.Random(config.seed).shuffle(additions)
+    selected_prefix = list(prefix)
+    displaced = []
+    for slot, addition in zip(slots, additions):
+        displaced.append(prefix[slot])
+        selected_prefix[slot] = addition
+    report = {
+        "cap_rows": cap,
+        "kept_baymax": sum(counts.values()),
+        "kept_xlam": len(slots) - len(additions),
+        "replaced_xlam": 0,
+        "added_boundary_rows": len(additions),
+        "added_content_sha256": [_sft_example_hash(row.example) for row in additions],
+        "displaced_xlam_sha256": [_sft_example_hash(row.example) for row in displaced],
+        "baymax_class_counts": dict(
+            Counter(
+                _reference_behavior(row) for row in selected_prefix if _source_name(row) == "baymax"
+            )
+        ),
+    }
+    return selected_prefix + displaced + original[cap:], report
 
 
 def _reference_cap_order(
@@ -450,13 +738,7 @@ def _reference_cap_order(
             "productive": baymax_count - clarify_count - refuse_count,
         }
     )
-    actual = Counter(
-        _row_behavior(row)
-        if _row_behavior(row) in {"request_clarification", "refuse_request"}
-        else "productive"
-        for row in reference
-        if _source_name(row) == "baymax"
-    )
+    actual = Counter(_reference_behavior(row) for row in reference if _source_name(row) == "baymax")
     if actual != expected:
         raise ValueError(
             f"{split}: reference BAYMAX class counts do not match the requested quotas."
