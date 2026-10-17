@@ -83,6 +83,7 @@ class TrainingHyperparameters(BaseModel):
     eval_steps: int = Field(gt=0)
     save_steps: int = Field(gt=0)
     save_total_limit: int = Field(gt=0)
+    first_tool_name_weight: float = Field(default=1.0, ge=1, allow_inf_nan=False)
 
 
 class TrainingRuntimeConfig(BaseModel):
@@ -145,6 +146,9 @@ def training_config_hash(config: SFTTrainingConfig) -> str:
     """Return the stable SHA256 hash for content-affecting training config fields."""
 
     payload = config.model_dump(mode="json", exclude={"config_hash"})
+    # An absent/default weighting setting must retain historical config identities.
+    if config.training.first_tool_name_weight == 1.0:
+        payload["training"].pop("first_tool_name_weight", None)
     return _sha256_json(payload)
 
 

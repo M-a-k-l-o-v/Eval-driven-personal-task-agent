@@ -109,6 +109,9 @@ def main() -> int:
     print(f"Output dir: {result.plan.output_dir}")
     print(f"Adapter path: {result.plan.adapter_path}")
     print(f"Config hash: {result.plan.config_hash}")
+    if result.plan.first_tool_name_weight > 1:
+        print(f"First tool-name loss weight: {result.plan.first_tool_name_weight:g}x")
+        print("Validation loss: unweighted")
     if result.train_artifact_report is not None:
         print()
         print("Final training artifact")

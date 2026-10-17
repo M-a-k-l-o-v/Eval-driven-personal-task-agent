@@ -1,0 +1,66 @@
+{
+  "config_name": "qwen2_5_1_5b_lora_grounding_v1_epochs2",
+  "config_hash": "f060ddbc1df6182840086ffc4b60f27785390ee2ee41938e2578bea3f3663986",
+  "base_model": "Qwen/Qwen2.5-1.5B-Instruct",
+  "data": {
+    "dataset_id": "mixed:Salesforce/xLAM-function-calling-60k+baymax/synthetic-control-v1",
+    "revision": "91ce08228633738365461a556668a6883b5faa806b84d969dddd8164114603a1",
+    "format_version": "qwen-chat-messages-v2",
+    "system_prompt_sha256": "a31446de6c8b67f1fc8ba8fc09ed8e2d7425ba832334dc8fd6fe2d55ef978468",
+    "train_path": "data\\sft\\v1\\name-first-grounding-v1\\train.jsonl",
+    "validation_path": "data\\sft\\v1\\name-first-grounding-v1\\validation.jsonl",
+    "test_path": "data\\sft\\v1\\name-first-grounding-v1\\test.jsonl",
+    "split_manifest_path": "data\\sft\\v1\\name-first-grounding-v1\\split-manifest.json",
+    "validation_report_path": "data\\sft\\v1\\name-first-grounding-v1\\validation-report.json",
+    "eval_scenarios_paths": [
+      "scenarios\\v1",
+      "scenarios\\v2"
+    ]
+  },
+  "lora": {
+    "r": 8,
+    "lora_alpha": 16,
+    "target_modules": [
+      "q_proj",
+      "k_proj",
+      "v_proj",
+      "o_proj"
+    ],
+    "lora_dropout": 0.05,
+    "bias": "none",
+    "task_type": "CAUSAL_LM"
+  },
+  "training": {
+    "learning_rate": 0.0002,
+    "num_train_epochs": 2.0,
+    "per_device_train_batch_size": 2,
+    "per_device_eval_batch_size": 2,
+    "gradient_accumulation_steps": 8,
+    "max_sequence_length": 2048,
+    "warmup_ratio": 0.03,
+    "weight_decay": 0.0,
+    "lr_scheduler_type": "cosine",
+    "max_grad_norm": 1.0,
+    "gradient_checkpointing": true,
+    "bf16": true,
+    "fp16": false,
+    "logging_steps": 10,
+    "eval_steps": 250,
+    "save_steps": 250,
+    "save_total_limit": 2,
+    "first_tool_name_weight": 1.0
+  },
+  "runtime": {
+    "seed": 1,
+    "run_name": "qwen2_5_1_5b_lora_grounding_v1_epochs2",
+    "output_dir": "models\\qwen2_5_1_5b_lora_grounding_v1_epochs2",
+    "model_registry_path": "models\\models.json",
+    "expected_adapter_path": "models\\qwen2_5_1_5b_lora_grounding_v1_epochs2\\adapter",
+    "report_to": []
+  },
+  "output_adapter": {
+    "native_output_format": "xlam_function_calling",
+    "baymax_boundary": "AgentResponse",
+    "adapter_owner": "Marv"
+  }
+}

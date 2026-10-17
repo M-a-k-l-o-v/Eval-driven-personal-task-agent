@@ -28,7 +28,7 @@ from baymax.models.sft_dataset import (
 )
 
 BAYMAX_SYNTHETIC_DATASET_ID = "baymax/synthetic-control-v1"
-BAYMAX_SYNTHETIC_GENERATOR_VERSION = "14"
+BAYMAX_SYNTHETIC_GENERATOR_VERSION = "15"
 TARGET_SYNTHETIC_EXAMPLE_COUNT = 1000
 CLARIFICATION_CONTRAST_PAIR_COUNT = 48
 REFUSAL_CONTRAST_PAIR_COUNT = 48
@@ -57,7 +57,7 @@ class BaymaxSFTBuildConfig(BaseModel):
 
     model_config = ConfigDict(extra="forbid")
 
-    output_dir: Path = Path("data/sft/v1/baymax-control")
+    output_dir: Path = Path("data/sft/v1/baymax-control-policy-v15")
     seed: int = 1
     split_ratios: SFTSplitRatios = Field(default_factory=SFTSplitRatios)
     system_prompt: str = DEFAULT_SFT_SYSTEM_PROMPT
@@ -83,8 +83,8 @@ class SyntheticBaymaxExample(BaseModel):
 def build_baymax_sft_dataset(config: BaymaxSFTBuildConfig) -> SFTSplitManifest:
     """Generate BAYMAX-control examples and write train/validation/test JSONL files."""
 
-    if config.matched_contrasts and config.output_dir.exists() and any(config.output_dir.iterdir()):
-        raise ValueError("Matched-contrast builds require a new, empty output directory.")
+    if config.output_dir.exists() and any(config.output_dir.iterdir()):
+        raise ValueError("BAYMAX SFT builds require a new, empty output directory.")
     source_examples = (
         generate_synthetic_baymax_examples(matched_contrasts=True)
         if config.matched_contrasts
@@ -442,12 +442,20 @@ def generate_synthetic_baymax_examples(
             [_call("request_clarification", question="Which review task should I mark as done?")],
         ),
         _example(
-            "baymax_clarify_notion_due_date_001",
-            "request_clarification",
+            "baymax_direct_notion_urgency_001",
+            "direct_tool_call",
             "Create a task to revise chemistry soon.",
             ["notion.create_task"],
             {"notion_tasks": []},
-            [_call("request_clarification", question="What due date should I use for soon?")],
+            [_call("notion.create_task", title="revise chemistry soon", status="open")],
+        ),
+        _example(
+            "baymax_clarify_notion_due_date_001",
+            "request_clarification",
+            "Create a task to revise chemistry due soon.",
+            ["notion.create_task"],
+            {"notion_tasks": []},
+            [_call("request_clarification", question="What due date should I use?")],
         ),
         _example(
             "baymax_clarify_clipboard_text_001",
@@ -1397,10 +1405,10 @@ def _clarification_contrast_pair(index: int) -> list[SyntheticBaymaxExample]:
             _example(
                 f"baymax_contrast_clarify_missing_due_{index + 1:03}",
                 "request_clarification",
-                f"Create a task to revise {topic} soon.",
+                f"Create a task to revise {topic} due soon.",
                 ["notion.create_task"],
                 {"notion_tasks": []},
-                [_call("request_clarification", question="What due date should I use for soon?")],
+                [_call("request_clarification", question="What due date should I use?")],
                 contrast_group=group,
                 contrast_role="missing_info",
             ),
@@ -2039,6 +2047,16 @@ def _generated_direct_tool_example(index: int) -> SyntheticBaymaxExample:
         )
     if operation == 2:
         title = f"{topic} {task}"
+        if (index // 12) % 2:
+            title += " soon"
+            return _example(
+                f"baymax_generated_direct_{index + 1:03}",
+                "direct_tool_call",
+                f"Create a task for {title}.",
+                ["notion.create_task"],
+                {"notion_tasks": []},
+                [_call("notion.create_task", title=title, status="open")],
+            )
         return _example(
             f"baymax_generated_direct_{index + 1:03}",
             "direct_tool_call",
@@ -2196,10 +2214,10 @@ def _generated_clarification_example(index: int) -> SyntheticBaymaxExample:
         return _example(
             f"baymax_generated_clarify_{index + 1:03}",
             "request_clarification",
-            f"Create a task to revise {topic} soon.",
+            f"Create a task to revise {topic} due soon.",
             ["notion.create_task"],
             {"notion_tasks": []},
-            [_call("request_clarification", question="What due date should I use for soon?")],
+            [_call("request_clarification", question="What due date should I use?")],
         )
     if operation == 6:
         return _example(

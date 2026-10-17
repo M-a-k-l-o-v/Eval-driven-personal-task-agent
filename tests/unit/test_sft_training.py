@@ -244,6 +244,39 @@ def test_run_sft_lora_training_dry_run_does_not_need_ml_dependencies(tmp_path: P
     assert result.saved_adapter_path is None
 
 
+@pytest.mark.parametrize("weight", [1.0, 3.0])
+def test_weighted_runs_refuse_existing_output_without_changing_default_dry_runs(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, weight: float
+) -> None:
+    config_path = _write_training_config_with_data(tmp_path)
+    config = sft_training.load_training_config(config_path)
+    config = training_config_with_hash(
+        config.model_copy(
+            update={
+                "training": config.training.model_copy(update={"first_tool_name_weight": weight})
+            }
+        )
+    )
+    write_training_config(config_path, config)
+    config.runtime.output_dir.mkdir()
+    marker = config.runtime.output_dir / "preserve.txt"
+    marker.write_text("existing checkpoint", encoding="utf-8")
+    loader = Mock(side_effect=AssertionError("No model should load in preflight"))
+    monkeypatch.setattr(sft_training, "_load_training_dependencies", loader)
+    if weight > 1:
+        with pytest.raises(ValueError, match="new empty output directory"):
+            run_sft_lora_training(
+                config_path=config_path, overrides=SFTTrainingOverrides(dry_run=True)
+            )
+    else:
+        result = run_sft_lora_training(
+            config_path=config_path, overrides=SFTTrainingOverrides(dry_run=True)
+        )
+        assert result.dry_run
+    assert marker.read_text() == "existing checkpoint"
+    loader.assert_not_called()
+
+
 def test_training_rejects_invalid_target_before_loading_ml_dependencies(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:

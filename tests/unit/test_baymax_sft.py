@@ -97,6 +97,85 @@ def test_matched_build_is_versioned_exports_groups_and_does_not_overwrite(tmp_pa
         build_baymax_sft_dataset(config)
 
 
+@pytest.mark.parametrize("matched_contrasts", [False, True])
+def test_notion_bare_urgency_creates_undated_tasks(matched_contrasts: bool) -> None:
+    examples = generate_synthetic_baymax_examples(matched_contrasts=matched_contrasts)
+    urgent_tasks = [
+        source
+        for source in examples
+        if source.available_tools == ["notion.create_task"]
+        and source.user_input.endswith(" soon.")
+        and " due soon." not in source.user_input
+    ]
+    assert len(urgent_tasks) >= 2
+    assert any(source.id == "baymax_direct_notion_urgency_001" for source in urgent_tasks)
+    assert any(source.id.startswith("baymax_generated_direct_") for source in urgent_tasks)
+    for source in urgent_tasks:
+        assert source.behavior_type == "direct_tool_call"
+        assert len(source.assistant_calls) == 1
+        call = source.assistant_calls[0]
+        assert call["name"] == "notion.create_task"
+        assert "due_date" not in call["arguments"]
+        assert call["arguments"]["title"].endswith(" soon")
+        validate_synthetic_baymax_example(source)
+        example = synthetic_baymax_example_to_sft_example(
+            source, system_prompt=DEFAULT_SFT_SYSTEM_PROMPT
+        )
+        assert not validate_sft_target_contract(example, location=source.id)
+
+
+@pytest.mark.parametrize("matched_contrasts", [False, True])
+def test_notion_explicit_unspecified_deadlines_still_clarify(matched_contrasts: bool) -> None:
+    examples = generate_synthetic_baymax_examples(matched_contrasts=matched_contrasts)
+    vague_deadlines = [
+        source
+        for source in examples
+        if source.available_tools == ["notion.create_task"] and " due soon." in source.user_input
+    ]
+    assert vague_deadlines
+    assert any(source.id == "baymax_clarify_notion_due_date_001" for source in vague_deadlines)
+    assert any(source.id.startswith("baymax_generated_clarify_") for source in vague_deadlines)
+    assert any(
+        source.id.startswith("baymax_contrast_clarify_missing_due_") for source in vague_deadlines
+    )
+    for source in vague_deadlines:
+        assert source.behavior_type == "request_clarification"
+        assert source.assistant_calls[0]["name"] == "request_clarification"
+        assert "due date" in source.assistant_calls[0]["arguments"]["question"]
+        validate_synthetic_baymax_example(source)
+
+
+@pytest.mark.parametrize("matched_contrasts", [False, True])
+def test_builder_preserves_existing_artifacts_before_generating(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, matched_contrasts: bool
+) -> None:
+    historical = tmp_path / "train.jsonl"
+    historical.write_bytes(b"historical dataset\n")
+    monkeypatch.setattr(
+        baymax_sft, "generate_synthetic_baymax_examples", lambda **_: pytest.fail("No generation")
+    )
+    with pytest.raises(ValueError, match="new, empty"):
+        build_baymax_sft_dataset(
+            BaymaxSFTBuildConfig(output_dir=tmp_path, matched_contrasts=matched_contrasts)
+        )
+    assert historical.read_bytes() == b"historical dataset\n"
+    assert list(tmp_path.iterdir()) == [historical]
+
+
+def test_urgency_policy_has_a_new_generator_identity(monkeypatch: pytest.MonkeyPatch) -> None:
+    from scripts.build_baymax_sft_dataset import DEFAULT_OUTPUT_DIR
+
+    config = BaymaxSFTBuildConfig()
+    assert DEFAULT_OUTPUT_DIR == config.output_dir
+    assert config.output_dir.name == "baymax-control-policy-v15"
+    examples = generate_synthetic_baymax_examples()
+    revision = baymax_sft.baymax_synthetic_revision(examples)
+    config_hash = baymax_sft.baymax_sft_build_config_hash(config)
+    monkeypatch.setattr(baymax_sft, "BAYMAX_SYNTHETIC_GENERATOR_VERSION", "14")
+    assert baymax_sft.baymax_synthetic_revision(examples) != revision
+    assert baymax_sft.baymax_sft_build_config_hash(config) != config_hash
+
+
 @pytest.mark.parametrize(
     "initial_state",
     [

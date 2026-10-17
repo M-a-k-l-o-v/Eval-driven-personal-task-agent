@@ -35,6 +35,7 @@ class LocalLoraConfig(BaseModel):
     temperature: float = Field(default=0.0, ge=0)
     trust_remote_code: bool = False
     allow_cpu: bool = False
+    compact_json: bool = False
 
 
 class LocalLoraInvocation(BaseModel):
@@ -98,7 +99,14 @@ class LocalLoraAgent:
         self._model.eval()
 
     def invoke(self, scenario: Scenario) -> LocalLoraInvocation:
-        messages = build_lora_scenario_messages(scenario)
+        return self.invoke_messages(
+            build_lora_scenario_messages(scenario, compact_json=self._config.compact_json)
+        )
+
+    def invoke_messages(self, messages: list[dict[str, str]]) -> LocalLoraInvocation:
+        """Generate from exact single-turn inputs, without an expected assistant answer."""
+        if [message.get("role") for message in messages] != ["system", "user"]:
+            raise ValueError("Inference requires only system/user messages; no assistant target.")
         prompt = self._tokenizer.apply_chat_template(
             messages,
             tokenize=False,
@@ -168,8 +176,12 @@ def run_lora_scenarios(
     return [run_lora_scenario(scenario, agent, run_id=run_id) for scenario in scenarios]
 
 
-def build_lora_scenario_messages(scenario: Scenario) -> list[dict[str, str]]:
-    """Build chat messages matching the SFT prompt style."""
+def build_lora_scenario_messages(
+    scenario: Scenario, *, compact_json: bool = False
+) -> list[dict[str, str]]:
+    """Build eval inputs; the optional ablation changes JSON separator spacing only."""
+
+    separators = (",", ":") if compact_json else None
 
     return [
         {"role": "system", "content": DEFAULT_SFT_SYSTEM_PROMPT},
@@ -178,7 +190,9 @@ def build_lora_scenario_messages(scenario: Scenario) -> list[dict[str, str]]:
             "content": "\n".join(
                 [
                     "Available tools, including internal meta-tools:",
-                    json.dumps(_available_tool_specs(scenario), sort_keys=True),
+                    json.dumps(
+                        _available_tool_specs(scenario), sort_keys=True, separators=separators
+                    ),
                     "",
                     "User request:",
                     json.dumps(
@@ -188,6 +202,7 @@ def build_lora_scenario_messages(scenario: Scenario) -> list[dict[str, str]]:
                             "request": scenario.user_input,
                         },
                         sort_keys=True,
+                        separators=separators,
                     ),
                 ]
             ),

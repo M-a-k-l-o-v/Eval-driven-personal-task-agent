@@ -24,6 +24,7 @@ def test_local_lora_config_allows_base_model_without_adapter() -> None:
 
     assert config.base_model == "Qwen/Qwen2.5-1.5B-Instruct"
     assert config.adapter_path is None
+    assert config.compact_json is False
 
 
 def test_parse_lora_agent_response_reads_xlam_tool_call() -> None:
@@ -251,6 +252,31 @@ def test_build_lora_scenario_messages_includes_eval_context_and_tools() -> None:
     assert "Do not use for unavailable tools" in messages[1]["content"]
     assert "2026-05-18T09:00:00+00:00" in messages[1]["content"]
     assert "Schedule linear algebra revision" in messages[1]["content"]
+
+
+def test_compact_json_preserves_values_escaping_time_and_tool_order() -> None:
+    scenario = load_scenario(SCENARIO_DIR / "calendar_create_001.json").model_copy(
+        update={"initial_state": {"clipboard_text": "Caf\u00e9: has spaces, too"}}
+    )
+    original_scenario = scenario.model_dump(mode="json")
+    spaced = build_lora_scenario_messages(scenario)
+    compact = build_lora_scenario_messages(scenario, compact_json=True)
+
+    assert compact[0] == spaced[0]
+    assert [message["role"] for message in compact] == ["system", "user"]
+    spaced_lines = spaced[1]["content"].splitlines()
+    compact_lines = compact[1]["content"].splitlines()
+    assert compact_lines[0] == spaced_lines[0]
+    assert compact_lines[2:4] == spaced_lines[2:4]
+    for index in (1, 4):
+        value = json.loads(spaced_lines[index])
+        assert json.loads(compact_lines[index]) == value
+        assert spaced_lines[index] == json.dumps(value, sort_keys=True)
+        assert compact_lines[index] == json.dumps(value, sort_keys=True, separators=(",", ":"))
+    assert "\\u00e9" in compact_lines[4]
+    assert "2026-05-18T09:00:00+00:00" in compact_lines[4]
+    assert "Caf\\u00e9: has spaces, too" in compact_lines[4]
+    assert scenario.model_dump(mode="json") == original_scenario
 
 
 def test_run_lora_scenario_scores_parsed_response() -> None:

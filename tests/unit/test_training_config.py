@@ -31,6 +31,80 @@ def test_training_config_hash_is_stable_and_excludes_hash_field() -> None:
     assert training_config_with_hash(config).config_hash == first_hash
 
 
+def test_default_weight_preserves_frozen_name_first_hash_and_nondefault_weight_changes_it() -> None:
+    path = Path(
+        "configs/sft/qwen2_5_1_5b_lora_target_compatible_v14_act200_anchored_val200_epochs2_qkvo_name_first.json"
+    )
+    reference = load_training_config(path)
+    assert reference.training.first_tool_name_weight == 1.0
+    assert (
+        training_config_hash(reference)
+        == reference.config_hash
+        == ("684a76cd39d845b6177bdaee495bb77bcb436406d384baf912f80b8164fb8b8b")
+    )
+    weighted = reference.model_copy(
+        update={"training": reference.training.model_copy(update={"first_tool_name_weight": 3.0})}
+    )
+    assert training_config_hash(weighted) != reference.config_hash
+
+
+@pytest.mark.parametrize("weight", [0, -1, 0.5, float("nan"), float("inf")])
+def test_invalid_tool_name_weights_are_rejected(weight: float) -> None:
+    fields = _training_config().training.model_dump()
+    fields["first_tool_name_weight"] = weight
+    with pytest.raises(ValueError):
+        TrainingHyperparameters.model_validate(fields)
+
+
+@pytest.mark.parametrize("weight", [2.0, 3.0])
+def test_tool_weight_configs_change_only_objective_and_run_identity(weight: float) -> None:
+    prefix = (
+        "configs/sft/qwen2_5_1_5b_lora_target_compatible_v14_act200_anchored_val200"
+        "_epochs2_qkvo_name_first"
+    )
+    reference = load_training_config(Path(prefix + ".json"))
+    candidate = load_training_config(Path(prefix + f"_tool_weight{weight:g}.json"))
+    assert candidate.training.first_tool_name_weight == weight
+    assert candidate.training.model_dump(exclude={"first_tool_name_weight"}) == (
+        reference.training.model_dump(exclude={"first_tool_name_weight"})
+    )
+    assert candidate.data == reference.data
+    assert candidate.lora == reference.lora
+    assert candidate.base_model == reference.base_model
+    assert candidate.output_adapter == reference.output_adapter
+    changed = {"run_name", "output_dir", "expected_adapter_path"}
+    assert candidate.runtime.model_dump(exclude=changed) == reference.runtime.model_dump(
+        exclude=changed
+    )
+    assert candidate.runtime.output_dir != reference.runtime.output_dir
+    assert candidate.runtime.expected_adapter_path != reference.runtime.expected_adapter_path
+    assert candidate.config_hash == training_config_hash(candidate)
+
+
+def test_coverage_four_epochs_changes_only_duration_and_run_identity() -> None:
+    prefix = "configs/sft/qwen2_5_1_5b_lora_coverage_2k_v2_epochs"
+    reference = load_training_config(Path(prefix + "2.json"))
+    candidate = load_training_config(Path(prefix + "4.json"))
+    assert reference.training.num_train_epochs == 2.0
+    assert candidate.training.num_train_epochs == 4.0
+    assert candidate.training.model_dump(exclude={"num_train_epochs"}) == (
+        reference.training.model_dump(exclude={"num_train_epochs"})
+    )
+    assert candidate.data == reference.data
+    assert candidate.lora == reference.lora
+    assert candidate.base_model == reference.base_model
+    assert candidate.output_adapter == reference.output_adapter
+    changed = {"run_name", "output_dir", "expected_adapter_path"}
+    assert candidate.runtime.model_dump(exclude=changed) == reference.runtime.model_dump(
+        exclude=changed
+    )
+    assert candidate.runtime.output_dir != reference.runtime.output_dir
+    assert candidate.runtime.expected_adapter_path != reference.runtime.expected_adapter_path
+    assert candidate.config_name != reference.config_name
+    assert candidate.config_hash != reference.config_hash
+    assert candidate.config_hash == training_config_hash(candidate)
+
+
 def test_validate_training_config_reports_hash_mismatch(tmp_path: Path) -> None:
     config_path = tmp_path / "config.json"
     write_training_config(config_path, _training_config(config_hash="incorrect"))

@@ -11,7 +11,7 @@ from pydantic import ValidationError
 from baymax.models.baymax_sft import BaymaxSFTBuildConfig, build_baymax_sft_dataset
 from baymax.models.sft_dataset import SFTSplitRatios
 
-DEFAULT_OUTPUT_DIR = Path("data/sft/v1/baymax-control")
+DEFAULT_OUTPUT_DIR = BaymaxSFTBuildConfig().output_dir
 
 
 def main() -> int:
