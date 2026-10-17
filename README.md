@@ -2,7 +2,7 @@
 
 A locally-runnable personal-task agent with an eval harness. Stepping-stone learning project — shipped as portfolio evidence of engineering + methodology discipline, not as a daily-driver assistant or research contribution.
 
-**Status**: Phase 1 eval baseline shipped (50 scenarios, OpenAI + scripted baselines). Phase 2 in progress (MLX backend, LoRA fine-tune, output adapter). Target ship: end of September 2026.
+**Status**: Closed out by the project owner on 2026-10-17 as a stepping-stone learning project. The final local fine-tune records 73/150 task successes on the development suite. Fake adapters only; not a production assistant.
 
 See [docs/PROJECT.md](docs/PROJECT.md) for the full "what BAYMAX is and isn't."
 
@@ -52,6 +52,9 @@ Full ownership rules: [docs/OWNERSHIP.md](docs/OWNERSHIP.md).
 | [docs/SCORING.md](docs/SCORING.md) | Deterministic scoring rules |
 | [docs/DEFERRED.md](docs/DEFERRED.md) | Known limitations + not-implemented items |
 | [docs/decisions/](docs/decisions/) | ADR archive |
+| [docs/experiments/README.md](docs/experiments/README.md) | Experiment history, settings, results and limitations |
+| [Experiment notebook PDF](docs/experiments/pdf/BAYMAX-experiment-notebook.pdf) | Combined experiment reports with internal navigation |
+| [Complete documentation PDF](docs/pdf/BAYMAX-complete-documentation.pdf) | Public project documents and experiment reports |
 
 ---
 
@@ -95,7 +98,31 @@ Phase 1 result files are committed under `results/`.
 
 ---
 
-## Current results (Phase 1 baselines)
+## Final local evaluation (150 development scenarios)
+
+| Local checkpoint | Task successes / 150 | Routing macro-F1 | Invalid outputs / 150 |
+| --- | ---: | ---: | ---: |
+| Unweighted name-first reference, 1k / 2 epochs | 57 | 0.612 | 1 |
+| Corrected grounding, 1k / 2 epochs | 53 | 0.591 | 0 |
+| Expanded coverage, 2k / 2 epochs | 64 | 0.615 | 2 |
+| Expanded coverage, 2k / 4 epochs | 73 | 0.681 | 0 |
+
+Source: [saved four-epoch evaluation](results/phase2/json-spacing/name-first-coverage-2k-v2-epochs4-compact-combined-150.json).
+All four use compact JSON, greedy decoding and the same combined v1/v2 suite.
+This is single-seed development evidence after repeated evaluation, not an untouched
+test set or proof of statistical significance. The final run correctly routes
+17/40 clarification cases and 27/29 refusal cases; clarification remains a weakness.
+Its recorded mean latency is 5,652 ms, versus 2,758 ms for the two-epoch 2k run.
+Hardware conditions were not controlled sufficiently to attribute that difference
+to epochs alone. Reported API cost is zero, not zero hardware/electricity cost.
+
+Recipes, decision matrices and qualifications are in the
+[four-epoch experiment report](docs/experiments/08-output-contract-learning/20-unique-2k-four-epochs.md).
+Generated training data, adapter weights and private local files are not included
+in Git. The committed config pins the dataset revision; reproducing or serving
+the local model requires generating the data and obtaining/training its adapter.
+
+## Historical Phase 1 baselines (50 scenarios)
 
 | Backend | task_success_rate | scenarios |
 |---|---|---|
@@ -103,7 +130,8 @@ Phase 1 result files are committed under `results/`.
 | gpt-4o-mini | **0.52** | 50 |
 | Qwen 1.5B + LoRA (smoke test) | 0.24 | 50 |
 
-Phase 2 will add: proper Qwen training runs (not smoke test), MLX backend integration, output adapter, expanded eval to ~200 scenarios. Fine-tune is EXPECTED to underperform baseline — honest characterization of transfer ceiling, not a project failure.
+These historical 50-case results are not directly comparable to the final 150-case
+local evaluations above. No claim that the fine-tune beats a frontier model is made.
 
 ---
 

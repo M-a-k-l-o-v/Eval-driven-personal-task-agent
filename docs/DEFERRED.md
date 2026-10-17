@@ -11,7 +11,7 @@ If any of these ever get built, it would be a NEW project reusing BAYMAX's archi
 ## Not in the shipped artifact
 
 ### Real API integrations
-- **Real Google Calendar / Notion / Gmail / system clipboard adapters** — fake in-memory adapters only. No OAuth, no real API auth, no rate limits, no network flakiness handling.
+- **Real Google Calendar / Notion / Gmail / system **clipboard** adapters** — fake in-memory adapters only. No OAuth, no real API auth, no rate limits, no network flakiness handling.
 - **Consequence**: BAYMAX cannot be used as a daily-driver assistant. Any successful eval scenario has zero real-world effect.
 
 ### Larger model
