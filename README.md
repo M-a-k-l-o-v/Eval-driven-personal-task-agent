@@ -2,7 +2,7 @@
 
 A locally-runnable personal-task agent with an eval harness. Stepping-stone learning project — shipped as portfolio evidence of engineering + methodology discipline, not as a daily-driver assistant or research contribution.
 
-**Status**: Phase 1 eval baseline shipped (50 scenarios, OpenAI + scripted baselines). Phase 2 in progress (MLX backend, LoRA fine-tune, output adapter). Target ship: end of September 2026.
+**Status** (updated 16 Nov 2026): Phase 1 eval baseline shipped (50 scenarios, OpenAI + scripted baselines). Phase 2 is partly merged: the SFT evaluation pipeline and the v2 suite are in `main`. Still to do: end-to-end eval through the MLX backend and output adapter, and a model card. Target: end of December 2026 (the September target slipped).
 
 See [docs/PROJECT.md](docs/PROJECT.md) for the full "what BAYMAX is and isn't."
 
