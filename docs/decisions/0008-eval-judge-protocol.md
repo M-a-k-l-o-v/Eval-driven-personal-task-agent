@@ -1,6 +1,6 @@
 # ADR 0008 - Eval judge protocol
 
-**Status**: Deferred
+**Status**: Accepted (deferral removed 2026-11-27; Phase 1 is complete)
 **Date**: 2026-06-23
 **Author**: Ronin
 **Related**: [docs/SCORING.md](../SCORING.md), [docs/DEFERRED.md](../DEFERRED.md), [ADR 0003](0003-scenario-format.md)
@@ -40,7 +40,7 @@ hallucination rate          actual tools not listed in available_tools
 task success                no failure reasons and full argument correctness
 ```
 
-LLM-as-judge is deferred until deterministic checks become too brittle for the scenario set. When added, it should be a separate scorer mode, not a replacement for deterministic scoring.
+This is no longer a deferral. Phase 1 is complete, and scorer changes are owned by Ronin, who will update the scorer himself (see `docs/SCORER_FIXES.md`). Until he does, the deterministic scorer above is the one in use and nothing else changes. Any judge mode he adds should be a separate scorer mode, not a replacement for deterministic scoring.
 
 ---
 

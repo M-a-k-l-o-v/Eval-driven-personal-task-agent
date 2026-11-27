@@ -4,7 +4,8 @@ This document tracks the Phase 1 scoring rules for BAYMAX eval scenarios.
 
 The scorer is deterministic. It compares an agent response against the expected
 behavior in a scenario. The runner also executes tool calls against fake adapters
-and records `tool_results` and `final_state`; LLM-as-judge scoring is deferred.
+and records `tool_results` and `final_state`; the deterministic scorer is the one in use
+until Ronin updates it (ADR 0008, no longer deferred).
 
 ## Current Scoring Rules
 

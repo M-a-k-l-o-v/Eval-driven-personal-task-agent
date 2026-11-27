@@ -31,7 +31,7 @@ If any of these ever get built, it would be a NEW project reusing BAYMAX's archi
 - **Consequence**: latency feels awkward for interactive use; fine for batch eval.
 
 ### LLM-as-judge scoring
-- **Deterministic scoring only.** ADR 0008 designed the judge protocol; implementation deferred and now not planned.
+- **Deterministic scoring only, for now.** ADR 0008 is no longer deferred (Phase 1 is complete). Ronin owns scorer updates; the current deterministic scorer stays in use until he changes it.
 - **Consequence**: cannot score ambiguous scenarios where multiple tool-call sequences would be valid.
 
 ### Sub-task chains / multi-phase task modeling
@@ -92,7 +92,7 @@ If Marv or someone else ever wanted to un-defer any of the above, BAYMAX's archi
 - SQLite state store → schema defined in ADR 0007
 - Multi-turn → hierarchical task_id already in v1 (ADR 0002)
 - Streaming → additive method on backend (ADR 0011 §A5)
-- LLM-as-judge → ADR 0008 defines the protocol
+- LLM-as-judge → ADR 0008 defines the protocol (no longer deferred; Ronin owns scorer updates)
 
 That extensibility is part of the artifact's engineering value. It's not going to be exercised by this project.
 

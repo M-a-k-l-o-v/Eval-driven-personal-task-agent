@@ -43,8 +43,9 @@ proceed. Accept any wording that conveys the required meaning.
 
 Keep `X` in the routing or output failure counts. Report how many responses
 qualified for wording review alongside the adequacy grades. Start with blinded
-human review and compare disagreements before expanding coverage. ADR 0008 keeps
-automated semantic judging deferred. [Eval judge decision](decisions/0008-eval-judge-protocol.md)
+human review and compare disagreements before expanding coverage. ADR 0008 is no
+longer deferred: Ronin will update the scorer himself, and the current scorer stays in use
+until then. [Eval judge decision](decisions/0008-eval-judge-protocol.md)
 
 **Acceptance checks.** Accept a correct question in different words. Give
 partial credit when it asks for start time but leaves a required duration
