@@ -87,7 +87,7 @@ class MLXBackend(InferenceBackend):
                 missing="mlx-lm package",
                 hint=(
                     "MLX runs on Apple Silicon only. Install with "
-                    "`uv add mlx-lm` on a Mac; skip MLX integration tests "
+                    "`uv sync --extra mlx` on a Mac; skip MLX integration tests "
                     "elsewhere by omitting HAVE_MLX=1."
                 ),
             ) from exc
@@ -104,7 +104,9 @@ class MLXBackend(InferenceBackend):
                 hint=f"Neither field set on entry {model_id!r}.",
             )
         try:
-            self._model, self._tokenizer = load(weights_path)
+            # load() returns 2 or 3 values depending on return_config; we only want the first two.
+            loaded = load(weights_path)
+            self._model, self._tokenizer = loaded[0], loaded[1]
         except FileNotFoundError as exc:
             raise BackendConfigError(
                 backend="mlx",
