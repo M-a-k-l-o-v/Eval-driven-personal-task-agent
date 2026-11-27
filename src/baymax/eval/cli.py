@@ -17,6 +17,7 @@ from baymax.eval.lora_runner import (
     LocalLoraDependencyError,
     run_lora_scenarios,
 )
+from baymax.eval.routing_metrics import routing_metrics
 from baymax.eval.runner import ScenarioRunResult, ScriptedAgent, run_scenarios
 from baymax.eval.scenario_loader import load_scenario_directories
 from baymax.eval.scorer import AgentResponse
@@ -59,6 +60,7 @@ def main(argv: Sequence[str] | None = None) -> int:
             scenario_ids=args.scenario_id,
             runner="agent_lora",
             backend_name=f"local-lora:{args.base_model}",
+            compact_json=args.compact_json,
         )
         return 0
 
@@ -76,6 +78,7 @@ def main(argv: Sequence[str] | None = None) -> int:
             scenario_ids=args.scenario_id,
             runner="agent_local",
             backend_name=f"local-base:{args.base_model}",
+            compact_json=args.compact_json,
         )
         return 0
 
@@ -254,6 +257,13 @@ def _build_parser() -> argparse.ArgumentParser:
         help="scenario ID to run; repeat for multiple IDs",
     )
 
+    for local_parser in (agent_lora_parser, agent_local_parser):
+        local_parser.add_argument(
+            "--compact-json",
+            action="store_true",
+            help="spacing-only input ablation; requires a new output file",
+        )
+
     return parser
 
 
@@ -326,7 +336,10 @@ def _run_agent_local(
     scenario_ids: list[str],
     runner: str,
     backend_name: str,
+    compact_json: bool = False,
 ) -> None:
+    if compact_json and output_path.exists():
+        raise SystemExit("error: compact-JSON ablation requires a new output file")
     run_id = str(uuid4())
     scenarios = load_scenario_directories(scenario_dirs)
     if scenario_ids:
@@ -338,17 +351,17 @@ def _run_agent_local(
     if limit is not None:
         scenarios = scenarios[:limit]
 
+    config = LocalLoraConfig(
+        base_model=base_model,
+        adapter_path=adapter_path,
+        max_new_tokens=max_new_tokens,
+        temperature=temperature,
+        trust_remote_code=trust_remote_code,
+        allow_cpu=allow_cpu,
+        compact_json=compact_json,
+    )
     try:
-        agent = LocalLoraAgent(
-            LocalLoraConfig(
-                base_model=base_model,
-                adapter_path=adapter_path,
-                max_new_tokens=max_new_tokens,
-                temperature=temperature,
-                trust_remote_code=trust_remote_code,
-                allow_cpu=allow_cpu,
-            )
-        )
+        agent = LocalLoraAgent(config)
     except (LocalLoraDependencyError, FileNotFoundError, RuntimeError) as error:
         raise SystemExit(f"error: {error}") from error
 
@@ -363,12 +376,12 @@ def _run_agent_local(
         run_id=run_id,
         runner=runner,
     )
+    output["benchmark_config"]["input_json_format"] = "compact" if compact_json else "spaced"
+    output["benchmark_config"]["local_model"] = config.model_dump(mode="json")
 
     output_path.parent.mkdir(parents=True, exist_ok=True)
-    output_path.write_text(
-        json.dumps(output, indent=2, sort_keys=True),
-        encoding="utf-8",
-    )
+    with output_path.open("x" if compact_json else "w", encoding="utf-8") as output_file:
+        output_file.write(json.dumps(output, indent=2, sort_keys=True))
 
 
 def load_scripted_responses(path: Path) -> dict[str, AgentResponse]:
@@ -392,12 +405,15 @@ def build_result_payload(
     runner: str = "scripted",
 ) -> dict[str, Any]:
     result_run_id = run_id or str(uuid4())
+    routing = routing_metrics(results)
     return {
         "run_id": result_run_id,
         "backend_name": backend_name,
         "timestamp": datetime.now(UTC).isoformat(),
         "scenario_count": len(results),
         "aggregate_metrics": _aggregate_metrics(results),
+        "decision_confusion_matrix": routing["decision_confusion_matrix"],
+        "decision_class_metrics": routing["decision_class_metrics"],
         "scenario_results": [
             {
                 "scenario_id": result.scenario_id,
@@ -427,14 +443,19 @@ def build_result_payload(
 
 
 def _aggregate_metrics(results: list[ScenarioRunResult]) -> dict[str, float | int | None]:
+    routing = routing_metrics(results)
     scenario_count = len(results)
     if scenario_count == 0:
         return {
             "task_success_rate": None,
+            "macro_f1": None,
+            "invalid_output_rate": None,
             "average_tool_call_accuracy": None,
             "average_argument_accuracy": None,
             "average_clarification_accuracy": None,
             "average_refusal_accuracy": None,
+            "average_decision_accuracy": None,
+            "decision_coverage_rate": None,
             "average_hallucination_rate": None,
             "average_latency_ms": None,
             "total_cost_usd": 0.0,
@@ -450,15 +471,24 @@ def _aggregate_metrics(results: list[ScenarioRunResult]) -> dict[str, float | in
         for result in results
         if result.score.refusal_accuracy is not None
     ]
+    decision_scores = [
+        result.score.decision_accuracy
+        for result in results
+        if result.score.decision_accuracy is not None
+    ]
 
     return {
         "task_success_rate": sum(result.score.task_success for result in results) / scenario_count,
+        "macro_f1": routing["macro_f1"],
+        "invalid_output_rate": routing["invalid_output_rate"],
         "average_tool_call_accuracy": _mean(
             [result.score.tool_call_accuracy for result in results]
         ),
         "average_argument_accuracy": _mean([result.score.argument_accuracy for result in results]),
         "average_clarification_accuracy": _mean(clarification_scores),
         "average_refusal_accuracy": _mean(refusal_scores),
+        "average_decision_accuracy": _mean(decision_scores),
+        "decision_coverage_rate": len(decision_scores) / scenario_count,
         "average_hallucination_rate": _mean(
             [result.score.hallucination_rate for result in results]
         ),

@@ -1,0 +1,31 @@
+{
+  "id": "ts_clarify_calendar_missing_time_001",
+  "category": "calendar",
+  "difficulty": "ambiguous",
+  "description": "Ask for a time when a conversational request supplies only the day.",
+  "user_input": "Thursday is the day for the lease walkthrough. Give it half an hour on my calendar.",
+  "current_time": "2027-02-10T10:00:00Z",
+  "available_tools": [
+    "calendar.create_event"
+  ],
+  "initial_state": {
+    "calendar_events": []
+  },
+  "expected_behavior": {
+    "type": "clarification",
+    "question_contains": [
+      "time"
+    ]
+  },
+  "success_criteria": [
+    "tool_not_called",
+    "clarification_requested"
+  ],
+  "tags": [
+    "template_shift",
+    "locked_eval",
+    "clarify",
+    "conversational",
+    "missing_time"
+  ]
+}

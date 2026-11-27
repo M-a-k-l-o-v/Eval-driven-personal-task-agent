@@ -89,4 +89,7 @@ async def test_run_agent_scenario_scores_core_agent_response() -> None:
     assert result.trace_id is not None
     assert result.cost_usd == 0.003
     assert result.score.task_success is True
+    assert result.agent_response is not None
+    assert result.agent_response.decision_type == "act"
+    assert result.score.decision_accuracy == 1.0
     assert result.final_state["calendar_events"][0]["title"] == ("Linear algebra revision")

@@ -11,7 +11,7 @@ from pydantic import ValidationError
 from baymax.models.baymax_sft import BaymaxSFTBuildConfig, build_baymax_sft_dataset
 from baymax.models.sft_dataset import SFTSplitRatios
 
-DEFAULT_OUTPUT_DIR = Path("data/sft/v1/baymax-control")
+DEFAULT_OUTPUT_DIR = BaymaxSFTBuildConfig().output_dir
 
 
 def main() -> int:
@@ -46,12 +46,18 @@ def main() -> int:
         default=0.1,
         help="Test split ratio.",
     )
+    parser.add_argument(
+        "--matched-contrasts",
+        action="store_true",
+        help="Use tighter triplets and export group membership for cap-aware sampling.",
+    )
     args = parser.parse_args()
 
     try:
         config = BaymaxSFTBuildConfig(
             output_dir=args.output_dir,
             seed=args.seed,
+            matched_contrasts=args.matched_contrasts,
             split_ratios=SFTSplitRatios(
                 train=args.train_ratio,
                 validation=args.validation_ratio,
@@ -62,7 +68,11 @@ def main() -> int:
         print(f"error: invalid BAYMAX SFT build config: {error}", file=sys.stderr)
         return 1
 
-    manifest = build_baymax_sft_dataset(config)
+    try:
+        manifest = build_baymax_sft_dataset(config)
+    except ValueError as error:
+        print(f"error: {error}", file=sys.stderr)
+        return 1
     print(f"Wrote BAYMAX SFT dataset to {config.output_dir}")
     print(
         "Counts: "

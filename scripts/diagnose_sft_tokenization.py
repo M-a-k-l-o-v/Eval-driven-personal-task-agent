@@ -3,10 +3,12 @@
 from __future__ import annotations
 
 import argparse
+import json
 from pathlib import Path
-from typing import Literal
+from typing import Any, Literal
 
 from baymax.models.sft_training import (
+    _tokenize_chat_example,
     diagnose_sft_tokenization,
     load_sft_jsonl,
 )
@@ -49,6 +51,13 @@ def main() -> int:
         help="Maximum problem rows to include in the report.",
     )
     parser.add_argument(
+        "--inspect-row",
+        type=int,
+        action="append",
+        default=[],
+        help="Preview actual labels for a zero-based loaded row index; repeat for multiple rows.",
+    )
+    parser.add_argument(
         "--trust-remote-code",
         action="store_true",
         help="Pass trust_remote_code=True when loading the tokenizer.",
@@ -70,6 +79,8 @@ def main() -> int:
     config = load_training_config(args.config)
     split_path = _split_path(config_path=args.split, config=config)
     rows = load_sft_jsonl(split_path, max_rows=args.max_rows)
+    if any(index < 0 or index >= len(rows) for index in args.inspect_row):
+        parser.error("--inspect-row must be a zero-based index within the loaded row cap")
     tokenizer = AutoTokenizer.from_pretrained(
         config.base_model,
         trust_remote_code=args.trust_remote_code,
@@ -81,10 +92,17 @@ def main() -> int:
         max_sequence_length=max_sequence_length,
         max_problem_rows=args.problem_row_limit,
     )
+    previews = [
+        {"row_index": index, **inspect_training_labels(rows[index], tokenizer, max_sequence_length)}
+        for index in args.inspect_row
+    ]
 
     if args.output is not None:
         args.output.parent.mkdir(parents=True, exist_ok=True)
-        args.output.write_text(diagnostics.model_dump_json(indent=2) + "\n", encoding="utf-8")
+        payload = diagnostics.model_dump()
+        if previews:
+            payload["label_previews"] = previews
+        args.output.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
 
     print(f"Split: {args.split}")
     print(f"Rows checked: {diagnostics.row_count}")
@@ -103,8 +121,42 @@ def main() -> int:
                 f"- row {row.row_index}: {', '.join(row.issues)} "
                 f"({row.trainable_label_tokens} trainable labels)"
             )
+    if previews:
+        print("Actual label previews (zero-based indices; -100 labels excluded from decoded text):")
+        print(json.dumps(previews, indent=2))
 
     return 0
+
+
+def inspect_training_labels(
+    row: dict[str, Any], tokenizer: Any, max_sequence_length: int
+) -> dict[str, Any]:
+    """Read actual training labels; independently check the rendered prompt boundary."""
+    tokenized = _tokenize_chat_example(row, tokenizer, max_sequence_length)
+    messages = row["messages"]
+    prompt = tokenizer.apply_chat_template(
+        messages[:-1], tokenize=False, add_generation_prompt=True
+    )
+    full = tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=False)
+    prompt_ids = tokenizer(prompt, truncation=False, add_special_tokens=False)["input_ids"]
+    full_ids = tokenizer(full, truncation=False, add_special_tokens=False)["input_ids"]
+    labels, input_ids = tokenized["labels"], tokenized["input_ids"]
+    boundary = min(len(prompt_ids), len(labels))
+    decoded = tokenizer.decode(
+        [label for label in labels if label != -100],
+        skip_special_tokens=False,
+        clean_up_tokenization_spaces=False,
+    )
+    target = messages[-1]["content"]
+    return {
+        "expected_target": target,
+        "decoded_trainable_labels": decoded,
+        "prompt_prefix_matches": full_ids[: len(prompt_ids)] == prompt_ids,
+        "prompt_tokens_masked": all(label == -100 for label in labels[:boundary]),
+        "visible_assistant_labels_match_inputs": bool(labels[boundary:])
+        and labels[boundary:] == input_ids[boundary:],
+        "complete_target_visible": decoded.startswith(target),
+    }
 
 
 def _split_path(*, config_path: SplitName, config: SFTTrainingConfig) -> Path:

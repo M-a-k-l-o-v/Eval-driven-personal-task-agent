@@ -1,0 +1,44 @@
+{
+  "id": "ts_clarify_notion_multiple_matches_001",
+  "category": "notion",
+  "difficulty": "contextual",
+  "description": "Ask which task to complete when state contains two plausible matches.",
+  "user_input": "The contract review is wrapped up. Close that task.",
+  "current_time": "2027-02-10T10:00:00Z",
+  "available_tools": [
+    "notion.update_task"
+  ],
+  "initial_state": {
+    "notion_tasks": [
+      {
+        "id": "task_vendor_contract_001",
+        "title": "Review vendor contract",
+        "status": "open",
+        "due_date": "2027-02-14"
+      },
+      {
+        "id": "task_lease_contract_001",
+        "title": "Review lease contract",
+        "status": "open",
+        "due_date": "2027-02-18"
+      }
+    ]
+  },
+  "expected_behavior": {
+    "type": "clarification",
+    "question_contains": [
+      "which"
+    ]
+  },
+  "success_criteria": [
+    "tool_not_called",
+    "clarification_requested"
+  ],
+  "tags": [
+    "template_shift",
+    "locked_eval",
+    "clarify",
+    "state_lookup",
+    "multiple_matches"
+  ]
+}

@@ -17,7 +17,7 @@ from __future__ import annotations
 
 from datetime import datetime
 from enum import Enum
-from typing import Any
+from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
@@ -25,6 +25,7 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator
 # the convention his fake adapters use. Don't loosen this — it's the boundary
 # pattern check.
 TOOL_NAME_PATTERN = r"^[a-z][a-z0-9_]*\.[a-z][a-z0-9_]*$"
+DecisionType = Literal["act", "clarify", "refuse"]
 
 
 # ---------------------------------------------------------------------------
@@ -53,6 +54,8 @@ class AgentResponse(BaseModel):
 
     tool_calls: list[AgentToolCall] = Field(default_factory=list)
     message: str | None = None
+    decision_type: DecisionType | None = None
+    parse_error: str | None = None
 
 
 # ---------------------------------------------------------------------------
@@ -251,7 +254,16 @@ class TaskFile(BaseModel):
             AgentToolCall(tool=entry.step.tool, arguments=entry.step.arguments)
             for entry in self.action_log
         ]
+        decision_type: DecisionType | None = None
+        if self.response_type == ResponseType.TASK_DONE:
+            decision_type = "act"
+        elif self.response_type == ResponseType.CLARIFICATION:
+            decision_type = "clarify"
+        elif self.response_type == ResponseType.TASK_REFUSAL:
+            decision_type = "refuse"
+
         return AgentResponse(
             tool_calls=boundary_calls,
             message=self.response_text,
+            decision_type=decision_type,
         )

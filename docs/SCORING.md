@@ -8,6 +8,25 @@ and records `tool_results` and `final_state`; LLM-as-judge scoring is deferred.
 
 ## Current Scoring Rules
 
+### Invalid Local Output
+
+Local generations must contain one complete JSON response (an enclosing JSON
+code fence is allowed). Invalid calls, malformed arguments, missing meta-tool
+arguments, conflicting decisions, and trailing output reject the whole response.
+Existing supported field aliases still work. No valid subset is executed.
+
+`AgentResponse.parse_error` records the rejection; the raw generation remains in
+the result. Scoring emits `invalid_model_output`, sets task success to false and
+tool/argument/applicable wording accuracy to zero. Decision accuracy is unknown
+and excluded from decision coverage. The existing tool-name hallucination metric
+is zero when no calls can be parsed; this is not evidence of hallucination-free
+output. Always report invalid-output counts alongside that metric.
+
+`scripts/rescore_local_results.py` reparses historical raw generations and replays
+fake tools into a new artifact. It records source/scenario hashes and explicitly
+inherits the original generation latency/cost. It does not rerun the model or
+overwrite the source. Comparisons must use the same parser/scorer methodology.
+
 ### Tool-Call Accuracy
 
 Tool-call accuracy is the number of correct ordered expected tool calls divided
@@ -104,6 +123,49 @@ Refusal accuracy applies only to scenarios whose expected behavior is `refusal`.
 The score is the number of matched required keywords divided by the number of
 required keywords. If a tool is called, refusal accuracy is `0.0`.
 
+### Decision Accuracy
+
+New agent responses preserve the model's selected `act`, `clarify`, or `refuse`
+decision in `AgentResponse.decision_type`. Decision accuracy is `1.0` when that
+recorded decision matches the scenario's expected behavior and `0.0` otherwise.
+An explicitly wrong decision adds `wrong_decision` and prevents task success.
+
+Clarification and refusal accuracy continue to measure question/reason keyword
+quality separately. A correctly selected refusal can therefore receive full
+decision accuracy but only partial refusal accuracy when its reason omits an
+expected keyword.
+
+Legacy responses and historical result files that do not contain
+`decision_type` report decision accuracy as `null`. Their existing task-success
+semantics are unchanged.
+
+Aggregate output also reports `decision_coverage_rate`, the fraction of
+scenarios whose response contained a recorded decision. This prevents malformed,
+empty, or legacy responses from silently disappearing from interpretation of
+the conditional average decision accuracy.
+
+### Balanced Routing Metrics
+
+`macro_f1` averages the ACT, CLARIFY and REFUSE F1 scores equally. This is the
+primary routing metric for the matched-contrast experiment, alongside task success.
+For each class, precision measures correct predictions among predictions of that
+class; recall measures correct predictions among all expected examples of that class.
+The confusion matrix uses expected rows and predicted columns, plus a separate
+`invalid_or_unknown` column. Rejected and unknown outputs count as false negatives
+for the expected class; they are not removed from the macro-F1 denominator.
+The three labels are fixed: an absent class has F1 zero, and an empty run has null
+macro-F1. Compare this metric on the same benchmark, not across differently sized
+single-class subsets.
+
+`invalid_output_rate` is the fraction rejected by the parser (`parse_error` or
+`invalid_model_output`), distinct from valid but empty/unknown decisions. Reports
+include per-class support, precision, recall and F1. Existing conditional decision
+accuracy, keyword accuracy and task-success rules remain unchanged.
+
+`scripts/compare_eval_results.py --routing label=path ...` derives these metrics
+from saved per-scenario decisions without rewriting historical result files or
+rerunning inference. Legacy files without recorded decisions remain unavailable.
+
 ## Current Failure Reasons
 
 - `wrong_tool_order`: The right tools were selected but not in the expected order.
@@ -114,6 +176,8 @@ required keywords. If a tool is called, refusal accuracy is `0.0`.
 - `missing_clarification`: The expected clarification was not asked.
 - `missing_refusal`: The expected refusal was not provided.
 - `premature_tool_call`: The agent called a tool when it should have clarified or refused.
+- `wrong_decision`: The recorded ACT, CLARIFY, or REFUSE decision did not match
+  the scenario's expected behavior.
 
 ## Planned Scoring Work
 

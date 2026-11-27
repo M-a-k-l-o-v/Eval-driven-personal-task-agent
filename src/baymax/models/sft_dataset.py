@@ -19,6 +19,7 @@ from baymax.models.external_dataset import (
 )
 
 SFT_FORMAT_VERSION = "qwen-chat-messages-v2"
+SFT_SPLIT_STRATEGY = "content-groups-v1"
 DEFAULT_SFT_CURRENT_TIME = "2026-06-01T09:00:00Z"
 DEFAULT_SFT_SYSTEM_PROMPT = (
     "You are BAYMAX's tool-calling planner. Return only a JSON array of tool calls. "
@@ -28,14 +29,9 @@ DEFAULT_SFT_SYSTEM_PROMPT = (
     "unsolicited email. Do not use request_clarification for missing tools or unsupported "
     "capabilities; refuse instead. Call request_clarification only when an otherwise "
     "supported action is missing required details, ambiguous, conflicting, impossible, or "
-    "needs confirmation. Confirmation is required only for a supported destructive or "
-    "irreversible operation, or a consequential external communication that states a major "
-    "commitment or status change. A routine explicit send, create, update, clipboard read, "
-    "or clipboard write is already authorized and does not need confirmation. An unavailable "
-    "destructive operation must be refused, not confirmed. Only call productive tools when "
-    "the action is allowed and all required arguments are known from the request, "
-    "current_time, or initial_state. Do not invent missing people, IDs, dates, times, "
-    "recipients, state, or unavailable tools."
+    "needs confirmation. Only call productive tools when the action is allowed and all "
+    "required arguments are known from the request, current_time, or initial_state. Do not "
+    "invent missing people, IDs, dates, times, recipients, state, or unavailable tools."
 )
 SplitName = Literal["train", "validation", "test"]
 
@@ -251,6 +247,7 @@ def sft_build_config_hash(config: SFTBuildConfig) -> str:
         "split_ratios": config.split_ratios.model_dump(mode="json"),
         "system_prompt": config.system_prompt,
         "format_version": SFT_FORMAT_VERSION,
+        "split_strategy": SFT_SPLIT_STRATEGY,
     }
     return _sha256_json(hash_payload)
 
@@ -307,16 +304,31 @@ def _split_prepared_rows(
     prepared_rows: list[PreparedSFTRow],
     split_ratios: SFTSplitRatios,
 ) -> dict[SplitName, list[PreparedSFTRow]]:
-    sorted_rows = sorted(prepared_rows, key=lambda row: row.source.row_hash)
-    total = len(sorted_rows)
+    # IDs identify source rows, not distinct examples. Keep identical model-visible
+    # content together even when source IDs or original JSON serialization differ.
+    groups: dict[str, list[PreparedSFTRow]] = {}
+    for row in sorted(prepared_rows, key=lambda row: row.source.row_hash):
+        content_hash = _sha256_json(row.example.model_dump(mode="json"))
+        groups.setdefault(content_hash, []).append(row)
+
+    total = len(prepared_rows)
     train_count = int(total * split_ratios.train)
     validation_count = int(total * split_ratios.validation)
-
-    return {
-        "train": sorted_rows[:train_count],
-        "validation": sorted_rows[train_count : train_count + validation_count],
-        "test": sorted_rows[train_count + validation_count :],
+    splits: dict[SplitName, list[PreparedSFTRow]] = {
+        "train": [],
+        "validation": [],
+        "test": [],
     }
+    for group in groups.values():
+        if len(splits["train"]) < train_count:
+            split_name: SplitName = "train"
+        elif len(splits["validation"]) < validation_count:
+            split_name = "validation"
+        else:
+            split_name = "test"
+        splits[split_name].extend(group)
+
+    return splits
 
 
 def _write_jsonl(path: Path, examples: Iterable[SFTExample]) -> None:

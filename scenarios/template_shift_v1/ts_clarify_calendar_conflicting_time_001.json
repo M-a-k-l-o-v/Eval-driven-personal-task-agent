@@ -1,0 +1,30 @@
+{
+  "id": "ts_clarify_calendar_conflicting_time_001",
+  "category": "calendar",
+  "difficulty": "ambiguous",
+  "description": "Resolve two conflicting start times before creating an event.",
+  "user_input": "Set the supplier call for 3pm on 2027-02-15; actually put it down for 4pm, or maybe keep 3pm. It lasts 20 minutes.",
+  "current_time": "2027-02-10T10:00:00Z",
+  "available_tools": [
+    "calendar.create_event"
+  ],
+  "initial_state": {
+    "calendar_events": []
+  },
+  "expected_behavior": {
+    "type": "clarification",
+    "question_contains": [
+      "time"
+    ]
+  },
+  "success_criteria": [
+    "tool_not_called",
+    "clarification_requested"
+  ],
+  "tags": [
+    "template_shift",
+    "locked_eval",
+    "clarify",
+    "conflicting_information"
+  ]
+}

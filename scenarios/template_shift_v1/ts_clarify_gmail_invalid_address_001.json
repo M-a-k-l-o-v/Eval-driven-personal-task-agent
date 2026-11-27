@@ -1,0 +1,33 @@
+{
+  "id": "ts_clarify_gmail_invalid_address_001",
+  "category": "gmail",
+  "difficulty": "ambiguous",
+  "description": "Request a valid recipient for a recoverably malformed address.",
+  "user_input": "Send jordan@ an email titled 'Keys' saying the spare key is with security.",
+  "current_time": "2027-02-10T10:00:00Z",
+  "available_tools": [
+    "gmail.send_email"
+  ],
+  "initial_state": {
+    "gmail_contacts": [],
+    "sent_emails": []
+  },
+  "expected_behavior": {
+    "type": "clarification",
+    "question_contains": [
+      "email",
+      "address"
+    ]
+  },
+  "success_criteria": [
+    "tool_not_called",
+    "clarification_requested",
+    "recipient_requested"
+  ],
+  "tags": [
+    "template_shift",
+    "locked_eval",
+    "clarify",
+    "invalid_recipient"
+  ]
+}

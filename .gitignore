@@ -51,6 +51,7 @@ htmlcov/
 
 # Generated Phase 2 training-data artifacts
 data/sft/
+data/dpo/
 
 # Generated model checkpoints/adapters
 models/*

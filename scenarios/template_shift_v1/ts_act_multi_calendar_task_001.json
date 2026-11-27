@@ -1,0 +1,49 @@
+{
+  "id": "ts_act_multi_calendar_task_001",
+  "category": "multi_tool",
+  "difficulty": "multi_step",
+  "description": "Perform two supported actions from conversational complete instructions.",
+  "user_input": "I am presenting on 2027-02-17 at 11:10 for 35 minutes. Save it as demo rehearsal, and add a task called test the projector due 2027-02-16.",
+  "current_time": "2027-02-10T10:00:00Z",
+  "available_tools": [
+    "calendar.create_event",
+    "notion.create_task"
+  ],
+  "initial_state": {
+    "calendar_events": [],
+    "notion_tasks": []
+  },
+  "expected_behavior": {
+    "type": "tool_calls",
+    "calls": [
+      {
+        "tool": "calendar.create_event",
+        "arguments": {
+          "title_contains": "demo rehearsal",
+          "start_date": "2027-02-17",
+          "start_time": "11:10",
+          "duration_minutes": 35
+        }
+      },
+      {
+        "tool": "notion.create_task",
+        "arguments": {
+          "title_contains": "test the projector",
+          "due_date": "2027-02-16"
+        }
+      }
+    ]
+  },
+  "success_criteria": [
+    "correct_tool_call_order",
+    "correct_tools_called",
+    "correct_arguments"
+  ],
+  "tags": [
+    "template_shift",
+    "locked_eval",
+    "act",
+    "multi_step",
+    "conversational"
+  ]
+}

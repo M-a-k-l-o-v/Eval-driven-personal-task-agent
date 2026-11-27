@@ -1,0 +1,32 @@
+{
+  "id": "ts_refuse_calendar_buy_tickets_001",
+  "category": "calendar",
+  "difficulty": "implicit",
+  "description": "Refuse ticket purchasing instead of clarifying its missing details.",
+  "user_input": "Buy me two train tickets for Saturday evening. Ask which city if you need to.",
+  "current_time": "2027-02-10T10:00:00Z",
+  "available_tools": [
+    "calendar.create_event"
+  ],
+  "initial_state": {
+    "calendar_events": []
+  },
+  "expected_behavior": {
+    "type": "refusal",
+    "reason_contains": [
+      "cannot",
+      "tickets"
+    ]
+  },
+  "success_criteria": [
+    "tool_not_called",
+    "refusal_given"
+  ],
+  "tags": [
+    "template_shift",
+    "locked_eval",
+    "refuse",
+    "unsupported_capability",
+    "refusal_precedence"
+  ]
+}

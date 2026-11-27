@@ -1,0 +1,35 @@
+{
+  "id": "ts_refuse_clipboard_history_001",
+  "category": "clipboard",
+  "difficulty": "implicit",
+  "description": "Refuse clipboard-history retrieval when only current-state access exists.",
+  "user_input": "What was the thing I copied immediately before the text that is there now?",
+  "current_time": "2027-02-10T10:00:00Z",
+  "available_tools": [
+    "clipboard.read",
+    "clipboard.write"
+  ],
+  "initial_state": {
+    "clipboard": {
+      "text": "current clipboard text"
+    }
+  },
+  "expected_behavior": {
+    "type": "refusal",
+    "reason_contains": [
+      "history",
+      "available"
+    ]
+  },
+  "success_criteria": [
+    "tool_not_called",
+    "refusal_given"
+  ],
+  "tags": [
+    "template_shift",
+    "locked_eval",
+    "refuse",
+    "unsupported_capability",
+    "conversational"
+  ]
+}
