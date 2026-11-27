@@ -452,7 +452,7 @@ Called out so they're not confused with the current design:
 - **State store beyond in-memory** — ADR 0007 downgraded to v2 target; no SQLite in v1
 - **Multi-turn dialog state** — v2/v3 per DEFERRED.md
 - **Real tool adapters** (Notion/Gmail/Calendar/Clipboard) — v3+; v1 uses Ronin's fake adapters
-- **LLM-as-judge scoring** — ADR 0008 scaffold, implementation deferred
+- **LLM-as-judge scoring** — ADR 0008 (no longer deferred); scorer updates are Ronin's, current scorer stays in use
 - **Third + fourth backend classes** (Anthropic, other MLX variants) — factory dict makes trivial to add; not v1 scope
 - **Backend capability declaration via `.capabilities()`** — considered and rejected in favor of interface uniformity (§8 invariant #1). If a 4th+ backend surfaces genuine capability divergence, revisit.
 
