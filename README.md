@@ -2,7 +2,9 @@
 
 A locally-runnable personal-task agent with an eval harness. Stepping-stone learning project — shipped as portfolio evidence of engineering + methodology discipline, not as a daily-driver assistant or research contribution.
 
-**Status**: Closed out by the project owner on 2026-10-17 as a stepping-stone learning project. The final local fine-tune records 73/150 task successes on the development suite. Fake adapters only; not a production assistant.
+**Status**: The Phase 1 eval baseline shipped with 50 scenarios. The local Phase 2 training and evaluation work closed out on 2026-10-17. Its final fine-tune records 73/150 task successes on the development suite. BAYMAX uses fake adapters only.
+
+The 2026-11-16 status update identified end-to-end evaluation through the MLX backend and output adapter, and a model card, as outstanding. Those deliverables are outside this local training closeout.
 
 See [docs/PROJECT.md](docs/PROJECT.md) for the full "what BAYMAX is and isn't."
 
