@@ -62,28 +62,29 @@ def _setup(tmp_path: Path, *, real_control: bool = False) -> SFTMixConfig:
             dataset_id="example/xlam", revision="pinned", output_dir=xlam, seed=1
         ),
     )
-    build_sft_dataset_from_rows(
-        [
-            {
-                "id": i,
-                "query": f"BAYMAX request {i}",
-                "tools": tools,
-                "answers": (
-                    [{"name": "request_clarification", "arguments": {"question": "Which?"}}]
-                    if i % 3 == 0
-                    else [{"name": "refuse_request", "arguments": {"reason": "Unavailable."}}]
-                    if i % 3 == 1
-                    else [{"name": "lookup", "arguments": {"n": i}}]
-                ),
-            }
-            for i in range(90)
-        ],
-        config=SFTBuildConfig(
-            dataset_id="example/baymax", revision="pinned", output_dir=baymax, seed=1
-        ),
-    )
     if real_control:
         build_baymax_sft_dataset(BaymaxSFTBuildConfig(output_dir=baymax, seed=1))
+    else:
+        build_sft_dataset_from_rows(
+            [
+                {
+                    "id": i,
+                    "query": f"BAYMAX request {i}",
+                    "tools": tools,
+                    "answers": (
+                        [{"name": "request_clarification", "arguments": {"question": "Which?"}}]
+                        if i % 3 == 0
+                        else [{"name": "refuse_request", "arguments": {"reason": "Unavailable."}}]
+                        if i % 3 == 1
+                        else [{"name": "lookup", "arguments": {"n": i}}]
+                    ),
+                }
+                for i in range(90)
+            ],
+            config=SFTBuildConfig(
+                dataset_id="example/baymax", revision="pinned", output_dir=baymax, seed=1
+            ),
+        )
     config = SFTMixConfig(
         xlam_dir=xlam,
         baymax_dir=baymax,

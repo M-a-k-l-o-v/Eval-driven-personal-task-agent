@@ -306,6 +306,7 @@ def test_config_preserves_training_recipe_and_uses_new_identity(
             "revision": "pinned",
             "split_manifest_path": str(parent / "split-manifest.json"),
             "validation_report_path": str(parent / "validation-report.json"),
+            "eval_scenarios_paths": ["scenarios/v1", "scenarios/v2"],
             **{
                 f"{split}_path": str(parent / f"{split}.jsonl")
                 for split in ("train", "validation", "test")
@@ -318,6 +319,8 @@ def test_config_preserves_training_recipe_and_uses_new_identity(
     reference = training_config_with_hash(type(base).model_validate(payload))
     reference_path = tmp_path / "reference.json"
     write_training_config(reference_path, reference)
+    reference_report = validate_training_config(reference_path, check_paths=True)
+    assert reference_report.valid, reference_report.issues
     config_path = tmp_path / "coverage.json"
     config = prepare_experiment(
         reference_config=reference_path,
